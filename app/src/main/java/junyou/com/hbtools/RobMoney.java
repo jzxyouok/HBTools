@@ -49,7 +49,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     //-----------[QQ红包]---------------//
     static final String QQ_HONGBAO_TEXT_KEY = "[QQ红包]";
 
-
     @Override
     public void onCreate()
     {

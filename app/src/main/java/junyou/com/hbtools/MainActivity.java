@@ -3,6 +3,7 @@ package junyou.com.hbtools;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -34,6 +36,10 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         switchPlugin = (Button) findViewById(R.id.button_accessible);
         switchPlugin.setOnClickListener(myClickListener);
         updateServiceStatus();
+
+        //ImageView img = (ImageView) findViewById(R.id.imageView);
+        //img.setImageDrawable(getResources().getDrawable(R.drawable.bg));
+
     }
 
     @Override
