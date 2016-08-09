@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE); //去掉标题
         setContentView(R.layout.activity_main);
 
         //监听AccessibilityService 变化
@@ -37,8 +39,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         switchPlugin.setOnClickListener(myClickListener);
         updateServiceStatus();
 
-        //ImageView img = (ImageView) findViewById(R.id.imageView);
-        //img.setImageDrawable(getResources().getDrawable(R.drawable.bg));
 
     }
 

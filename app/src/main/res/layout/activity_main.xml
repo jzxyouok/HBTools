@@ -7,22 +7,77 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/bgimage"
     tools:context="junyou.com.hbtools.MainActivity">
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/button_accessible"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="194dp" />
+        android:layout_below="@+id/textView3"
+        android:layout_alignLeft="@+id/share_button"
+        android:layout_alignStart="@+id/share_button"
+        android:layout_marginTop="32dp" />
 
-    <ImageView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:layout_alignBottom="@+id/button_accessible"
+        android:text="@string/action_settings"
+        android:id="@+id/setting_button"
+        android:layout_marginTop="75dp"
+        android:layout_below="@+id/button_accessible" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/action_share"
+        android:id="@+id/share_button"
+        android:layout_alignBottom="@+id/setting_button"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/action_help"
+        android:id="@+id/help_button"
+        android:layout_alignTop="@+id/share_button"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/action_grasp"
+        android:id="@+id/textView"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="78dp" />
+        android:layout_marginTop="39dp"
+        android:textColor="@color/colorwhite"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/action_num"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/colorwhite"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/action_total"
+        android:id="@+id/textView3"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/colorwhite"
+        />
 
 </RelativeLayout>

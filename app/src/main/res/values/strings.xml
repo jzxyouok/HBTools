@@ -2,8 +2,16 @@
     <string name="app_name">骏游抢红包神器</string>
     <string name="Text_1">自动抢红包助手，福利来啦~</string>
     <string name="Text_2">点击开启红包助手\n○ 微信红包助手\n○ 开启服务\n○ 回到桌面\n○ 让手机自动抢红包吧\n以后再也不用担心手慢抢不过别人咯~</string>
-    <string name="action_settings">设置</string>
     <string name="app_description">点击开启服务开始自动抢红包吧！</string>
     <string name="service_off">点击关闭红包助手</string>
     <string name="service_on">点击开启红包助手</string>
+
+    <string name="action_settings">设置</string>
+    <string name = "action_share">分享</string>
+    <string name = "action_help">帮助</string>
+
+    <string name = "action_grasp">已抢</string>
+    <string name = "action_num">15个红包</string>
+    <string name = "action_total">共计5元</string>
+    <string name = "action_yuan">元</string>
 </resources>
