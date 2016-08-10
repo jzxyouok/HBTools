@@ -107,6 +107,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     //查找红包列表，执行点击红包事件
     private boolean openWeChatHongbao(AccessibilityEvent event)
     {
+        Log.i("TAG","监听微信");
         if (mListMutex) return false;
         mListMutex = true;
         AccessibilityNodeInfo eventSource = event.getSource();
@@ -252,7 +253,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         this.watchFlagsFromPreference();
         AccessibilityServiceInfo info = getServiceInfo();
         //这里可以设置多个包名，监听多个应用
-        info.packageNames = new String[]{"com.tencent.mobileqq"};
+        info.packageNames = new String[]{"com.tencent.mobileqq","com.tencent.mm"};
         setServiceInfo(info);
     }
 
@@ -278,8 +279,8 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         /* 如果已经接收到红包并且还没有戳开 */
         if (mLuckyMoneyReceived && !mLuckyMoneyPicked && (mReceiveNode != null))
         {
+            Log.i("TAG","如果已经接收到红包并且还没有戳开");
             mMutex = true;
-
             mReceiveNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
             mLuckyMoneyReceived = false;
             mLuckyMoneyPicked = true;
@@ -287,6 +288,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         /* 如果戳开但还未领取 */
         if (mUnpackCount == 1 && (mUnpackNode != null))
         {
+            Log.i("TAG","如果戳开但还未领取");
             int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 1000;
             new android.os.Handler().postDelayed(
                     new Runnable() {
@@ -318,12 +320,17 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         /* 聊天会话窗口，遍历节点匹配“领取红包”和"查看红包" */
         AccessibilityNodeInfo node1 = (sharedPreferences.getBoolean("pref_watch_self", false)) ?
                 this.getTheLastNode(WECHAT_VIEW_OTHERS_CH, WECHAT_VIEW_SELF_CH) : this.getTheLastNode(WECHAT_VIEW_OTHERS_CH);
-        if (node1 != null && currentActivityName.contains(WECHAT_LUCKMONEY_GENERAL_ACTIVITY)) {
+        if (node1 != null && currentActivityName.contains(WECHAT_LUCKMONEY_GENERAL_ACTIVITY))
+        {
+            Log.i("TAG","聊天会话窗口，遍历节点匹配“领取红包”和查看红包");
             String excludeWords = sharedPreferences.getString("pref_watch_exclude_words", "");
-            if (this.signature.generateSignature(node1, excludeWords)) {
+           // Log.i("TAG","excludeWords=="+ excludeWords);
+            if (this.signature.generateSignature(node1, excludeWords))
+            {
+                Log.i("TAG","进来了");
                 mLuckyMoneyReceived = true;
                 mReceiveNode = node1;
-                Log.d("sig", this.signature.toString());
+                Log.d("TAG", this.signature.toString());
             }
             return;
         }
@@ -346,7 +353,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             mMutex = false;
             mLuckyMoneyPicked = false;
             mUnpackCount = 0;
-            performGlobalAction(GLOBAL_ACTION_BACK);
+            performGlobalAction(GLOBAL_ACTION_BACK);            //点击返回键
             signature.commentString = generateCommentString();
         }
     }
@@ -467,6 +474,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public boolean openQQHongbao(AccessibilityEvent event)
     {
+        //Log.i("TAG", "111");
         if (mListMutex) return false;
         mListMutex = true;
 
@@ -487,7 +495,9 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 String id = getHongbaoText(mReceiveNode_1.get(size - 1));
                 long now = System.currentTimeMillis();
                 if (this.shouldReturn(id, now - lastFetchedTime))
+                {
                     return false;
+                }
 
                 lastFetchedHongbaoId = id;
                 lastFetchedTime = now;
@@ -497,17 +507,14 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 {
                     return false;
                 }
-
+                //处理普通红包
                 cellNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                Log.i("TAG", "---------开始----------");
-
+                //处理口令红包
                 if (cellNode.getText().toString().equals(QQ_HONG_BAO_PASSWORD))
                 {
-                    Log.i("TAG", "///////////");
                     AccessibilityNodeInfo rowNode = getRootInActiveWindow();
                     if (rowNode == null)
                     {
-                        Log.i("TAG", "noteInfo is　null");
                         return false;
                     } else
                     {
@@ -521,11 +528,13 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         return false;
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void checkNodeInfo()
     {
-
+        //Log.i("TAG", "监听聊天窗口");
         if (rootNodeInfo_1 == null)
         {
+            Log.i("TAG", "333");
             return;
         }
          /* 聊天会话窗口，遍历节点匹配“点击拆开”，“口令红包”，“点击输入口令” */
@@ -534,9 +543,11 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
         if (!nodes1.isEmpty())
         {
+            Log.i("TAG", "4444");
             String nodeId = Integer.toHexString(System.identityHashCode(this.rootNodeInfo_1));
             if (!nodeId.equals(lastFetchedHongbaoId))
             {
+                Log.i("TAG", "555");
                 mLuckyMoneyReceived_1 = true;
                 mReceiveNode_1 = nodes1;
             }
@@ -599,11 +610,14 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (info.getText() != null && info.getText().toString().equals(QQ_CLICK_TO_PASTE_PASSWORD))
             {
                 info.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                //performGlobalAction(GLOBAL_ACTION_BACK);
+
             }
 
             if (info.getClassName().toString().equals("android.widget.Button") && info.getText().toString().equals("发送"))
             {
                 info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+               // performGlobalAction(GLOBAL_ACTION_BACK);
             }
 
         } else
