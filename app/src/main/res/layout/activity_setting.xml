@@ -7,6 +7,15 @@
     android:fitsSystemWindows="true"
     tools:context="junyou.com.hbtools.SettingActivity">
 
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="120px"
+        android:id="@+id/listview"
+        >
+
+    </ListView>
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +25,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/colorBG"
             app:popupTheme="@style/notitle.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
@@ -40,5 +49,7 @@
         <!--android:layout_alignParentTop="true"-->
         <!--&lt;!&ndash;android:textSize=""&ndash;&gt;-->
         <!--/>-->
+
+
 
 </android.support.design.widget.CoordinatorLayout>

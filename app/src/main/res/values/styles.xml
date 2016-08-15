@@ -15,8 +15,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="notitle.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="notitle.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <!--<item name="android:background">@color/colorBG</item>-->
+    </style>
 
-    <style name="notitle.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="notitle.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
+        <item name="android:background">@color/colorBG</item>
+    </style>
 
 </resources>
