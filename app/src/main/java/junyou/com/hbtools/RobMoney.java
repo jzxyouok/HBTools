@@ -25,7 +25,6 @@ import java.util.List;
 
 public class RobMoney extends AccessibilityService implements SharedPreferences.OnSharedPreferenceChangeListener
 {
-
     private static final String WECHAT_DETAILS_EN = "Details";
     private static final String WECHAT_DETAILS_CH = "红包详情";
     private static final String WECHAT_BETTER_LUCK_EN = "Better luck next time!";
