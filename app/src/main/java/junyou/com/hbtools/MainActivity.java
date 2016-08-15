@@ -3,44 +3,109 @@ package junyou.com.hbtools;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.Image;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
 
+import static junyou.com.hbtools.R.mipmap.bat_nor_money;
+
 public class MainActivity extends AppCompatActivity implements AccessibilityManager.AccessibilityStateChangeListener
 {
-
     //开关切换按钮
-    private Button switchPlugin;
-
+    private ImageButton imagebtn ;
+    private TextView isGrasping;
+    private ImageView imageview_2;
     private AccessibilityManager accessibilityManager;
+
+    //底部三个按钮
+    private ImageButton imgbtn_setting;
+    private ImageButton imgbtn_share;
+    private ImageButton imgbtn_help;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE); //去掉标题
         setContentView(R.layout.activity_main);
 
         //监听AccessibilityService 变化
         accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.addAccessibilityStateChangeListener(this);
-        switchPlugin = (Button) findViewById(R.id.button_accessible);
-        switchPlugin.setOnClickListener(myClickListener);
+
+        ImageView iv = (ImageView) findViewById(R.id.imageView_1);
+        iv.setImageResource(R.mipmap.bg_top);
+        ImageView iv_downimg = (ImageView) findViewById(R.id.btn_bgimg);
+        iv_downimg.setImageResource(R.mipmap.bat_down_money);
+
+        imagebtn = (ImageButton)findViewById(R.id.imageButton_1);
+        imagebtn.setBackgroundColor(Color.TRANSPARENT);
+        imagebtn.setOnClickListener(myClickListener);
+
+        isGrasping = (TextView)findViewById(R.id.textView_1);
+
+        imageview_2 = (ImageView) findViewById(R.id.imageview_2);
+        imageview_2.setImageResource(R.mipmap.icon_money);
         updateServiceStatus();
 
+        imgbtn_setting = (ImageButton) findViewById(R.id.imgbtn_settings);
+        imgbtn_setting.setBackgroundColor(Color.TRANSPARENT);
+        imgbtn_setting.setImageResource(R.mipmap.icon_circularset);
+        imgbtn_setting.setOnClickListener(onClickSetting);
 
+        imgbtn_share = (ImageButton) findViewById(R.id.imgbtn_share);
+        imgbtn_share.setBackgroundColor(Color.TRANSPARENT);
+        imgbtn_share.setImageResource(R.mipmap.icon_share);
+        imgbtn_share.setOnClickListener(onClickShare);
+
+        imgbtn_help = (ImageButton) findViewById(R.id.imgbtn_help);
+        imgbtn_help.setBackgroundColor(Color.TRANSPARENT);
+        imgbtn_help.setImageResource(R.mipmap.icon_help);
+        imgbtn_help.setOnClickListener(onClickHelp);
     }
+
+    private View.OnClickListener onClickSetting = new View.OnClickListener()
+    {
+        @Override
+        public void onClick(View v)
+        {
+            Log.i("TAG","setting");
+            Intent settingAvt = new Intent(MainActivity.this,SettingActivity.class);
+            startActivity(settingAvt);
+        }
+    };
+
+    private  View.OnClickListener onClickShare = new View.OnClickListener()
+    {
+        @Override
+        public void onClick(View v)
+        {
+            Log.i("TAG","share");
+        }
+    };
+
+    private  View.OnClickListener onClickHelp = new View.OnClickListener()
+    {
+        @Override
+        public void onClick(View v)
+        {
+            Log.i("TAG","help");
+        }
+    };
 
     @Override
     protected void onDestroy()
@@ -68,12 +133,16 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             Log.i("TAG","service is on");
             Toast.makeText(getApplicationContext(), "抢红包神器已经开启", Toast.LENGTH_LONG).show();
-            switchPlugin.setText(R.string.service_off);
+            imagebtn.setImageResource(R.mipmap.bat_sel_money);
+            isGrasping.setText(R.string.action_isGrasping);
+            imageview_2.setVisibility(View.VISIBLE);
         } else
         {
             Log.i("TAG","service is off");
             Toast.makeText(getApplicationContext(), "抢红包神器已经关闭", Toast.LENGTH_LONG).show();
-            switchPlugin.setText(R.string.service_on);
+            imagebtn.setImageResource(R.mipmap.bat_nor_money);
+            isGrasping.setText(R.string.action_clickToGradp);
+            imageview_2.setVisibility(View.INVISIBLE);
         }
     }
 

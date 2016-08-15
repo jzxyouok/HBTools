@@ -107,7 +107,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     //查找红包列表，执行点击红包事件
     private boolean openWeChatHongbao(AccessibilityEvent event)
     {
-        Log.i("TAG","监听微信");
         if (mListMutex) return false;
         mListMutex = true;
         AccessibilityNodeInfo eventSource = event.getSource();
@@ -474,13 +473,28 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public boolean openQQHongbao(AccessibilityEvent event)
     {
-        //Log.i("TAG", "111");
+        Log.i("TAG","监听QQ");
         if (mListMutex) return false;
         mListMutex = true;
 
         this.rootNodeInfo_1 = event.getSource();
+        /*
+        List<AccessibilityNodeInfo> node1 = rootNodeInfo_1.findAccessibilityNodeInfosByText(QQ_HONGBAO_TEXT_KEY);
+        if (!node1.isEmpty())
+        {
+            for(AccessibilityNodeInfo info:node1)
+            {
+                Log.i("TAG","在界面上找到红包了");
+                //cellNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+            }
+        }else
+        {
+            Log.i("TAG","找不到红包");
+        }
+        */
         if (rootNodeInfo_1 == null)
         {
+            Log.i("TAG","rootNodeInfo_1 == null");
             return false;
         }
         mReceiveNode_1 = null;
@@ -543,11 +557,10 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
         if (!nodes1.isEmpty())
         {
-            Log.i("TAG", "4444");
+            Log.i("TAG", "有QQ红包字眼出现");
             String nodeId = Integer.toHexString(System.identityHashCode(this.rootNodeInfo_1));
             if (!nodeId.equals(lastFetchedHongbaoId))
             {
-                Log.i("TAG", "555");
                 mLuckyMoneyReceived_1 = true;
                 mReceiveNode_1 = nodes1;
             }
@@ -610,6 +623,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (info.getText() != null && info.getText().toString().equals(QQ_CLICK_TO_PASTE_PASSWORD))
             {
                 info.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+//                usleep(1000);
                 //performGlobalAction(GLOBAL_ACTION_BACK);
 
             }
