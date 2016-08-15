@@ -6,4 +6,7 @@
     <color name="colorTitleBar">#ea4033</color>
     <color name="colorwhite">#ffffff</color>
     <color name="colordark">#000000</color>
+    <color name="colorBG">#e84032</color>
+    <color name="colorBottonWord">#ffba25</color>
+
 </resources>

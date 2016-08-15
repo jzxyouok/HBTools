@@ -7,11 +7,18 @@
     <string name="service_on">点击开启红包助手</string>
 
     <string name="action_settings">设置</string>
-    <string name = "action_share">分享</string>
-    <string name = "action_help">帮助</string>
+    <string name="action_share">分享</string>
+    <string name="action_help">帮助</string>
 
-    <string name = "action_grasp">已抢</string>
-    <string name = "action_num">15个红包</string>
-    <string name = "action_total">共计5元</string>
-    <string name = "action_yuan">元</string>
+    <string name="action_grasp">抢包数(个)</string>
+    <string name="action_total">共计(元)</string>
+    <string name="action_totalall">共计</string>
+    <string name="action_today">今日</string>
+    <string name="num_1">210</string>
+    <string name="num_2">20</string>
+    <string name="num_3">41451</string>
+    <string name="num_4">502</string>
+    <string name="action_isGrasping">正在抢红包中...</string>
+    <string name="action_clickToGradp">点击按钮开始抢红包</string>
+    <string name="title_activity_setting">设置</string>
 </resources>

@@ -7,77 +7,108 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@drawable/bgimage"
+    android:id="@+id/relativeLayout"
+    android:background="@color/colorBG"
     tools:context="junyou.com.hbtools.MainActivity">
 
-    <Button
-        android:layout_width="wrap_content"
+    <ImageView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button_accessible"
-        android:layout_below="@+id/textView3"
-        android:layout_alignLeft="@+id/share_button"
-        android:layout_alignStart="@+id/share_button"
-        android:layout_marginTop="32dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/action_settings"
-        android:id="@+id/setting_button"
-        android:layout_marginTop="75dp"
-        android:layout_below="@+id/button_accessible" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/action_share"
-        android:id="@+id/share_button"
-        android:layout_alignBottom="@+id/setting_button"
+        android:id="@+id/imageView_1"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <Button
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_bgimg"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:scaleX="1.1"
+        android:scaleY="1.1" />
+
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/action_help"
-        android:id="@+id/help_button"
-        android:layout_alignTop="@+id/share_button"
+        android:id="@+id/imageButton_1"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageview_2"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/action_clickToGradp"
+        android:textColor="@color/colorwhite"
+        android:id="@+id/textView_1"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/imageButton_1"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgbtn_settings"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:paddingLeft="50px"
+        android:paddingBottom="50px" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgbtn_share"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="50px" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgbtn_help"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:paddingBottom="50px"
+        android:paddingRight="50px" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/action_grasp"
-        android:id="@+id/textView"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="@string/action_settings"
+        android:textColor="@color/colorBottonWord"
+        android:paddingLeft="50px"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="39dp"
-        android:textColor="@color/colorwhite"
-        />
+        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/action_share"
+        android:textColor="@color/colorBottonWord"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/action_num"
-        android:id="@+id/textView2"
-        android:layout_below="@+id/textView"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:textColor="@color/colorwhite"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/action_total"
-        android:id="@+id/textView3"
-        android:layout_marginTop="15dp"
-        android:layout_below="@+id/textView2"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/colorwhite"
-        />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/action_help"
+        android:textColor="@color/colorBottonWord"
+        android:paddingRight="50px"/>
 
 </RelativeLayout>
