@@ -20,6 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 import static junyou.com.hbtools.R.mipmap.bat_nor_money;
@@ -37,6 +39,12 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     private ImageButton imgbtn_share;
     private ImageButton imgbtn_help;
 
+    //四个文本控件
+    TextView num_total ;
+    TextView num_today ;
+    TextView money_total;
+    TextView money_today ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -48,9 +56,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         accessibilityManager.addAccessibilityStateChangeListener(this);
 
         ImageView iv = (ImageView) findViewById(R.id.imageView_1);
-        iv.setImageResource(R.mipmap.bg_top);
+//        iv.setImageResource(R.mipmap.bg_top);
         ImageView iv_downimg = (ImageView) findViewById(R.id.btn_bgimg);
-        iv_downimg.setImageResource(R.mipmap.bat_down_money);
+//        iv_downimg.setImageResource(R.mipmap.bat_down_money);
 
         imagebtn = (ImageButton)findViewById(R.id.imageButton_1);
         imagebtn.setBackgroundColor(Color.TRANSPARENT);
@@ -59,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         isGrasping = (TextView)findViewById(R.id.textView_1);
 
         imageview_2 = (ImageView) findViewById(R.id.imageview_2);
-        imageview_2.setImageResource(R.mipmap.icon_money);
+//      imageview_2.setImageResource(R.mipmap.icon_money);
         updateServiceStatus();
 
         imgbtn_setting = (ImageButton) findViewById(R.id.imgbtn_settings);
@@ -76,6 +84,13 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         imgbtn_help.setBackgroundColor(Color.TRANSPARENT);
         imgbtn_help.setImageResource(R.mipmap.icon_help);
         imgbtn_help.setOnClickListener(onClickHelp);
+
+        //四个文本控件
+//         num_total = (TextView)findViewById(R.id.num_total);
+////        num_total.setText("500");
+//         num_today = (TextView)findViewById(R.id.num_today);
+//         money_total = (TextView)findViewById(R.id.money_total);
+//         money_today = (TextView)findViewById(R.id.money_today);
     }
 
     private View.OnClickListener onClickSetting = new View.OnClickListener()

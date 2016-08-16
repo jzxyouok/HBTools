@@ -12,34 +12,40 @@
     tools:context="junyou.com.hbtools.MainActivity">
 
     <ImageView
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageView_1"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/bg_top"
+        android:adjustViewBounds="true"
+        android:maxWidth="768dp"/>
 
     <ImageView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btn_bgimg"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:scaleX="1.1"
-        android:scaleY="1.1" />
+        android:scaleY="1.1"
+        android:src="@mipmap/bat_down_money"/>
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageButton_1"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/bat_nor_money" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageview_2"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/icon_money"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -61,7 +67,8 @@
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:paddingLeft="50px"
-        android:paddingBottom="50px" />
+        android:paddingBottom="50px"
+        android:src="@mipmap/icon_circularset"/>
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -70,7 +77,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:paddingBottom="50px" />
+        android:paddingBottom="50px"
+        android:src="@mipmap/icon_share"/>
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -81,7 +89,8 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentRight="true"
         android:paddingBottom="50px"
-        android:paddingRight="50px" />
+        android:paddingRight="50px"
+        android:src="@mipmap/icon_help"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -110,5 +119,77 @@
         android:text="@string/action_help"
         android:textColor="@color/colorBottonWord"
         android:paddingRight="50px"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="抢包数(个)"
+        android:paddingLeft="20px"
+        android:paddingTop="90px"
+        android:textColor="@color/colordark"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="共计(元)"
+        android:paddingLeft="20px"
+        android:paddingTop="190px"
+        android:textColor="@color/colordark"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:text="总共"
+        android:paddingTop="40px"
+        android:textColor="@color/colordark" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="今日"
+        android:paddingTop="40px"
+        android:textColor="@color/colordark"
+        android:paddingRight="120px" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="210"
+        android:textColor="@color/colorwhite"
+        android:paddingTop="90px"
+        android:id="@+id/num_total"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="20"
+        android:textColor="@color/colorwhite"
+        android:paddingTop="90px"
+        android:paddingRight="120px"
+        android:id="@+id/num_today"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="41451"
+        android:textColor="@color/colorwhite"
+        android:paddingTop="190px"
+        android:id="@+id/money_total"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="502"
+        android:textColor="@color/colorwhite"
+        android:paddingRight="120px"
+        android:paddingTop="190px"
+        android:id="@+id/money_today"/>
 
 </RelativeLayout>

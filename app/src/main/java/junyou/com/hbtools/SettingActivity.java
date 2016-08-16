@@ -1,9 +1,12 @@
 package junyou.com.hbtools;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +14,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -40,11 +46,33 @@ public class SettingActivity extends AppCompatActivity
         }
 
         listView = (ListView) findViewById(R.id.listview);
-        listView.setFastScrollEnabled(true);
         listView.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,strs));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Log.i("TAG","点击第"+position+ "个位置");
+                switch (position)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        break;
+                }
+            }
+        });
     }
 
-    @Override
+//    @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
         switch (item.getItemId())
@@ -56,22 +84,8 @@ public class SettingActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu)
-//    {
-//        int group_1 = 1;
-//        int group_2 = 2;
-//        int group_3 = 3;
-//
-//        menu.add(group_1,1,1,"微信红包自动抢");
-//        menu.add(group_1,2,2,"QQ红包自动抢");
-//
-//        menu.add(group_2,3,3,"通用设置");
-//        menu.add(group_2,4,4,"防踢设置");
-//        menu.add(group_2,5,5,"优化设置");
-//
-//        menu.add(group_3,6,6,"关于");
-//
-//        return super.onCreateOptionsMenu(menu);
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 }

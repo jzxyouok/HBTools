@@ -8,5 +8,5 @@
     <color name="colordark">#000000</color>
     <color name="colorBG">#e84032</color>
     <color name="colorBottonWord">#ffba25</color>
-
+    <color name="colorgray">#524e4e</color>
 </resources>
