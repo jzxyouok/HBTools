@@ -31,6 +31,7 @@ public class SettingActivity extends AppCompatActivity
     private final String[] strs = new String[]{
             "微信红包自动抢", "QQ红包自动抢", "通用设置", "防踢设置", "优化设置","关于"
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -72,7 +73,7 @@ public class SettingActivity extends AppCompatActivity
         });
     }
 
-//    @Override
+    @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
         switch (item.getItemId())

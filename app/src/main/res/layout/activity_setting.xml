@@ -13,13 +13,7 @@
         android:paddingTop="120px"
         android:id="@+id/listview"
         android:focusable="false">
-
     </ListView>
-
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -37,34 +31,5 @@
 
     <include layout="@layout/content_setting" />
 
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/fab"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="bottom|end"-->
-        <!--android:layout_margin="@dimen/fab_margin"-->
-        <!--android:src="@android:drawable/ic_dialog_email" />-->
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/title_activity_setting"-->
-        <!--android:textColor="@color/colordark"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--&lt;!&ndash;android:textSize=""&ndash;&gt;-->
-        <!--/>-->
-
-    <!--<ImageView-->
-        <!--android:layout_width="40dp"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:id="@+id/preference_back"-->
-        <!--android:layout_marginLeft="4dp"-->
-        <!--android:layout_marginRight="4dp"-->
-        <!--android:clickable="true"-->
-        <!--android:onClick="performBack"-->
-        <!--android:layout_alignBottom="@+id/settings_bar"-->
-        <!--android:src="@mipmap/ic_back"-->
-        <!--android:padding="10dp"/>-->
 
 </android.support.design.widget.CoordinatorLayout>
