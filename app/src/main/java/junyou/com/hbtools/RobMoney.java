@@ -112,7 +112,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         // Not a message
         if (event.getEventType() != AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED || eventSource == null)
         {
-            Log.i("TAG","NULLLLL");
             return false;
         }
         List<AccessibilityNodeInfo> nodes = eventSource.findAccessibilityNodeInfosByText(WECHAT_NOTIFICATION_TIP);
@@ -130,16 +129,15 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);		//自动打开红包
                 signature.setContentDescription(contentDescription.toString());
 
-                Log.i("TAG","contdescri=="+contentDescription);
-                Log.i("TAG","descri=="+signature.getContentDescription());
-                Log.i("TAG","contentDescription exist");
+//                Log.i("TAG","contdescri=="+contentDescription);
+//                Log.i("TAG","descri=="+signature.getContentDescription());
                 return true;
             }
             else
             {
-                Log.i("TAG","contdescri=="+contentDescription);
-                Log.i("TAG","descri=="+signature.getContentDescription());
-                Log.i("TAG","contentDescription is null");
+//                Log.i("TAG","contdescri=="+contentDescription);
+//                Log.i("TAG","descri=="+signature.getContentDescription());
+//                Log.i("TAG","contentDescription is null");
             }
         }
         return false;
@@ -277,7 +275,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         /* 如果已经接收到红包并且还没有戳开 */
         if (mLuckyMoneyReceived && !mLuckyMoneyPicked && (mReceiveNode != null))
         {
-            Log.i("TAG","如果已经接收到红包并且还没有戳开");
+            Log.i("TAG","收到红包并且还没有戳开");
             mMutex = true;
             mReceiveNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
             mLuckyMoneyReceived = false;
@@ -286,12 +284,13 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         /* 如果戳开但还未领取 */
         if (mUnpackCount == 1 && (mUnpackNode != null))
         {
-            Log.i("TAG","如果戳开但还未领取");
+            Log.i("TAG","打开了一个红包");     //监听强到的红包个数
             int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 1000;
             new android.os.Handler().postDelayed(
                     new Runnable() {
                         public void run() {
                             try {
+                                Log.i("TAG","打开了红包。。。。");
                                 mUnpackNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                             } catch (Exception e) {
                                 mMutex = false;
@@ -320,12 +319,12 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 this.getTheLastNode(WECHAT_VIEW_OTHERS_CH, WECHAT_VIEW_SELF_CH) : this.getTheLastNode(WECHAT_VIEW_OTHERS_CH);
         if (node1 != null && currentActivityName.contains(WECHAT_LUCKMONEY_GENERAL_ACTIVITY))
         {
-            Log.i("TAG","聊天会话窗口，遍历节点匹配“领取红包”和查看红包");
+//            Log.i("TAG","聊天会话窗口，遍历节点匹配“领取红包”和查看红包");
             String excludeWords = sharedPreferences.getString("pref_watch_exclude_words", "");
            // Log.i("TAG","excludeWords=="+ excludeWords);
             if (this.signature.generateSignature(node1, excludeWords))
             {
-                Log.i("TAG","进来了");
+//                Log.i("TAG","进来了");
                 mLuckyMoneyReceived = true;
                 mReceiveNode = node1;
                 Log.d("TAG", this.signature.toString());
@@ -472,7 +471,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public boolean openQQHongbao(AccessibilityEvent event)
     {
-        Log.i("TAG","监听QQ");
+//        Log.i("TAG","监听QQ");
         if (mListMutex) return false;
         mListMutex = true;
 
