@@ -79,7 +79,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     {
         if (sharedPreferences == null)
         {
-            Log.i("TAG","sharedPreferences is null");
             return;
         }
 
@@ -91,7 +90,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (watchNotifications(event)) return;
             //若是红包，执行点击红包的操作
             if(openQQHongbao(event)) return;			//抢QQ红包
-            if (openWeChatHongbao(event)) return;		//抢微信
+            if (openWeChatHongbao(event)) return;		//监视微信的聊天列表
             mListMutex = false;
         }
 
@@ -128,16 +127,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             {
                 nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);		//自动打开红包
                 signature.setContentDescription(contentDescription.toString());
-
-//                Log.i("TAG","contdescri=="+contentDescription);
-//                Log.i("TAG","descri=="+signature.getContentDescription());
                 return true;
-            }
-            else
-            {
-//                Log.i("TAG","contdescri=="+contentDescription);
-//                Log.i("TAG","descri=="+signature.getContentDescription());
-//                Log.i("TAG","contentDescription is null");
             }
         }
         return false;
@@ -213,7 +203,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
         this.powerUtil = new PowerUtil(this);
-        Boolean watchOnLockFlag = sharedPreferences.getBoolean("pref_watch_on_lock", false);
+        Boolean watchOnLockFlag = sharedPreferences.getBoolean("pref_watch_on_lock", false);//是否息屏抢红包
         this.powerUtil.handleWakeLock(watchOnLockFlag);
     }
 
@@ -233,7 +223,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
-        if (key.equals("pref_watch_on_lock"))
+        if (key.equals("pref_watch_on_lock"))   //是否息屏抢红包
         {
             Boolean changedValue = sharedPreferences.getBoolean(key, false);
            this.powerUtil.handleWakeLock(changedValue);
@@ -284,8 +274,8 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         /* 如果戳开但还未领取 */
         if (mUnpackCount == 1 && (mUnpackNode != null))
         {
-            Log.i("TAG","打开了一个红包");     //监听强到的红包个数
-            int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 1000;
+            Log.i("TAG","打开了一个红包");     //监听抢到的红包个数
+            int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 1000;  //延时拆开红包
             new android.os.Handler().postDelayed(
                     new Runnable() {
                         public void run() {
@@ -315,19 +305,19 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         }
 
         /* 聊天会话窗口，遍历节点匹配“领取红包”和"查看红包" */
-        AccessibilityNodeInfo node1 = (sharedPreferences.getBoolean("pref_watch_self", false)) ?
+
+        AccessibilityNodeInfo node1 = (sharedPreferences.getBoolean("pref_watch_self", false)) ?//拆开自己发的红包
                 this.getTheLastNode(WECHAT_VIEW_OTHERS_CH, WECHAT_VIEW_SELF_CH) : this.getTheLastNode(WECHAT_VIEW_OTHERS_CH);
         if (node1 != null && currentActivityName.contains(WECHAT_LUCKMONEY_GENERAL_ACTIVITY))
         {
-//            Log.i("TAG","聊天会话窗口，遍历节点匹配“领取红包”和查看红包");
-            String excludeWords = sharedPreferences.getString("pref_watch_exclude_words", "");
+            Log.i("TAG","聊天会话窗口，遍历节点匹配“领取红包”和查看红包");
+            String excludeWords = sharedPreferences.getString("pref_watch_exclude_words", "");  //屏蔽红包文字内容
            // Log.i("TAG","excludeWords=="+ excludeWords);
             if (this.signature.generateSignature(node1, excludeWords))
             {
-//                Log.i("TAG","进来了");
+                Log.i("TAG","进来了、、、、、、");
                 mLuckyMoneyReceived = true;
                 mReceiveNode = node1;
-                Log.d("TAG", this.signature.toString());
             }
             return;
         }
@@ -449,13 +439,13 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     {
         if (!signature.others) return null;
 
-        Boolean needComment = sharedPreferences.getBoolean("pref_comment_switch", false);
+        Boolean needComment = sharedPreferences.getBoolean("pref_comment_switch", false);//开启自动回复
         if (!needComment) return null;
 
-        String[] wordsArray = sharedPreferences.getString("pref_comment_words", "").split(" +");
+        String[] wordsArray = sharedPreferences.getString("pref_comment_words", "").split(" +");    //自定义回复内容
         if (wordsArray.length == 0) return null;
 
-        Boolean atSender = sharedPreferences.getBoolean("pref_comment_at", false);
+        Boolean atSender = sharedPreferences.getBoolean("pref_comment_at", false);            //@发红包的人
         if (atSender)
         {
             return "@" + signature.sender + " " + wordsArray[(int) (Math.random() * wordsArray.length)];
@@ -492,7 +482,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         */
         if (rootNodeInfo_1 == null)
         {
-            Log.i("TAG","rootNodeInfo_1 == null");
+            //Log.i("TAG","rootNodeInfo_1 == null");
             return false;
         }
         mReceiveNode_1 = null;
