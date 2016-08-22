@@ -46,12 +46,14 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     TextView money_total;
     TextView money_today ;
 
+    private static MainActivity instance;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        instance = this;
         //监听AccessibilityService 变化
         accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.addAccessibilityStateChangeListener(this);
@@ -87,11 +89,17 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         imgbtn_help.setOnClickListener(onClickHelp);
 
         //四个文本控件
-//         num_total = (TextView)findViewById(R.id.num_total);
-////        num_total.setText("500");
-//         num_today = (TextView)findViewById(R.id.num_today);
-//         money_total = (TextView)findViewById(R.id.money_total);
-//         money_today = (TextView)findViewById(R.id.money_today);
+         num_total = (TextView)findViewById(R.id.num_total);
+//        num_total.setText("500");
+         num_today = (TextView)findViewById(R.id.num_today);
+         money_total = (TextView)findViewById(R.id.money_total);
+         money_today = (TextView)findViewById(R.id.money_today);
+        //RobMoney.getInstance().showData();
+    }
+
+    public static MainActivity getInstance()
+    {
+        return instance;
     }
 
     private View.OnClickListener onClickSetting = new View.OnClickListener()

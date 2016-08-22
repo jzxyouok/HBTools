@@ -22,9 +22,12 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class RobMoney extends AccessibilityService implements SharedPreferences.OnSharedPreferenceChangeListener
 {
+    private static RobMoney instance;
+
     private static final String WECHAT_DETAILS_EN = "Details";
     private static final String WECHAT_DETAILS_CH = "红包详情";
     private static final String WECHAT_BETTER_LUCK_EN = "Better luck next time!";
@@ -46,6 +49,12 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     private boolean mLuckyMoneyPicked, mLuckyMoneyReceived;
     private int mUnpackCount = 0;
 
+    //四个标签的存储字符
+    private String mTotalNum = "totalnum";
+    private String mTotalNumToday = "totalnumtoday";
+    private String mTotalMoney = "totalmoney";
+    private String mTotalMoneyToday = "totalmoneytoday";
+
     //-----------[QQ红包]---------------//
     static final String QQ_HONGBAO_TEXT_KEY = "[QQ红包]";
     private boolean caihongbao = false;
@@ -66,12 +75,18 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     public void onCreate()
     {
         super.onCreate();
+        instance = this;
         Log.i("TAG","service onCreate");
     }
 
     public RobMoney()
     {
 
+    }
+
+    public static RobMoney getInstance()
+    {
+        return instance;
     }
 
     @Override
@@ -282,6 +297,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                             try {
                                 Log.i("TAG","打开了红包。。。。");
                                 mUnpackNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                addTotalNum();
                             } catch (Exception e) {
                                 mMutex = false;
                                 mLuckyMoneyPicked = false;
@@ -313,6 +329,10 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             Log.i("TAG","聊天会话窗口，遍历节点匹配“领取红包”和查看红包");
             String excludeWords = sharedPreferences.getString("pref_watch_exclude_words", "");  //屏蔽红包文字内容
            // Log.i("TAG","excludeWords=="+ excludeWords);
+            if (hasYuan())
+            {
+                Log.i("TAG", "有0.01元字儿");
+            }
             if (this.signature.generateSignature(node1, excludeWords))
             {
                 Log.i("TAG","进来了、、、、、、");
@@ -321,12 +341,12 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             }
             return;
         }
-
         /* 戳开红包，红包还没抢完，遍历节点匹配“拆红包” */
         AccessibilityNodeInfo node2 = findOpenButton(this.rootNodeInfo);
         if (node2 != null && "android.widget.Button".equals(node2.getClassName()) && currentActivityName.contains(WECHAT_LUCKMONEY_RECEIVE_ACTIVITY)) {
             mUnpackNode = node2;
             mUnpackCount += 1;
+            Log.i("TAG", "有拆红包关键字");
             return;
         }
 
@@ -334,6 +354,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         boolean hasNodes = this.hasOneOfThoseNodes(
                 WECHAT_BETTER_LUCK_CH, WECHAT_DETAILS_CH,
                 WECHAT_BETTER_LUCK_EN, WECHAT_DETAILS_EN, WECHAT_EXPIRES_CH);
+
         if (mMutex && eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED && hasNodes
                 && (currentActivityName.contains(WECHAT_LUCKMONEY_DETAIL_ACTIVITY)
                 || currentActivityName.contains(WECHAT_LUCKMONEY_RECEIVE_ACTIVITY))) {
@@ -342,6 +363,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             mUnpackCount = 0;
             performGlobalAction(GLOBAL_ACTION_BACK);            //点击返回键
             signature.commentString = generateCommentString();
+            Log.i("TAG", "手慢了");
         }
     }
 
@@ -376,9 +398,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         for (String text : texts)
         {
             if (text == null) continue;
-
             nodes = this.rootNodeInfo.findAccessibilityNodeInfosByText(text);
-
             if (nodes != null && !nodes.isEmpty())
             {
                 tempNode = nodes.get(nodes.size() - 1);
@@ -433,6 +453,22 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (nodes != null && !nodes.isEmpty()) return true;
         }
         return false;
+    }
+
+    private boolean hasYuan()
+    {
+        List<AccessibilityNodeInfo> nodes;
+        nodes = this.rootNodeInfo.findAccessibilityNodeInfosByText("0.01");
+        if (nodes != null)
+        {
+            for(AccessibilityNodeInfo info : nodes)
+            {
+                info.getClassName();
+                Log.i("TAG", "");
+            }
+            return true;
+        }
+        return  false;
     }
 
     private String generateCommentString()
@@ -633,4 +669,32 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             }
         }
     }
+
+    private void addTotalNum()
+    {
+//        City.getCity().setCityName(_cityName);
+//        Context ctx =MainActivity.this;
+//        SharedPreferences sp =ctx.getSharedPreferences("CITY", MODE_PRIVATE);
+//        Editor editor=sp.edit();
+//        editor.putString("CityName", City.getCity().getCityName());
+//        editor.commit();
+//        return City.getCity().getCityName();
+
+        int nowNum =sharedPreferences.getInt(mTotalNum,0) + 1;
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(mTotalNum,nowNum);
+        editor.commit();
+
+        Log.i("TAG", "抢到总共:"+ nowNum + "个红包");
+       MainActivity.getInstance().num_total.setText(nowNum + "");
+    }
+
+
+
+//    public void showData()
+//    {
+//        int nowNum =sharedPreferences.getInt(mTotalNum,0);
+//        MainActivity.getInstance().num_total.setText(nowNum + "");
+//        Log.i("TAG", "showData: showData");
+//    }
 }
