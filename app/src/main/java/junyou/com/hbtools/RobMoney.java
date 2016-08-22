@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -347,6 +348,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             mUnpackNode = node2;
             mUnpackCount += 1;
             Log.i("TAG", "有拆红包关键字");
+            //在这里累加钱
             return;
         }
 
@@ -365,6 +367,27 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             signature.commentString = generateCommentString();
             Log.i("TAG", "手慢了");
         }
+    }
+
+    private boolean hasYuan()
+    {
+        List<AccessibilityNodeInfo> nodes;
+        nodes = this.rootNodeInfo.findAccessibilityNodeInfosByText("0.01");
+        if (nodes != null)
+        {
+            Log.i("TAG","非空"+nodes.size());
+            for(AccessibilityNodeInfo info : nodes)
+            {
+                Log.i("TAG", "hasYuan: ");
+                Log.i("TAG", "内容:"+info.getContentDescription());
+                if ("0.01".equals(info.getText().toString()))
+                {
+                    Log.i("TAG", "id===="+info.getWindowId());
+                    return true;
+                }
+            }
+        }
+        return  false;
     }
 
     //发送回复
@@ -453,22 +476,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (nodes != null && !nodes.isEmpty()) return true;
         }
         return false;
-    }
-
-    private boolean hasYuan()
-    {
-        List<AccessibilityNodeInfo> nodes;
-        nodes = this.rootNodeInfo.findAccessibilityNodeInfosByText("0.01");
-        if (nodes != null)
-        {
-            for(AccessibilityNodeInfo info : nodes)
-            {
-                info.getClassName();
-                Log.i("TAG", "");
-            }
-            return true;
-        }
-        return  false;
     }
 
     private String generateCommentString()
