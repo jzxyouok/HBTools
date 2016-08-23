@@ -275,7 +275,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
         mReceiveNode = null;
         mUnpackNode = null;
-
         checkNodeInfo(event.getEventType());
 
         /* 如果已经接收到红包并且还没有戳开 */
@@ -288,6 +287,14 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             mLuckyMoneyPicked = true;
         }
         /* 如果戳开但还未领取 */
+        Log.i("TAG","mUnpackCount:"+mUnpackCount);
+        if (mUnpackNode == null )
+        {
+            Log.i("TAG", "mUnpackNode空");
+        }else
+        {
+            Log.i("TAG", "mUnpackNode非空");
+        }
         if (mUnpackCount == 1 && (mUnpackNode != null))
         {
             Log.i("TAG","打开了一个红包");     //监听抢到的红包个数
@@ -298,7 +305,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                             try {
                                 Log.i("TAG","打开了红包。。。。");
                                 mUnpackNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                addTotalNum();
+                                //addTotalNum();
                             } catch (Exception e) {
                                 mMutex = false;
                                 mLuckyMoneyPicked = false;
@@ -307,6 +314,10 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                         }
                     },
                     delayFlag);
+        }
+        else
+        {
+//            Log.i("TAG", "空空的");
         }
     }
 
@@ -330,10 +341,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             Log.i("TAG","聊天会话窗口，遍历节点匹配“领取红包”和查看红包");
             String excludeWords = sharedPreferences.getString("pref_watch_exclude_words", "");  //屏蔽红包文字内容
            // Log.i("TAG","excludeWords=="+ excludeWords);
-            if (hasYuan())
-            {
-                Log.i("TAG", "有0.01元字儿");
-            }
             if (this.signature.generateSignature(node1, excludeWords))
             {
                 Log.i("TAG","进来了、、、、、、");
@@ -342,13 +349,36 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             }
             return;
         }
+
         /* 戳开红包，红包还没抢完，遍历节点匹配“拆红包” */
         AccessibilityNodeInfo node2 = findOpenButton(this.rootNodeInfo);
-        if (node2 != null && "android.widget.Button".equals(node2.getClassName()) && currentActivityName.contains(WECHAT_LUCKMONEY_RECEIVE_ACTIVITY)) {
+        if (node2 != null &&
+                "android.widget.Button".equals(node2.getClassName()) &&
+                currentActivityName.contains(WECHAT_LUCKMONEY_RECEIVE_ACTIVITY))
+        {
             mUnpackNode = node2;
             mUnpackCount += 1;
             Log.i("TAG", "有拆红包关键字");
             //在这里累加钱
+            /*
+            List<AccessibilityNodeInfo> list = rootNodeInfo.findAccessibilityNodeInfosByText("元");
+            if (!list.isEmpty())
+            {
+                Log.i("TAG", "node非空");
+                //下标是2的节点是红包的金额
+                for (AccessibilityNodeInfo info:list)
+                {
+//                Log.i("TAG", "描述："+info.getContentDescription());
+//                Log.i("TAG", "文本内容："+info.getText().toString());
+//                Log.i("TAG", "ID:"+info.getWindowId());
+//                Log.i("TAG", ""+info.getClassName());
+                    Log.i("TAG", "2T:"+info.getParent().getChild(2).getText().toString());
+                }
+            }else
+            {
+                Log.i("TAG", "nodes是空的");
+            }
+            */
             return;
         }
 
@@ -369,26 +399,26 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         }
     }
 
-    private boolean hasYuan()
-    {
-        List<AccessibilityNodeInfo> nodes;
-        nodes = this.rootNodeInfo.findAccessibilityNodeInfosByText("0.01");
-        if (nodes != null)
-        {
-            Log.i("TAG","非空"+nodes.size());
-            for(AccessibilityNodeInfo info : nodes)
-            {
-                Log.i("TAG", "hasYuan: ");
-                Log.i("TAG", "内容:"+info.getContentDescription());
-                if ("0.01".equals(info.getText().toString()))
-                {
-                    Log.i("TAG", "id===="+info.getWindowId());
-                    return true;
-                }
-            }
-        }
-        return  false;
-    }
+//    private boolean hasYuan()
+//    {
+//        List<AccessibilityNodeInfo> nodes;
+//        nodes = this.rootNodeInfo.findAccessibilityNodeInfosByText("0.01");
+//        if (nodes != null)
+//        {
+//            Log.i("TAG","非空"+nodes.size());
+//            for(AccessibilityNodeInfo info : nodes)
+//            {
+//                Log.i("TAG", "hasYuan: ");
+//                Log.i("TAG", "内容:"+info.getContentDescription());
+//                if ("0.01".equals(info.getText().toString()))
+//                {
+//                    Log.i("TAG", "id===="+info.getWindowId());
+//                    return true;
+//                }
+//            }
+//        }
+//        return  false;
+//    }
 
     //发送回复
     private void sendComment()
