@@ -3,8 +3,10 @@ package junyou.com.hbtools;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.Image;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -41,19 +43,28 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     private ImageButton imgbtn_help;
 
     //四个文本控件
-    TextView num_total ;
-    TextView num_today ;
-    TextView money_total;
-    TextView money_today ;
+    public  TextView num_total ;
+    public  TextView num_today ;
+    public  TextView money_total;
+    public  TextView money_today ;
 
     private static MainActivity instance;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         instance = this;
+
+        if (sharedPreferences == null)
+        {
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        }
+//        sharedPreferences.registerOnSharedPreferenceChangeListener((SharedPreferences.OnSharedPreferenceChangeListener) this);
+
         //监听AccessibilityService 变化
         accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.addAccessibilityStateChangeListener(this);
@@ -90,11 +101,24 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
         //四个文本控件
          num_total = (TextView)findViewById(R.id.num_total);
-//        num_total.setText("500");
          num_today = (TextView)findViewById(R.id.num_today);
          money_total = (TextView)findViewById(R.id.money_total);
          money_today = (TextView)findViewById(R.id.money_today);
-        //RobMoney.getInstance().showData();
+
+        showDatas();
+    }
+
+    private void showDatas()
+    {
+        if (sharedPreferences != null)
+        {
+            //会崩溃  TODO
+            Log.i("TAG", "初始总红包数量:"+ sharedPreferences.getString("totalnum",""));
+            Log.i("TAG", "初始总资产:"+ sharedPreferences.getString("totalmoney",""));
+        }
+
+//        num_total.setText(sharedPreferences.getString("totalnum",""));
+//        money_total.setText(sharedPreferences.getString("totalmoney",""));
     }
 
     public static MainActivity getInstance()
