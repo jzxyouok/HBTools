@@ -22,6 +22,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -50,6 +51,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     private AccessibilityNodeInfo rootNodeInfo, mReceiveNode, mUnpackNode;
     private boolean mLuckyMoneyPicked, mLuckyMoneyReceived;
     private int mUnpackCount = 0;
+    private boolean mIsEnterWeChatList=false;
 
     //四个标签的存储字符
     private String mTotalNum = "totalnum";
@@ -110,24 +112,12 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (openWeChatHongbao(event)) return;		//监视微信的聊天列表
             mListMutex = false;
         }
-
         if (!mChatMutex)
         {
             mChatMutex = true;
-            int eventType = event.getEventType();
-            if (eventType != AccessibilityEvent.TYPE_VIEW_SCROLLED)
-            {
-                watchChat(event);
-//                String className = event.getClassName().toString();
-//                if ("com.tencent.mm.ui.LauncherUI".equals(className))
-//                {
-//                    watchChat(event);
-//                }else
-//                {
-//                    Log.i("TAG", "不在聊天列表");
-//                }
-            }
+            watchChat(event);
             mChatMutex = false;
+            mIsEnterWeChatList = false;
         }
     }
 
@@ -175,6 +165,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         if (tip.contains(WECHAT_NOTIFICATION_TIP) || tip.contains(QQ_HONGBAO_TEXT_KEY))
         {
             Log.i("TAG","is hongbao~~~~~~");
+            mIsEnterWeChatList = true;
             if (event.getParcelableData() == null || !(event.getParcelableData() instanceof Notification))
             {
                 return false;
@@ -283,20 +274,13 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     private void watchChat(AccessibilityEvent event)
     {
         this.rootNodeInfo = getRootInActiveWindow();
-
         if (rootNodeInfo == null) return;
-
         mReceiveNode = null;
         mUnpackNode = null;
         checkNodeInfo(event.getEventType());
 
-        if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_SCROLLED)
-        {
-            Log.i("TAG", "正在滚动");
-        }
-
         /* 如果已经接收到红包并且还没有戳开 */
-        if (mLuckyMoneyReceived && !mLuckyMoneyPicked && (mReceiveNode != null))
+        if (mLuckyMoneyReceived && !mLuckyMoneyPicked && (mReceiveNode != null) && mIsEnterWeChatList)
         {
             Log.i("TAG","收到红包并且还没有戳开");
             mMutex = true;
@@ -344,7 +328,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 this.getTheLastNode(WECHAT_VIEW_OTHERS_CH, WECHAT_VIEW_SELF_CH) : this.getTheLastNode(WECHAT_VIEW_OTHERS_CH);
         if (node1 != null && currentActivityName.contains(WECHAT_LUCKMONEY_GENERAL_ACTIVITY))
         {
-            Log.i("TAG","聊天会话窗口，遍历节点匹配“领取红包”和查看红包");
+//            Log.i("TAG","聊天会话窗口，遍历节点匹配“领取红包”和查看红包");
             String excludeWords = sharedPreferences.getString("pref_watch_exclude_words", "");  //屏蔽红包文字内容
            // Log.i("TAG","excludeWords=="+ excludeWords);
             if (this.signature.generateSignature(node1, excludeWords))
@@ -390,31 +374,38 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 {
                     Log.i("TAG", "红包的钱:"+info.getParent().getChild(2).getText().toString());
 
-                    String mm = sharedPreferences.getString(mTotalMoney,"");
+//                    String mm = sharedPreferences.getString(mTotalMoney,"");
+                    SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+                    String mm =  sharedP.getString(mTotalMoney,"");
+                    DecimalFormat decimalFormat=new DecimalFormat("#0.00");
                     if (!"".equals(mm))
                     {
-                        Log.i("TAG", "原来非空");
                         //原来是非空的
                         float oldd = Float.valueOf(mm);
                         float neww = Float.valueOf(info.getParent().getChild(2).getText().toString());
                         float result = oldd + neww;
+                        //保留两位小数
+                        String result_1=decimalFormat.format(result);
+
                         Log.i("TAG", "oldd："+ mm);
-                        Log.i("TAG", "result："+ result);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(mTotalMoney,String.valueOf(result));
+                        Log.i("TAG", "result："+ result_1);
+                        SharedPreferences.Editor editor = sharedP.edit();
+                        editor.putString(mTotalMoney,result_1);
                         editor.commit();
                         //写到主页上的标签上
-                        MainActivity.getInstance().money_total.setText(String.valueOf(result));
+                        MainActivity.getInstance().money_total.setText(result_1);
+                        MainActivity.getInstance().money_today.setText(result_1);
                     }else
                     {
-                        Log.i("TAG", "原来是空的");
                         //原来是空的
                         float neww = Float.valueOf(info.getParent().getChild(2).getText().toString());
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(mTotalMoney,String.valueOf(neww));
+                        String neww_1=decimalFormat.format(neww);
+                        SharedPreferences.Editor editor = sharedP.edit();
+                        editor.putString(mTotalMoney,neww_1);
                         editor.commit();
                         //写到主页上的标签上
-                        MainActivity.getInstance().money_total.setText(String.valueOf(neww));
+                        MainActivity.getInstance().money_total.setText(neww_1);
+                        MainActivity.getInstance().money_today.setText(neww_1);
                     }
 
                 }
@@ -697,19 +688,14 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
     private void addTotalNum()
     {
-        int nowNum =sharedPreferences.getInt(mTotalNum,0) + 1;
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+        int nowNum =sharedP.getInt(mTotalNum,0) + 1;
+        SharedPreferences.Editor editor = sharedP.edit();
         editor.putInt(mTotalNum,nowNum);
         editor.commit();
 
         Log.i("TAG", "抢到总共:"+ nowNum + "个红包");
        MainActivity.getInstance().num_total.setText(nowNum + "");
+        MainActivity.getInstance().num_today.setText(nowNum + "");
     }
-
-//    public void showData()
-//    {
-//        int nowNum =sharedPreferences.getInt(mTotalNum,0);
-//        MainActivity.getInstance().num_total.setText(nowNum + "");
-//        Log.i("TAG", "showData: showData");
-//    }
 }

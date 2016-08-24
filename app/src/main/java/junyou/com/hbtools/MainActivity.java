@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     public  TextView money_today ;
 
     private static MainActivity instance;
-    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -59,10 +58,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
         instance = this;
 
-        if (sharedPreferences == null)
-        {
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        }
 //        sharedPreferences.registerOnSharedPreferenceChangeListener((SharedPreferences.OnSharedPreferenceChangeListener) this);
 
         //监听AccessibilityService 变化
@@ -110,15 +105,30 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
     private void showDatas()
     {
-        if (sharedPreferences != null)
+        SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+
+        Log.i("TAG", "初始总红包数量:"+ String.valueOf(sharedP.getInt("totalnum",0)));
+        Log.i("TAG", "初始总资产:"+ sharedP.getString("totalmoney",""));
+        //显示数据
+        num_total.setText(String.valueOf(sharedP.getInt("totalnum",0)));
+
+        if ("".endsWith(sharedP.getString("totalmoney","")))
         {
-            //会崩溃  TODO
-            Log.i("TAG", "初始总红包数量:"+ sharedPreferences.getString("totalnum",""));
-            Log.i("TAG", "初始总资产:"+ sharedPreferences.getString("totalmoney",""));
+            money_total.setText("0.00");
+        }else
+        {
+            money_total.setText(sharedP.getString("totalmoney",""));
+        }
+        //今天的数据
+        num_today.setText(String.valueOf(sharedP.getInt("totalnum",0)));
+        if ("".endsWith(sharedP.getString("totalmoney","")))
+        {
+            money_today.setText("0.00");
+        }else
+        {
+            money_today.setText(sharedP.getString("totalmoney",""));
         }
 
-//        num_total.setText(sharedPreferences.getString("totalnum",""));
-//        money_total.setText(sharedPreferences.getString("totalmoney",""));
     }
 
     public static MainActivity getInstance()
