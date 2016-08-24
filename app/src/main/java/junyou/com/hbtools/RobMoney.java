@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.text.LoginFilter;
 import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -563,6 +564,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 }
                 //处理普通红包
                 cellNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                Log.i("TAG","拆开普通红包");
                 //处理口令红包
                 if (cellNode.getText().toString().equals(QQ_HONG_BAO_PASSWORD))
                 {
@@ -663,13 +665,15 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (info.getText() != null && info.getText().toString().equals(QQ_CLICK_TO_PASTE_PASSWORD))
             {
                 info.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-//                usleep(1000);
+                Log.i("TAG","点击输入口令");
                 //performGlobalAction(GLOBAL_ACTION_BACK);
 
             }
 
             if (info.getClassName().toString().equals("android.widget.Button") && info.getText().toString().equals("发送"))
             {
+                //点击发送消息
+                Log.i("TAG","点击发送消息");
                 info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                // performGlobalAction(GLOBAL_ACTION_BACK);
             }
