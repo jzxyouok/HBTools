@@ -110,13 +110,13 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (watchNotifications(event)) return;
             //若是红包，执行点击红包的操作
             if(openQQHongbao(event)) return;			//抢QQ红包
-            if (openWeChatHongbao(event)) return;		//监视微信的聊天列表
+            if (openWeChatHongbao(event)) return;		//监视微信（貌似这个方法没作用）
             mListMutex = false;
         }
         if (!mChatMutex)
         {
             mChatMutex = true;
-            watchChat(event);
+            watchChat(event);           //  监视微信
             mChatMutex = false;
             mIsEnterWeChatList = false;
         }

@@ -1,35 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:orientation="vertical"
     tools:context="junyou.com.hbtools.SettingActivity">
 
-    <ListView
-        android:layout_width="match_parent"
+    <RelativeLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="120px"
-        android:id="@+id/listview"
-        android:focusable="false">
-    </ListView>
+        android:background="@color/colorBG"
+        tools:context=".SettingActivity"
+      >
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="54dp"
+            android:id="@+id/settings_bar"
+            android:text="@string/action_settings"
+            android:textColor="#fff"
+            android:gravity="left|center_vertical|center_horizontal"
+            android:elegantTextHeight="false"
+            android:textSize="18sp"
+            android:layout_toRightOf="@+id/preference_back"
+            />
 
-    <android.support.design.widget.AppBarLayout
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:id="@+id/preference_back"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:clickable="true"
+            android:onClick="performBack"
+            android:layout_alignBottom="@+id/settings_bar"
+            android:src="@mipmap/ic_back"
+            android:padding="10dp"/>
+    </RelativeLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/notitle.AppBarOverlay">
+        android:layout_height="match_parent"
+        android:id="@+id/preferences_fragment"
+        tools:layout="@android:layout/simple_list_item_1"/>
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorBG"
-            app:popupTheme="@style/notitle.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
-
-    <include layout="@layout/content_setting" />
-
-
-</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

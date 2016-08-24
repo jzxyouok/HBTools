@@ -1,6 +1,8 @@
 package junyou.com.hbtools;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -101,6 +103,16 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
          money_today = (TextView)findViewById(R.id.money_today);
 
         showDatas();
+        //获取设置中开关的状态
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Boolean watchOnLockFlag = sharedPreferences.getBoolean("pref_watch_notification", false);
+        if (watchOnLockFlag)
+        {
+            Log.i("TAG", "trueeeeee");
+        } else
+        {
+            Log.i("TAG", "falseeeeeee");
+        }
     }
 
     private void showDatas()
@@ -143,6 +155,8 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             Log.i("TAG","setting");
             Intent settingAvt = new Intent(MainActivity.this,SettingActivity.class);
+            settingAvt.putExtra("title", "偏好设置");
+            settingAvt.putExtra("frag_id", "GeneralSettingsFragment");
             startActivity(settingAvt);
         }
     };
