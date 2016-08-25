@@ -396,6 +396,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                         //写到主页上的标签上
                         MainActivity.getInstance().money_total.setText(result_1);
                         MainActivity.getInstance().money_today.setText(result_1);
+                        MainActivity.getInstance().num_money.setText(result_1);
                     }else
                     {
                         //原来是空的
@@ -407,6 +408,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                         //写到主页上的标签上
                         MainActivity.getInstance().money_total.setText(neww_1);
                         MainActivity.getInstance().money_today.setText(neww_1);
+                        MainActivity.getInstance().num_money.setText(neww_1);
                     }
 
                 }
@@ -701,5 +703,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         Log.i("TAG", "抢到总共:"+ nowNum + "个红包");
        MainActivity.getInstance().num_total.setText(nowNum + "");
         MainActivity.getInstance().num_today.setText(nowNum + "");
+        MainActivity.getInstance().num_redpkt.setText(nowNum + "");
     }
 }

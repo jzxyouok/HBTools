@@ -12,20 +12,24 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
 
+    <!--android:name=".MainActivity"-->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/notitle">
-        <activity android:name=".MainActivity"
-                android:screenOrientation="portrait">
+        <activity
+        android:name=".SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".MainActivity"/>
 
         <service
             android:name=".RobMoney"
@@ -44,7 +48,8 @@
         <activity
             android:name=".SettingActivity"
             android:label="@string/title_activity_setting"
-            android:theme="@style/notitle"></activity>
+            android:theme="@style/notitle" />
+        <activity android:name=".helpActivity" />
     </application>
 
 </manifest>

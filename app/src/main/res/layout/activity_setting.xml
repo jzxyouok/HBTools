@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorBG"
         tools:context=".SettingActivity"
-      >
+        android:id="@+id/up_bg">
         <TextView android:layout_width="wrap_content"
             android:layout_height="54dp"
             android:id="@+id/settings_bar"
@@ -37,10 +37,30 @@
             android:padding="10dp"/>
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="#ffffff"
+        android:layout_below="@id/up_bg"
+        android:id="@+id/vip_bar">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="没有限制,可以一直抢红包了哦"
+            android:layout_centerHorizontal="true"
+            android:textSize="18dp"
+            android:paddingTop="20dp"/>
+        <ImageButton
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/preferences_fragment"
-        tools:layout="@android:layout/simple_list_item_1"/>
+        tools:layout="@android:layout/simple_list_item_1"
+        android:layout_below="@id/vip_bar"/>
 
-</LinearLayout>
+</RelativeLayout>

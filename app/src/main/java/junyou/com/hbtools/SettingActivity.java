@@ -98,5 +98,4 @@ public class SettingActivity extends FragmentActivity
 
         window.setStatusBarColor(0xffE46C62);
     }
-
 }
