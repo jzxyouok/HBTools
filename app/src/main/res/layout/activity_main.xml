@@ -313,25 +313,23 @@
         >
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="340dp"
         android:id="@+id/should_openServer"
-        tools:layout="@android:layout/simple_list_item_1"
         android:background="#f2db6f"
         android:layout_alignParentBottom="true"
         android:onClick="openSettings"
         >
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="需要开启辅助功能才能自动抢红包，点击开启"
-            android:textSize="16dp"
-            android:paddingTop="10dp"
-            android:paddingLeft="20dp"
-            />
-    </LinearLayout>
+            android:textSize="12dp"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="15dp"/>
+    </RelativeLayout>
 
     <LinearLayout
         android:orientation="vertical"

@@ -19,6 +19,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     //左上角两个个按钮
     private ImageButton setting_imagebtn;
     private ImageButton help_imagebtn;
-    private LinearLayout shouldOpenServer_layout;
+    private RelativeLayout shouldOpenServer_layout;
 
     private TextView wechat_auto_text;
     private TextView qq_auto_text;
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         num_redpkt = (TextView) findViewById(R.id.packt_num_text);
         num_money = (TextView) findViewById(R.id.money_num_text);
 
-        shouldOpenServer_layout = (LinearLayout) findViewById(R.id.should_openServer);
+        shouldOpenServer_layout = (RelativeLayout) findViewById(R.id.should_openServer);
         updateServiceStatus();
         showDatas();
         //获取设置中开关的状态
