@@ -1,35 +1,27 @@
 package junyou.com.hbtools;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.Image;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.accessibility.AccessibilityManager;
-import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
-
-import static junyou.com.hbtools.R.mipmap.bat_nor_money;
 
 public class MainActivity extends AppCompatActivity implements AccessibilityManager.AccessibilityStateChangeListener
 {
@@ -49,6 +41,14 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     public  TextView num_today ;
     public  TextView money_total;
     public  TextView money_today ;
+//-----------------------new items---------------------------------//
+    private Switch openWechat_switch;
+    private Switch openQQ_switch;
+
+    //左上角两个个按钮
+    private ImageButton setting_imagebtn;
+    private ImageButton help_imagebtn;
+    private LinearLayout shouldOpenServer_layout;
 
     private static MainActivity instance;
 
@@ -79,12 +79,12 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
         imageview_2 = (ImageView) findViewById(R.id.imageview_2);
 //      imageview_2.setImageResource(R.mipmap.icon_money);
-        updateServiceStatus();
+
 
         imgbtn_setting = (ImageButton) findViewById(R.id.imgbtn_settings);
         imgbtn_setting.setBackgroundColor(Color.TRANSPARENT);
         imgbtn_setting.setImageResource(R.mipmap.icon_circularset);
-        imgbtn_setting.setOnClickListener(onClickSetting);
+//        imgbtn_setting.setOnClickListener(onClickSetting);
 
         imgbtn_share = (ImageButton) findViewById(R.id.imgbtn_share);
         imgbtn_share.setBackgroundColor(Color.TRANSPARENT);
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         imgbtn_help = (ImageButton) findViewById(R.id.imgbtn_help);
         imgbtn_help.setBackgroundColor(Color.TRANSPARENT);
         imgbtn_help.setImageResource(R.mipmap.icon_help);
-        imgbtn_help.setOnClickListener(onClickHelp);
+//        imgbtn_help.setOnClickListener(onClickHelp);
 
         //四个文本控件
          num_total = (TextView)findViewById(R.id.num_total);
@@ -102,6 +102,20 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
          money_total = (TextView)findViewById(R.id.money_total);
          money_today = (TextView)findViewById(R.id.money_today);
 
+        //-----------------------new items--------------------------//
+        //开关
+        openWechat_switch = (Switch) findViewById(R.id.open_wechat_switch);
+        openWechat_switch.setOnCheckedChangeListener(wechat_swtich_listener);
+        openQQ_switch = (Switch) findViewById(R.id.open_qq_switch);
+        openQQ_switch.setOnCheckedChangeListener(qq_switch_listener);
+
+        //写到这  TODO
+        setting_imagebtn = (ImageButton) findViewById(R.id.imageButton_setting);
+        help_imagebtn = (ImageButton) findViewById(R.id.imageButton_help);
+
+        shouldOpenServer_layout = (LinearLayout) findViewById(R.id.should_openServer);
+//        shouldOpenServer_layout.setVisibility(View.INVISIBLE);
+        updateServiceStatus();
         showDatas();
         //获取设置中开关的状态
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -155,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             Log.i("TAG","setting");
             Intent settingAvt = new Intent(MainActivity.this,SettingActivity.class);
-            settingAvt.putExtra("title", "偏好设置");
+            settingAvt.putExtra("title", "设置");
             settingAvt.putExtra("frag_id", "GeneralSettingsFragment");
             startActivity(settingAvt);
         }
@@ -208,6 +222,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             imagebtn.setImageResource(R.mipmap.bat_sel_money);
             isGrasping.setText(R.string.action_isGrasping);
             imageview_2.setVisibility(View.VISIBLE);
+            shouldOpenServer_layout.setVisibility(View.INVISIBLE);
         } else
         {
             Log.i("TAG","service is off");
@@ -215,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             imagebtn.setImageResource(R.mipmap.bat_nor_money);
             isGrasping.setText(R.string.action_clickToGradp);
             imageview_2.setVisibility(View.INVISIBLE);
+            shouldOpenServer_layout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -224,8 +240,8 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             try
             {
-                Intent accessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                startActivity(accessibleIntent);
+//                Intent accessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+//                startActivity(accessibleIntent);
             } catch (Exception e)
             {
                 Toast.makeText(getApplicationContext(), "遇到一些问题,请手动打开系统设置>辅助服务>微信红包助手", Toast.LENGTH_LONG).show();
@@ -246,5 +262,45 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             }
         }
         return false;
+    }
+
+    private CompoundButton.OnCheckedChangeListener wechat_swtich_listener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked)
+            {
+                Log.i("TAG", "打开微信抢红包");
+            }else
+            {
+                Log.i("TAG", "关闭微信抢红包");
+            }
+        }
+    };
+
+    private CompoundButton.OnCheckedChangeListener qq_switch_listener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked)
+            {
+                Log.i("TAG", "打开QQ抢红包");
+            }else
+            {
+                Log.i("TAG", "关闭QQ抢红包");
+            }
+        }
+    };
+
+    public void openSettings(View view)
+    {
+        try
+        {
+            Log.i("TAG", "打开了设置");
+            Intent accessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            startActivity(accessibleIntent);
+        } catch (Exception e)
+        {
+            Toast.makeText(getApplicationContext(), "遇到一些问题,请手动打开系统设置>辅助服务>微信红包助手", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 }
