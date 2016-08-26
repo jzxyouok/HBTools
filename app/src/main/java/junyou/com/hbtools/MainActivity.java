@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     public TextView num_redpkt;
     public TextView num_money;
 
+    //剩余天数
+    private TextView left_days_text;
+
     private static MainActivity instance;
     SharedPreferences sharedPreferences;
     @Override
@@ -89,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
         imageview_2 = (ImageView) findViewById(R.id.imageview_2);
 //      imageview_2.setImageResource(R.mipmap.icon_money);
-
 
         imgbtn_setting = (ImageButton) findViewById(R.id.imgbtn_settings);
         imgbtn_setting.setBackgroundColor(Color.TRANSPARENT);
@@ -134,11 +136,17 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         num_redpkt = (TextView) findViewById(R.id.packt_num_text);
         num_money = (TextView) findViewById(R.id.money_num_text);
 
+        //剩余天数标签
+        left_days_text = (TextView) findViewById(R.id.left_days_text);
+
+        //布局获取
         shouldOpenServer_layout = (RelativeLayout) findViewById(R.id.should_openServer);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         updateServiceStatus();
         showDatas();
+        //showLeftDays();
         //获取设置中开关的状态
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 //        Boolean watchOnLockFlag = sharedPreferences.getBoolean("pref_watch_notification", false);
 //        if (watchOnLockFlag)
 //        {
@@ -147,13 +155,22 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //        {
 //            Log.i("TAG", "falseeeeeee");
 //        }
-        sharedPreferences.edit().putBoolean("wechat_switch",true);
     }
+    private void showLeftDays()
+    {
+        //设置天数
+        getSharedPreferences("config",MODE_PRIVATE).edit().putInt("left_days_count",15);
 
+
+        if (left_days_text != null)
+        {
+            int days = getSharedPreferences("config",MODE_PRIVATE).getInt("left_days_count",0);
+            left_days_text.setText(String.valueOf(days) + " 天");
+        }
+    }
     private void showDatas()
     {
         SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
-
         Log.i("TAG", "初始总红包数量:"+ String.valueOf(sharedP.getInt("totalnum",0)));
         Log.i("TAG", "初始总资产:"+ sharedP.getString("totalmoney",""));
         //显示数据
@@ -255,6 +272,10 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             imageview_2.setVisibility(View.VISIBLE);
             shouldOpenServer_layout.setVisibility(View.INVISIBLE);
             top_image.setImageResource(R.mipmap.top_img_radpacket_yes);
+
+            openWechat_switch.setChecked(true);
+            openQQ_switch.setChecked(true);
+
         } else
         {
             Log.i("TAG","service is off");
@@ -264,6 +285,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             imageview_2.setVisibility(View.INVISIBLE);
             shouldOpenServer_layout.setVisibility(View.VISIBLE);
             top_image.setImageResource(R.mipmap.top_img_radpacket_on);
+
+            openWechat_switch.setChecked(false);
+            openQQ_switch.setChecked(false);
         }
     }
 
@@ -300,16 +324,54 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     private CompoundButton.OnCheckedChangeListener wechat_swtich_listener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked)
+            if (isServiceEnabled())
             {
-                wechat_auto_text.setText("自动抢");
-                wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
-                sharedPreferences.edit().putBoolean("wechat_switch",true);
+                if (isChecked)
+                {
+                    wechat_auto_text.setText("自动抢");
+                    wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
+                    sharedPreferences.edit().putBoolean("wechat_switch",true);
+                }else
+                {
+                    wechat_auto_text.setText("自动抢   关闭");
+                    wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
+                    sharedPreferences.edit().putBoolean("wechat_switch",false);
+                }
             }else
             {
-                wechat_auto_text.setText("自动抢   关闭");
-                wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
-                sharedPreferences.edit().putBoolean("wechat_switch",false);
+                if (isChecked)
+                {
+                    //未开启服务 弹出提示，再进入设置
+                    new AlertDialog.Builder(instance)
+                            .setTitle("提示")
+                            .setMessage("必须打开辅助功能->红包快手->开启服务，才能抢红包哦.")
+                            .setPositiveButton("去打开辅助功能", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    try
+                                    {
+                                        Log.i("TAG", "打开了设置");
+                                        Intent accessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                                        startActivity(accessibleIntent);
+                                    } catch (Exception e)
+                                    {
+                                        Toast.makeText(getApplicationContext(), "遇到一些问题,请手动打开系统设置>辅助服务>微信红包助手", Toast.LENGTH_LONG).show();
+                                        e.printStackTrace();
+                                    }
+                                }
+                            })
+                            .setNegativeButton("取消",null)
+                            .show();
+
+                    wechat_auto_text.setText("自动抢   关闭");
+                    wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
+                    sharedPreferences.edit().putBoolean("wechat_switch",false);
+                }else
+                {
+                    wechat_auto_text.setText("自动抢   关闭");
+                    wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
+                    sharedPreferences.edit().putBoolean("wechat_switch",false);
+                }
             }
         }
     };
@@ -317,15 +379,55 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     private CompoundButton.OnCheckedChangeListener qq_switch_listener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked)
+            if (isServiceEnabled())
             {
-                qq_auto_text.setText("自动抢");
-                qq_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
+                if (isChecked)
+                {
+                    qq_auto_text.setText("自动抢");
+                    qq_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
+                    sharedPreferences.edit().putBoolean("qq_switch",true);
+                }else
+                {
+                    qq_auto_text.setText("自动抢   关闭");
+                    qq_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
+                    sharedPreferences.edit().putBoolean("qq_switch",false);
+                }
             }else
             {
-                qq_auto_text.setText("自动抢   关闭");
-                qq_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
+                if (isChecked)
+                {
+                    //未开启服务 弹出提示，再进入设置
+                    new AlertDialog.Builder(instance)
+                            .setTitle("提示")
+                            .setMessage("必须打开辅助功能->红包快手->开启服务，才能抢红包哦.")
+                            .setPositiveButton("去打开辅助功能", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    try
+                                    {
+                                        Log.i("TAG", "打开了设置");
+                                        Intent accessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                                        startActivity(accessibleIntent);
+                                    } catch (Exception e)
+                                    {
+                                        Toast.makeText(getApplicationContext(), "遇到一些问题,请手动打开系统设置>辅助服务>微信红包助手", Toast.LENGTH_LONG).show();
+                                        e.printStackTrace();
+                                    }
+                                }
+                            })
+                            .setNegativeButton("取消",null)
+                            .show();
+                    qq_auto_text.setText("自动抢   关闭");
+                    qq_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
+                    sharedPreferences.edit().putBoolean("qq_switch",false);
+                }else
+                {
+                    qq_auto_text.setText("自动抢   关闭");
+                    qq_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
+                    sharedPreferences.edit().putBoolean("qq_switch",false);
+                }
             }
+
         }
     };
 
@@ -355,6 +457,10 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     .setNegativeButton("取消",null)
                     .show();
         }
-
+    }
+    //左下角获取更多天数按钮
+    public void getMoreTime(View view)
+    {
+        Log.i("TAG", "点我获取天数哦");
     }
 }

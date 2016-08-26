@@ -302,6 +302,26 @@
             android:textSize="12sp" />
 
     </RelativeLayout>
+    <!--通告-->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/id_trumpet"
+        android:src="@mipmap/icon_trumpet"
+        android:layout_above="@+id/should_openServer"
+        android:paddingLeft="50dp"/>
+    <!--我要的跑马灯呢?-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="喜报:截至2016-8-31,抢红包的金额达到50.00元"
+        android:textColor="@color/colorwhite"
+        android:layout_toRightOf="@id/id_trumpet"
+        android:layout_above="@+id/should_openServer"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
 
     <LinearLayout
         android:orientation="vertical"
@@ -438,4 +458,32 @@
         </RelativeLayout>
     </LinearLayout>
 
+<ImageView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/under_icon_clock"
+    android:src="@mipmap/under_icon_clock_good"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentRight="true"
+    android:paddingRight="10dp"
+    android:onClick="getMoreTime"/>
+<ImageView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/under_icon_tool"
+    android:src="@mipmap/under_icon_tooltip"
+    android:layout_above="@+id/under_icon_clock"
+    android:layout_alignParentRight="true"
+    android:paddingRight="30dp"/>
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/left_days_text"
+    android:text="10天"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentRight="true"
+    android:layout_marginRight="35dp"
+    android:paddingBottom="35dp"
+    android:textSize="20dp"
+    android:textColor="@color/colorwhite"/>
 </RelativeLayout>
