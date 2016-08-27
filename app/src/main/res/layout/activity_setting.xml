@@ -40,7 +40,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:background="#ffffff"
+        android:background="@android:color/transparent"
         android:layout_below="@id/up_bg"
         android:id="@+id/vip_bar">
         <TextView
@@ -49,14 +49,24 @@
             android:text="没有限制,可以一直抢红包了哦"
             android:layout_centerHorizontal="true"
             android:textSize="15dp"
-            android:paddingTop="30dp"/>
+            android:layout_marginTop="40dp"/>
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             android:src="@mipmap/bat_pop_yellow_tow"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:onClick="superVipClick"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/icon_red_point"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="120dp"
+            android:layout_marginBottom="15dp"/>
     </RelativeLayout>
     <FrameLayout
         android:layout_width="match_parent"

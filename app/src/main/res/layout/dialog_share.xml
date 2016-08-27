@@ -1,8 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     android:background="@android:color/transparent"
     android:orientation="vertical" >
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@mipmap/msg_pop_three"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/open_service_layout">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_pengyouquan"
+            android:src="@mipmap/icon_pengyouquan"
+            android:layout_alignParentTop="false"
+            android:layout_marginTop="300dp"
+            android:layout_marginLeft="50dp"
+            android:onClick="sharePengYouQuanClick"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_weixin"
+            android:src="@mipmap/icon_weixin"
+            android:layout_alignParentTop="false"
+            android:layout_marginTop="300dp"
+            android:layout_toRightOf="@+id/id_pengyouquan"
+            android:layout_marginLeft="20dp"
+            android:onClick="shareWeiXinClick"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_qq"
+            android:src="@mipmap/icon_qq"
+            android:layout_alignParentTop="false"
+            android:layout_marginTop="300dp"
+            android:layout_toRightOf="@+id/id_weixin"
+            android:layout_marginLeft="20dp"
+            android:onClick="shareQQClick"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_weibo"
+            android:src="@mipmap/icon_weibo"
+            android:layout_alignParentTop="false"
+            android:layout_marginTop="300dp"
+            android:layout_toRightOf="@+id/id_qq"
+            android:layout_marginLeft="20dp"
+            android:onClick="shareWeiboClick"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_text_pyq"
+            android:text="朋友圈"
+            android:textSize="12dp"
+            android:layout_alignParentTop="false"
+            android:layout_below="@+id/id_pengyouquan"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="50dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_text_weixin"
+            android:text="微信"
+            android:textSize="12dp"
+            android:layout_alignParentTop="false"
+            android:layout_below="@+id/id_pengyouquan"
+            android:layout_toRightOf="@+id/id_text_pyq"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="34dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_text_qq"
+            android:text="QQ"
+            android:textSize="12dp"
+            android:layout_alignParentTop="false"
+            android:layout_below="@+id/id_pengyouquan"
+            android:layout_toRightOf="@+id/id_text_weixin"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="39dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/id_text_weibo"
+            android:text="微博"
+            android:textSize="12dp"
+            android:layout_alignParentTop="false"
+            android:layout_below="@+id/id_pengyouquan"
+            android:layout_toRightOf="@+id/id_text_qq"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="39dp"/>
+
+    </RelativeLayout>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/icon_close"
+        android:onClick="closeOpenShare"
+        android:layout_marginTop="50dp"
+        android:layout_below="@+id/open_service_layout"/>
 </RelativeLayout>

@@ -69,9 +69,12 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
     //弹窗
     Dialog dialog_openSvs;
+    Dialog dialog_openShare;
+    Dialog dialog_receiveTime;
 
     private static MainActivity instance;
     SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -148,7 +151,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         shouldOpenServer_layout = (RelativeLayout) findViewById(R.id.should_openServer);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-
         updateServiceStatus();
         showDatas();
         //showLeftDays();
@@ -166,11 +168,24 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
     private void showDialog()
     {
-        View view = LayoutInflater.from(instance).inflate(R.layout.dialog_openservice, null);
+        //打开设置弹窗
+        View view_1 = LayoutInflater.from(instance).inflate(R.layout.dialog_openservice, null);
         dialog_openSvs = new Dialog(this,R.style.common_dialog);
-        dialog_openSvs.setContentView(view);
-//        dialog_openSvs.show();
-
+        dialog_openSvs.setContentView(view_1);
+        //打开分享弹窗
+        View view_2 = LayoutInflater.from(instance).inflate(R.layout.dialog_share,null);
+        dialog_openShare = new Dialog(this,R.style.common_dialog);
+        dialog_openShare.setContentView(view_2);
+        //主页的获取更多天数弹窗
+//        View view_3 = LayoutInflater.from(instance).inflate(R.layout.dialog_receivetime,null);
+//        dialog_receiveTime = new Dialog(this,R.style.common_dialog);
+//        dialog_receiveTime.setContentView(view_3);
+//        dialog_receiveTime.show();
+        //设置里的下载弹窗
+//        View view_3 = LayoutInflater.from(instance).inflate(R.layout.dialog_settingshare,null);
+//        Dialog dialog_settingShare = new Dialog(this,R.style.common_dialog);
+//        dialog_settingShare.setContentView(view_3);
+//        dialog_settingShare.show();
     }
     private void showLeftDays()
     {
@@ -451,6 +466,8 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     public void getMoreTime(View view)
     {
         Log.i("TAG", "点我获取天数哦");
+        if (null != dialog_openShare)
+            dialog_openShare.show();
     }
     public void openServiceClick(View view)
     {
@@ -477,5 +494,29 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             dialog_openSvs.dismiss();
         }
+    }
+    public void closeOpenShare(View view)
+    {
+        if (null != dialog_openShare)
+        {
+            dialog_openShare.dismiss();
+        }
+    }
+
+    public void sharePengYouQuanClick(View view)
+    {
+        Log.i("TAG", "点击分享到朋友圈");
+    }
+    public void shareWeiXinClick(View view)
+    {
+        Log.i("TAG", "点击分享到微信");
+    }
+    public void shareQQClick(View view)
+    {
+        Log.i("TAG", "点击分享到QQ");
+    }
+    public void shareWeiboClick(View view)
+    {
+        Log.i("TAG", "点击分享到微博");
     }
 }

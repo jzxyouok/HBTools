@@ -1,8 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     android:background="@android:color/transparent"
     android:orientation="vertical" >
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@mipmap/msg_pop_five"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/open_service_layout">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/bat_pop_yellow_tow"
+            android:background="@android:color/transparent"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="false"
+            android:layout_marginTop="300dp"
+            android:onClick="super_vip_click"/>
 
+    </RelativeLayout>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/icon_close"
+        android:onClick="closeOpenSuperVip"
+        android:layout_marginTop="50dp"
+        android:layout_below="@+id/open_service_layout"/>
 </RelativeLayout>

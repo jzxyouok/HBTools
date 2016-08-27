@@ -40,6 +40,6 @@
         android:layout_centerHorizontal="true"
         android:src="@mipmap/icon_close"
         android:onClick="closeOpenServiceClick"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="50dp"
         android:layout_below="@+id/open_service_layout"/>
 </RelativeLayout>

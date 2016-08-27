@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
                   xmlns:android="http://schemas.android.com/apk/res/android"
-                  tools:context=".SettingActivity"
+                  tools:context="junyou.com.hbtools.SettingActivity"
                   android:icon="@null">
     <PreferenceCategory
             android:title=""
@@ -23,6 +23,8 @@
             android:title="立即去广告"
             android:summary="开启无广告模式"
             android:layout="@layout/preference_checkbox"
+            android:enabled="true"
+            android:persistent="true"
             android:defaultValue="false"/>
     </PreferenceCategory>
 

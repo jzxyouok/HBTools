@@ -248,7 +248,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/square"
+            android:src="@mipmap/top_img"
             android:paddingTop="75dp"/>
         <!--可以抢的图-->
         <ImageView
@@ -474,7 +474,9 @@
     android:src="@mipmap/under_icon_tooltip"
     android:layout_above="@+id/under_icon_clock"
     android:layout_alignParentRight="true"
-    android:paddingRight="30dp"/>
+    android:paddingRight="30dp"
+    android:layout_marginBottom="-10dp"
+    android:onClick="getMoreTime"/>
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

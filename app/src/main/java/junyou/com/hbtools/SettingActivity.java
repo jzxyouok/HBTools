@@ -1,11 +1,16 @@
 package junyou.com.hbtools;
 
 import android.annotation.TargetApi;
+import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -15,7 +20,8 @@ import junyou.com.hbtools.fragments.SettingFragment;
 
 public class SettingActivity extends FragmentActivity
 {
-
+    private Dialog dialog_open_vip;
+    private static SettingActivity instance;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -32,6 +38,12 @@ public class SettingActivity extends FragmentActivity
 //        }
         loadUI();
         prepareSettings();
+        instance = this;
+    }
+
+    public static SettingActivity getInstance()
+    {
+        return instance;
     }
 
     private void prepareSettings()
@@ -97,5 +109,36 @@ public class SettingActivity extends FragmentActivity
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         window.setStatusBarColor(0xffE46C62);
+    }
+
+    public void superVipClick(View view)
+    {
+        Log.i("TAG", "点击弹出超级VIP弹窗");
+        View view_1 = LayoutInflater.from(SettingActivity.this).inflate(R.layout.dialog_supervip, null);
+        dialog_open_vip = new Dialog(this,R.style.common_dialog);
+        dialog_open_vip.setContentView(view_1);
+        dialog_open_vip.show();
+    }
+
+    public void super_vip_click(View view)
+    {
+        Log.i("TAG", "点击获取超级VIP");
+    }
+
+    public void closeOpenSuperVip(View view)
+    {
+        dialog_open_vip.dismiss();
+    }
+
+    //SettingFragment中的弹窗方法
+    public void closeDownloadClick(View view)
+    {
+        Log.i("TAG", "关闭弹窗");
+        SettingFragment.getInstance().dialog_setting_share.dismiss();
+    }
+    public void opendownloadClick(View view)
+    {
+        Log.i("TAG", "打开下载骏游连连看");
+        SettingFragment.getInstance().dialog_setting_share.dismiss();
     }
 }
