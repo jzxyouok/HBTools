@@ -309,17 +309,21 @@
         android:id="@+id/id_trumpet"
         android:src="@mipmap/icon_trumpet"
         android:layout_above="@+id/should_openServer"
-        android:paddingLeft="50dp"/>
+        android:layout_marginLeft="45dp"/>
     <!--我要的跑马灯呢?-->
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:text="喜报:截至2016-8-31,抢红包的金额达到50.00元"
+        android:text="@string/marquee_word_1"
+        android:id="@+id/marquee_text"
+        android:singleLine="true"
         android:textColor="@color/colorwhite"
         android:layout_toRightOf="@id/id_trumpet"
         android:layout_above="@+id/should_openServer"
+        android:layout_centerHorizontal="true"
         android:ellipsize="marquee"
         android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
         android:focusable="true"
         android:focusableInTouchMode="true"/>
 
@@ -348,7 +352,7 @@
             android:text="需要开启辅助功能才能自动抢红包，点击开启"
             android:textSize="12dp"
             android:layout_centerHorizontal="true"
-            android:paddingTop="15dp"/>
+            android:layout_marginTop="15dp"/>
     </RelativeLayout>
 
     <LinearLayout

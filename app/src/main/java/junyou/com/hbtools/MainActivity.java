@@ -7,12 +7,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
+import android.text.LoginFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +29,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements AccessibilityManager.AccessibilityStateChangeListener
 {
@@ -63,6 +71,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     //红包个数 金额标签
     public TextView num_redpkt;
     public TextView num_money;
+
+    //跑马灯文本
+    private TextView marquee_text;
 
     //剩余天数
     private TextView left_days_text;
@@ -151,6 +162,8 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         shouldOpenServer_layout = (RelativeLayout) findViewById(R.id.should_openServer);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        //跑马灯文本
+        marquee_text = (TextView) findViewById(R.id.marquee_text);
         updateServiceStatus();
         showDatas();
         //showLeftDays();
@@ -164,6 +177,46 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //            Log.i("TAG", "falseeeeeee");
 //        }
         showDialog();
+        refrishMarqueeText();
+    }
+
+    private void refrishMarqueeText()
+    {
+        final String []marquee_lists = {
+                getResources().getString(R.string.marquee_word_1),
+                getResources().getString(R.string.marquee_word_2),
+                getResources().getString(R.string.marquee_word_3),
+                getResources().getString(R.string.marquee_word_4),
+                getResources().getString(R.string.marquee_word_5)
+        };
+        //调度器
+        Timer timer = new Timer();
+        final Handler handler = new Handler(){
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case 1:
+                    {
+                        int num = (int)(Math.random()*5);  //0-4
+                        if (null != marquee_text)
+                        {
+                            marquee_text.setText(marquee_lists[num]);
+                        }
+                        Log.i("TAG",num + marquee_lists[num]);
+                    }
+                    break;
+                }
+                super.handleMessage(msg);
+            }
+        };
+
+        TimerTask task = new TimerTask(){
+            public void run() {
+                Message message = new Message();
+                message.what = 1;
+                handler.sendMessage(message);
+            }
+        };
+        timer.schedule(task, 1000,8000);    //1秒之后执行，每5秒执行一次
     }
 
     private void showDialog()
