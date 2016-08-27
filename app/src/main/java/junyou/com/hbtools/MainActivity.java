@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Timer;
@@ -166,7 +167,8 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         marquee_text = (TextView) findViewById(R.id.marquee_text);
         updateServiceStatus();
         showDatas();
-        //showLeftDays();
+        refrishMarqueeText();
+//        showLeftDays();
         //获取设置中开关的状态
 //        Boolean watchOnLockFlag = sharedPreferences.getBoolean("pref_watch_notification", false);
 //        if (watchOnLockFlag)
@@ -177,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //            Log.i("TAG", "falseeeeeee");
 //        }
         showDialog();
-        refrishMarqueeText();
+
     }
 
     private void refrishMarqueeText()
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                         {
                             marquee_text.setText(marquee_lists[num]);
                         }
-                        Log.i("TAG",num + marquee_lists[num]);
+//                        Log.i("TAG",num + marquee_lists[num]);
                     }
                     break;
                 }
@@ -240,17 +242,47 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //        dialog_settingShare.setContentView(view_3);
 //        dialog_settingShare.show();
     }
+    //时间显示有问题，TODO
     private void showLeftDays()
     {
+        SharedPreferences sharedP = getSharedPreferences("config",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedP.edit();
         //设置天数
-        getSharedPreferences("config",MODE_PRIVATE).edit().putInt("left_days_count",15);
-
+        /*
+        editor.putInt("left_days_count",15);
+        editor.commit();
 
         if (left_days_text != null)
         {
             int days = getSharedPreferences("config",MODE_PRIVATE).getInt("left_days_count",0);
             left_days_text.setText(String.valueOf(days) + " 天");
         }
+*/
+
+        Calendar calendar = Calendar.getInstance();
+        String nowDate = calendar.get(Calendar.YEAR) + "年"
+                + (calendar.get(Calendar.MONTH)+1) + "月"//从0计算
+                + calendar.get(Calendar.DAY_OF_MONTH) + "日";
+
+        if (!nowDate.equals(getSharedPreferences("config",MODE_PRIVATE).getString("date_mark","")))
+        {
+            //日期不相等
+            editor.putInt("left_days_count",getSharedPreferences("config",MODE_PRIVATE).getInt("left_days_count",0) - 1);
+            editor.commit();
+
+            if (left_days_text != null)
+            {
+                int days = getSharedPreferences("config",MODE_PRIVATE).getInt("left_days_count",0);
+                left_days_text.setText(String.valueOf(days) + " 天");
+            }
+        }else
+        {
+            //日期相等  保存今天的日期信息
+            editor.putString("date_mark",nowDate);
+            editor.commit();
+        }
+        Log.e("TAG", nowDate);
+        Log.i("TAG", "存储日期:" + getSharedPreferences("config",MODE_PRIVATE).getString("date_mark",""));
     }
     private void showDatas()
     {
