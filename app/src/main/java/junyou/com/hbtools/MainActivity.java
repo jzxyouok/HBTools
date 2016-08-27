@@ -1,6 +1,7 @@
 package junyou.com.hbtools;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.CompoundButton;
@@ -64,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
     //剩余天数
     private TextView left_days_text;
+
+    //弹窗
+    Dialog dialog_openSvs;
 
     private static MainActivity instance;
     SharedPreferences sharedPreferences;
@@ -143,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         shouldOpenServer_layout = (RelativeLayout) findViewById(R.id.should_openServer);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+
         updateServiceStatus();
         showDatas();
         //showLeftDays();
@@ -155,6 +161,16 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //        {
 //            Log.i("TAG", "falseeeeeee");
 //        }
+        showDialog();
+    }
+
+    private void showDialog()
+    {
+        View view = LayoutInflater.from(instance).inflate(R.layout.dialog_openservice, null);
+        dialog_openSvs = new Dialog(this,R.style.common_dialog);
+        dialog_openSvs.setContentView(view);
+//        dialog_openSvs.show();
+
     }
     private void showLeftDays()
     {
@@ -342,27 +358,10 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                 if (isChecked)
                 {
                     //未开启服务 弹出提示，再进入设置
-                    new AlertDialog.Builder(instance)
-                            .setTitle("提示")
-                            .setMessage("必须打开辅助功能->红包快手->开启服务，才能抢红包哦.")
-                            .setPositiveButton("去打开辅助功能", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    try
-                                    {
-                                        Log.i("TAG", "打开了设置");
-                                        Intent accessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                                        startActivity(accessibleIntent);
-                                    } catch (Exception e)
-                                    {
-                                        Toast.makeText(getApplicationContext(), "遇到一些问题,请手动打开系统设置>辅助服务>微信红包助手", Toast.LENGTH_LONG).show();
-                                        e.printStackTrace();
-                                    }
-                                }
-                            })
-                            .setNegativeButton("取消",null)
-                            .show();
-
+                    if (null != dialog_openSvs)
+                    {
+                        dialog_openSvs.show();
+                    }
                     wechat_auto_text.setText("自动抢   关闭");
                     wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
                     sharedPreferences.edit().putBoolean("wechat_switch",false);
@@ -397,26 +396,10 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                 if (isChecked)
                 {
                     //未开启服务 弹出提示，再进入设置
-                    new AlertDialog.Builder(instance)
-                            .setTitle("提示")
-                            .setMessage("必须打开辅助功能->红包快手->开启服务，才能抢红包哦.")
-                            .setPositiveButton("去打开辅助功能", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    try
-                                    {
-                                        Log.i("TAG", "打开了设置");
-                                        Intent accessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                                        startActivity(accessibleIntent);
-                                    } catch (Exception e)
-                                    {
-                                        Toast.makeText(getApplicationContext(), "遇到一些问题,请手动打开系统设置>辅助服务>微信红包助手", Toast.LENGTH_LONG).show();
-                                        e.printStackTrace();
-                                    }
-                                }
-                            })
-                            .setNegativeButton("取消",null)
-                            .show();
+                    if (null != dialog_openSvs)
+                    {
+                        dialog_openSvs.show();
+                    }
                     qq_auto_text.setText("自动抢   关闭");
                     qq_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
                     sharedPreferences.edit().putBoolean("qq_switch",false);
@@ -435,7 +418,12 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     {
         if (!isServiceEnabled())
         {
+            if (null != dialog_openSvs)
+            {
+                dialog_openSvs.show();
+            }
             //未开启服务 弹出提示，再进入设置
+            /*
             new AlertDialog.Builder(this)
                     .setTitle("提示")
                     .setMessage("必须打开辅助功能->红包快手->开启服务，才能抢红包哦.")
@@ -456,11 +444,38 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     })
                     .setNegativeButton("取消",null)
                     .show();
+*/
         }
     }
     //左下角获取更多天数按钮
     public void getMoreTime(View view)
     {
         Log.i("TAG", "点我获取天数哦");
+    }
+    public void openServiceClick(View view)
+    {
+        Log.i("TAG", "点击打开系统设置");
+        try
+        {
+            Log.i("TAG", "打开了设置");
+            Intent accessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            startActivity(accessibleIntent);
+        } catch (Exception e)
+        {
+            Toast.makeText(getApplicationContext(), "遇到一些问题,请手动打开系统设置>辅助服务>微信红包助手", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+        if (null != dialog_openSvs)
+        {
+            dialog_openSvs.dismiss();
+        }
+    }
+    public void closeOpenServiceClick(View view)
+    {
+        Log.i("TAG", "点击关闭系统设置提示");
+        if (null != dialog_openSvs)
+        {
+            dialog_openSvs.dismiss();
+        }
     }
 }
