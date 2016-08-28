@@ -84,9 +84,11 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     Dialog dialog_openShare;
     Dialog dialog_receiveTime;
 
+    //广播消息
+    private Intent bor_intent;
+
     private static MainActivity instance;
     SharedPreferences sharedPreferences;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -165,6 +167,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
         //跑马灯文本
         marquee_text = (TextView) findViewById(R.id.marquee_text);
+        //广播
+       bor_intent = new Intent("junyou.com.hbtools.RECEIVER");
+
         updateServiceStatus();
         showDatas();
         refrishMarqueeText();
@@ -179,7 +184,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //            Log.i("TAG", "falseeeeeee");
 //        }
         showDialog();
-
     }
 
     private void refrishMarqueeText()
@@ -446,13 +450,21 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                 if (isChecked)
                 {
                     //打开开关
-//                    RobMoney.getInstance().startService();
+//                    RobMoney.getInstance().onStart();
+                    //发送广播
+                    bor_intent.putExtra("wechat_broadcast", true);
+                    sendBroadcast(bor_intent);
+
                     wechat_auto_text.setText("自动抢");
                     wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
                     sharedPreferences.edit().putBoolean("wechat_switch",true);
                 }else
                 {
                     //关闭开关
+//                    RobMoney.getInstance().onDestroy();
+                    bor_intent.putExtra("wechat_broadcast", false);
+                    sendBroadcast(bor_intent);
+
                     wechat_auto_text.setText("自动抢   关闭");
                     wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
                     sharedPreferences.edit().putBoolean("wechat_switch",false);
@@ -487,11 +499,17 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             {
                 if (isChecked)
                 {
+                    bor_intent.putExtra("qq_broadcast", true);
+                    sendBroadcast(bor_intent);
+
                     qq_auto_text.setText("自动抢");
                     qq_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
                     sharedPreferences.edit().putBoolean("qq_switch",true);
                 }else
                 {
+                    bor_intent.putExtra("qq_broadcast", false);
+                    sendBroadcast(bor_intent);
+
                     qq_auto_text.setText("自动抢   关闭");
                     qq_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
                     sharedPreferences.edit().putBoolean("qq_switch",false);
@@ -552,7 +570,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 */
         }
     }
-    //左下角获取更多天数按钮
+    //右下角获取更多天数按钮
     public void getMoreTime(View view)
     {
         Log.i("TAG", "点我获取天数哦");

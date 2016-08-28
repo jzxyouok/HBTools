@@ -12,12 +12,12 @@
             android:summary="开启或关闭红包快手"
                 android:defaultValue="true"
                 android:layout="@layout/preference_checkbox"/>
-        <CheckBoxPreference
-                android:key="pref_no_notes"
-                android:title="红包免打扰"
-            android:summary="开启免打扰模式"
-                android:layout="@layout/preference_checkbox"
-                android:defaultValue="false"/>
+        <!--<CheckBoxPreference-->
+                <!--android:key="pref_no_notes"-->
+                <!--android:title="红包免打扰"-->
+            <!--android:summary="开启免打扰模式"-->
+                <!--android:layout="@layout/preference_checkbox"-->
+                <!--android:defaultValue="false"/>-->
         <CheckBoxPreference
             android:key="pref_no_ad"
             android:title="立即去广告"

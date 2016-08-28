@@ -6,8 +6,11 @@ import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
@@ -76,12 +79,39 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     private final static String QQ_HONG_BAO_PASSWORD = "口令红包";
     private final static String QQ_CLICK_TO_PASTE_PASSWORD = "点击输入口令";
 
+    //广播
+    private MsgReceiver msgReceiver;
+    boolean mIsWeChatOn = true;
+    boolean mIsQQOn = true;
+    /**
+     * 广播接收器
+     */
+    public class MsgReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //拿到进度，更新UI
+            mIsWeChatOn = intent.getBooleanExtra("wechat_broadcast", true);
+            int v_1 = mIsWeChatOn==true ? 1:0;
+            Log.i("TAG", "微信消息:" + v_1);
+
+            mIsQQOn = intent.getBooleanExtra("qq_broadcast",true);
+            int v_2 = mIsQQOn == true ? 1:0;
+            Log.i("TAG", "qq消息" + v_2);
+        }
+    }
+
     @Override
     public void onCreate()
     {
         super.onCreate();
         instance = this;
         Log.i("TAG","service onCreate");
+        //动态注册广播接收器
+        msgReceiver = new MsgReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("junyou.com.hbtools.RECEIVER");
+        registerReceiver(msgReceiver, intentFilter);
     }
 
     public RobMoney()
@@ -101,7 +131,12 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         {
             return;
         }
-
+        //关闭了红包快手
+        if (!sharedPreferences.getBoolean("pref_watch_notification",true))
+        {
+            Log.i("TAG", "不能抢红包了，关闭了红包助手");
+            return;
+        }
         setCurrentActivityName(event);
 	        /* 检测通知消息 */
         if (!mMutex)
@@ -109,8 +144,8 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             //是否是红包的判断，若是红包就打开消息栏进入该软件，若不是红包直接返回
             if (watchNotifications(event)) return;
             //若是红包，执行点击红包的操作
-            if(openQQHongbao(event)) return;			//抢QQ红包
-            if (openWeChatHongbao(event)) return;		//监视微信（貌似这个方法没作用）
+            if(openQQHongbao(event)) return;
+            if (openWeChatHongbao(event)) return;	//监视微信（貌似这个方法没作用）
             mListMutex = false;
         }
         if (!mChatMutex)
@@ -153,6 +188,45 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         return false;
     }
 
+    //观察QQ通知栏
+    private boolean qqNotification(AccessibilityEvent event)
+    {
+        if (event.getEventType() != AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED)
+        {
+            return false;
+        }
+        Log.i("TAG","通知栏有QQ消息!!!");
+        // Not a hongbao
+        String tip = event.getText().toString();
+        if (tip.contains(QQ_HONGBAO_TEXT_KEY))
+        {
+            Log.i("TAG","是QQ红包~~~");
+            if (event.getParcelableData() == null || !(event.getParcelableData() instanceof Notification))
+            {
+                return false;
+            }
+
+            Parcelable parcelable = event.getParcelableData();
+            if (parcelable instanceof Notification)
+            {
+                Notification notification = (Notification) parcelable;
+                try {
+                    notification.contentIntent.send();
+                } catch (PendingIntent.CanceledException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            return true;
+        }
+        else
+        {
+            Log.i("TAG","不是QQ红包!");
+        }
+
+        return true;
+    }
+
     //观察通知栏的消息，查找[微信红包]或者[QQ红包关]关键字，打开通知栏消息
     private boolean watchNotifications(AccessibilityEvent event)
     {
@@ -160,12 +234,12 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         {
             return false;
         }
-        Log.i("TAG","notification state changed!!!");
+        Log.i("TAG","通知栏有消息!!!");
         // Not a hongbao
         String tip = event.getText().toString();
         if (tip.contains(WECHAT_NOTIFICATION_TIP) || tip.contains(QQ_HONGBAO_TEXT_KEY))
         {
-            Log.i("TAG","is hongbao~~~~~~");
+            Log.i("TAG","是红包~~~");
             mIsEnterWeChatList = true;
             if (event.getParcelableData() == null || !(event.getParcelableData() instanceof Notification))
             {
@@ -189,7 +263,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         }
         else
         {
-            Log.i("TAG","not hongbao!");
+            Log.i("TAG","不是红包");
         }
 
         return true;
@@ -268,6 +342,8 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     public void onDestroy()
     {
         this.powerUtil.handleWakeLock(false);
+        //注销广播
+        unregisterReceiver(msgReceiver);
         super.onDestroy();
     }
 
