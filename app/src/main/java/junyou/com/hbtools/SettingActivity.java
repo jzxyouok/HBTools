@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -119,6 +120,7 @@ public class SettingActivity extends FragmentActivity
 
     public void super_vip_click(View view)
     {
+        dialog_open_vip.dismiss();
         Log.i("TAG", "点击获取超级VIP");
     }
 
@@ -136,6 +138,11 @@ public class SettingActivity extends FragmentActivity
     public void opendownloadClick(View view)
     {
         Log.i("TAG", "打开下载骏游连连看");
+        Intent webViewIntent = new Intent(this, WebViewActivity.class);
+        webViewIntent.putExtra("title", "骏游科技");
+//        webViewIntent.putExtra("url", "http://www.zjhzjykj.com");
+        webViewIntent.putExtra("url", "http://www.zjhzjykj.com/game/ShowClass.asp?ClassID=2");
+        startActivity(webViewIntent);
         SettingFragment.getInstance().dialog_setting_share.dismiss();
     }
 }

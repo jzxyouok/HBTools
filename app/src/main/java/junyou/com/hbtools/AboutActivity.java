@@ -76,17 +76,33 @@ public class AboutActivity extends FragmentActivity {
     public void sharePengYouQuanClick(View view)
     {
         Log.i("TAG", "点击分享到朋友圈");
+        if (null != dialog_openShare)
+        {
+            dialog_openShare.dismiss();
+        }
     }
     public void shareWeiXinClick(View view)
     {
         Log.i("TAG", "点击分享到微信");
+        if (null != dialog_openShare)
+        {
+            dialog_openShare.dismiss();
+        }
     }
     public void shareQQClick(View view)
     {
         Log.i("TAG", "点击分享到QQ");
+        if (null != dialog_openShare)
+        {
+            dialog_openShare.dismiss();
+        }
     }
     public void shareWeiboClick(View view)
     {
         Log.i("TAG", "点击分享到微博");
+        if (null != dialog_openShare)
+        {
+            dialog_openShare.dismiss();
+        }
     }
 }

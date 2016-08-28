@@ -341,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         if (isServiceEnabled())
         {
             Log.i("TAG","service is on");
-            Toast.makeText(getApplicationContext(), "抢红包神器已经开启", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "红包快手已经开启", Toast.LENGTH_LONG).show();
             shouldOpenServer_layout.setVisibility(View.INVISIBLE);
             top_image.setImageResource(R.mipmap.top_img_radpacket_yes);
 
@@ -351,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         } else
         {
             Log.i("TAG","service is off");
-            Toast.makeText(getApplicationContext(), "抢红包神器已经关闭", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "红包快手已经关闭", Toast.LENGTH_LONG).show();
             shouldOpenServer_layout.setVisibility(View.VISIBLE);
             top_image.setImageResource(R.mipmap.top_img_radpacket_on);
 
@@ -618,20 +618,36 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     public void sharePengYouQuanClick(View view)
     {
         Log.i("TAG", "点击分享到朋友圈");
+        if (null != dialog_openShare)
+        {
+            dialog_openShare.dismiss();
+        }
     }
 
     public void shareWeiXinClick(View view)
     {
         Log.i("TAG", "点击分享到微信");
+        if (null != dialog_openShare)
+        {
+            dialog_openShare.dismiss();
+        }
     }
 
     public void shareQQClick(View view)
     {
         Log.i("TAG", "点击分享到QQ");
+        if (null != dialog_openShare)
+        {
+            dialog_openShare.dismiss();
+        }
     }
 
     public void shareWeiboClick(View view)
     {
         Log.i("TAG", "点击分享到微博");
+        if (null != dialog_openShare)
+        {
+            dialog_openShare.dismiss();
+        }
     }
 }

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="junyou.com.hbtools">
+    package="junyou.com.hbtools"
+    android:versionCode="1"
+    android:versionName="1.0.0">
 
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -49,7 +51,8 @@
             android:label="@string/title_activity_setting"
             android:theme="@style/notitle" />
         <activity android:name=".helpActivity" />
-        <activity android:name=".AboutActivity"></activity>
+        <activity android:name=".AboutActivity" />
+        <activity android:name=".WebViewActivity"></activity>
     </application>
 
 </manifest>
