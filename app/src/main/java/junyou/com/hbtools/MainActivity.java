@@ -39,35 +39,24 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements AccessibilityManager.AccessibilityStateChangeListener
 {
-    //开关切换按钮
-    private ImageButton imagebtn ;
-    private TextView isGrasping;
-    private ImageView imageview_2;
     private AccessibilityManager accessibilityManager;
+    SharedPreferences sharedPreferences;
 
-    //底部三个按钮
-    private ImageButton imgbtn_setting;
-    private ImageButton imgbtn_share;
-    private ImageButton imgbtn_help;
+    private static MainActivity instance;
 
-    //四个文本控件
-    public  TextView num_total ;
-    public  TextView num_today ;
-    public  TextView money_total;
-    public  TextView money_today ;
-//-----------------------new items---------------------------------//
     private Switch openWechat_switch;
     private Switch openQQ_switch;
 
     //左上角两个个按钮
     private ImageButton setting_imagebtn;
     private ImageButton help_imagebtn;
+
     private RelativeLayout shouldOpenServer_layout;
+
+    private ImageView top_image;
 
     private TextView wechat_auto_text;
     private TextView qq_auto_text;
-
-    private ImageView top_image;
 
     //红包个数 金额标签
     public TextView num_redpkt;
@@ -80,15 +69,13 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     private TextView left_days_text;
 
     //弹窗
-    Dialog dialog_openSvs;
-    Dialog dialog_openShare;
-    Dialog dialog_receiveTime;
+    private Dialog dialog_openSvs;
+    private Dialog dialog_openShare;
+    private Dialog dialog_receiveTime;
 
     //广播消息
     private Intent bor_intent;
 
-    private static MainActivity instance;
-    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -100,42 +87,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         //监听AccessibilityService 变化
         accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.addAccessibilityStateChangeListener(this);
-
-        ImageView iv = (ImageView) findViewById(R.id.imageView_1);
-//        iv.setImageResource(R.mipmap.bg_top);
-        ImageView iv_downimg = (ImageView) findViewById(R.id.btn_bgimg);
-//        iv_downimg.setImageResource(R.mipmap.bat_down_money);
-
-        imagebtn = (ImageButton)findViewById(R.id.imageButton_1);
-        imagebtn.setBackgroundColor(Color.TRANSPARENT);
-        imagebtn.setOnClickListener(myClickListener);
-
-        isGrasping = (TextView)findViewById(R.id.textView_1);
-
-        imageview_2 = (ImageView) findViewById(R.id.imageview_2);
-//      imageview_2.setImageResource(R.mipmap.icon_money);
-
-        imgbtn_setting = (ImageButton) findViewById(R.id.imgbtn_settings);
-        imgbtn_setting.setBackgroundColor(Color.TRANSPARENT);
-        imgbtn_setting.setImageResource(R.mipmap.icon_circularset);
-//        imgbtn_setting.setOnClickListener(onClickSetting);
-
-        imgbtn_share = (ImageButton) findViewById(R.id.imgbtn_share);
-        imgbtn_share.setBackgroundColor(Color.TRANSPARENT);
-        imgbtn_share.setImageResource(R.mipmap.icon_share);
-//        imgbtn_share.setOnClickListener(onClickShare);
-
-        imgbtn_help = (ImageButton) findViewById(R.id.imgbtn_help);
-        imgbtn_help.setBackgroundColor(Color.TRANSPARENT);
-        imgbtn_help.setImageResource(R.mipmap.icon_help);
-//        imgbtn_help.setOnClickListener(onClickHelp);
-
-        //四个文本控件
-         num_total = (TextView)findViewById(R.id.num_total);
-         num_today = (TextView)findViewById(R.id.num_today);
-         money_total = (TextView)findViewById(R.id.money_total);
-         money_today = (TextView)findViewById(R.id.money_today);
-
         //-----------------------new items--------------------------//
         //开关
         openWechat_switch = (Switch) findViewById(R.id.open_wechat_switch);
@@ -164,9 +115,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         //布局获取
         shouldOpenServer_layout = (RelativeLayout) findViewById(R.id.should_openServer);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
         //跑马灯文本
         marquee_text = (TextView) findViewById(R.id.marquee_text);
+
         //广播
        bor_intent = new Intent("junyou.com.hbtools.RECEIVER");
 
@@ -174,16 +125,37 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         showDatas();
         refrishMarqueeText();
 //        showLeftDays();
-        //获取设置中开关的状态
-//        Boolean watchOnLockFlag = sharedPreferences.getBoolean("pref_watch_notification", false);
-//        if (watchOnLockFlag)
-//        {
-//            Log.i("TAG", "trueeeeee");
-//        } else
-//        {
-//            Log.i("TAG", "falseeeeeee");
-//        }
         showDialog();
+        showSwitchStatus();
+    }
+
+    private void showSwitchStatus()
+    {
+        SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+        boolean wechat_data = sharedP.getBoolean("wechat_switch",true);
+        boolean qq_data = sharedP.getBoolean("qq_switch",true);
+
+        if (wechat_data) {
+            Log.i("TAG", "微信开");
+            openWechat_switch.setChecked(true);
+            wechat_auto_text.setText("自动抢");
+            wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
+        }else {
+            Log.i("TAG", "微信关");
+            openWechat_switch.setChecked(false);
+            wechat_auto_text.setText("自动抢   关闭");
+            wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
+        }
+
+        if (qq_data){
+            openQQ_switch.setChecked(true);
+            qq_auto_text.setText("自动抢");
+            qq_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
+        }else{
+            openQQ_switch.setChecked(false);
+            qq_auto_text.setText("自动抢   关闭");
+            qq_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
+        }
     }
 
     private void refrishMarqueeText()
@@ -222,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                 handler.sendMessage(message);
             }
         };
-        timer.schedule(task, 1000,8000);    //1秒之后执行，每5秒执行一次
+        timer.schedule(task, 10000,10000);    //10秒之后执行，每10秒执行一次
     }
 
     private void showDialog()
@@ -246,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //        dialog_settingShare.setContentView(view_3);
 //        dialog_settingShare.show();
     }
+
     //时间显示有问题，TODO
     private void showLeftDays()
     {
@@ -288,31 +261,13 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         Log.e("TAG", nowDate);
         Log.i("TAG", "存储日期:" + getSharedPreferences("config",MODE_PRIVATE).getString("date_mark",""));
     }
+
     private void showDatas()
     {
         SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
         Log.i("TAG", "初始总红包数量:"+ String.valueOf(sharedP.getInt("totalnum",0)));
         Log.i("TAG", "初始总资产:"+ sharedP.getString("totalmoney",""));
         //显示数据
-        /*
-        num_total.setText(String.valueOf(sharedP.getInt("totalnum",0)));
-        if ("".endsWith(sharedP.getString("totalmoney","")))
-        {
-            money_total.setText("0.00");
-        }else
-        {
-            money_total.setText(sharedP.getString("totalmoney",""));
-        }
-        //今天的数据
-        num_today.setText(String.valueOf(sharedP.getInt("totalnum",0)));
-        if ("".endsWith(sharedP.getString("totalmoney","")))
-        {
-            money_today.setText("0.00");
-        }else
-        {
-            money_today.setText(sharedP.getString("totalmoney",""));
-        }
-*/
         num_redpkt.setText(String.valueOf(sharedP.getInt("totalnum",0)));
         if ("".endsWith(sharedP.getString("totalmoney","")))
         {
@@ -387,9 +342,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             Log.i("TAG","service is on");
             Toast.makeText(getApplicationContext(), "抢红包神器已经开启", Toast.LENGTH_LONG).show();
-            imagebtn.setImageResource(R.mipmap.bat_sel_money);
-            isGrasping.setText(R.string.action_isGrasping);
-            imageview_2.setVisibility(View.VISIBLE);
             shouldOpenServer_layout.setVisibility(View.INVISIBLE);
             top_image.setImageResource(R.mipmap.top_img_radpacket_yes);
 
@@ -400,9 +352,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             Log.i("TAG","service is off");
             Toast.makeText(getApplicationContext(), "抢红包神器已经关闭", Toast.LENGTH_LONG).show();
-            imagebtn.setImageResource(R.mipmap.bat_nor_money);
-            isGrasping.setText(R.string.action_clickToGradp);
-            imageview_2.setVisibility(View.INVISIBLE);
             shouldOpenServer_layout.setVisibility(View.VISIBLE);
             top_image.setImageResource(R.mipmap.top_img_radpacket_on);
 
@@ -449,25 +398,47 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                 //服务已经开启
                 if (isChecked)
                 {
-                    //打开开关
-//                    RobMoney.getInstance().onStart();
                     //发送广播
                     bor_intent.putExtra("wechat_broadcast", true);
                     sendBroadcast(bor_intent);
 
                     wechat_auto_text.setText("自动抢");
                     wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
-                    sharedPreferences.edit().putBoolean("wechat_switch",true);
+                    //  存数据
+                    SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedP.edit();
+                    editor.putBoolean("wechat_switch",true);
+                    editor.commit();
+
+                    if (sharedP.getBoolean("wechat_switch",true))
+                    {
+                        Log.i("TAG", "手动设置了微信开");
+                    }else
+                    {
+                        Log.i("TAG", "不能手动设置微信开");
+                    }
+
                 }else
                 {
                     //关闭开关
-//                    RobMoney.getInstance().onDestroy();
                     bor_intent.putExtra("wechat_broadcast", false);
                     sendBroadcast(bor_intent);
 
                     wechat_auto_text.setText("自动抢   关闭");
                     wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
-                    sharedPreferences.edit().putBoolean("wechat_switch",false);
+
+                    SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedP.edit();
+                    editor.putBoolean("wechat_switch",false);
+                    editor.commit();
+
+                    if (!sharedP.getBoolean("wechat_switch",true))
+                    {
+                        Log.i("TAG", "手动设置了微信关");
+                    }else
+                    {
+                        Log.i("TAG", "不能手动设置微信关");
+                    }
                 }
             }else
             {
@@ -481,12 +452,21 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     }
                     wechat_auto_text.setText("自动抢   关闭");
                     wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
-                    sharedPreferences.edit().putBoolean("wechat_switch",false);
+
+                    SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedP.edit();
+                    editor.putBoolean("wechat_switch",true);
+                    editor.commit();
+
                 }else
                 {
                     wechat_auto_text.setText("自动抢   关闭");
                     wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
-                    sharedPreferences.edit().putBoolean("wechat_switch",false);
+
+                    SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedP.edit();
+                    editor.putBoolean("wechat_switch",false);
+                    editor.commit();
                 }
             }
         }
@@ -504,7 +484,12 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
                     qq_auto_text.setText("自动抢");
                     qq_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
-                    sharedPreferences.edit().putBoolean("qq_switch",true);
+
+                    SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedP.edit();
+                    editor.putBoolean("qq_switch",true);
+                    editor.commit();
+
                 }else
                 {
                     bor_intent.putExtra("qq_broadcast", false);
@@ -512,7 +497,12 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
                     qq_auto_text.setText("自动抢   关闭");
                     qq_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
-                    sharedPreferences.edit().putBoolean("qq_switch",false);
+
+                    SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedP.edit();
+                    editor.putBoolean("qq_switch",false);
+                    editor.commit();
+
                 }
             }else
             {
@@ -525,12 +515,22 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     }
                     qq_auto_text.setText("自动抢   关闭");
                     qq_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
-                    sharedPreferences.edit().putBoolean("qq_switch",false);
+
+                    SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedP.edit();
+                    editor.putBoolean("qq_switch",true);
+                    editor.commit();
+
                 }else
                 {
                     qq_auto_text.setText("自动抢   关闭");
                     qq_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
-                    sharedPreferences.edit().putBoolean("qq_switch",false);
+
+                    SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedP.edit();
+                    editor.putBoolean("qq_switch",false);
+                    editor.commit();
+
                 }
             }
 
@@ -570,6 +570,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 */
         }
     }
+
     //右下角获取更多天数按钮
     public void getMoreTime(View view)
     {
@@ -577,6 +578,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         if (null != dialog_openShare)
             dialog_openShare.show();
     }
+
     public void openServiceClick(View view)
     {
         Log.i("TAG", "点击打开系统设置");
@@ -595,6 +597,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             dialog_openSvs.dismiss();
         }
     }
+
     public void closeOpenServiceClick(View view)
     {
         Log.i("TAG", "点击关闭系统设置提示");
@@ -603,6 +606,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             dialog_openSvs.dismiss();
         }
     }
+
     public void closeOpenShare(View view)
     {
         if (null != dialog_openShare)
@@ -615,14 +619,17 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     {
         Log.i("TAG", "点击分享到朋友圈");
     }
+
     public void shareWeiXinClick(View view)
     {
         Log.i("TAG", "点击分享到微信");
     }
+
     public void shareQQClick(View view)
     {
         Log.i("TAG", "点击分享到QQ");
     }
+
     public void shareWeiboClick(View view)
     {
         Log.i("TAG", "点击分享到微博");

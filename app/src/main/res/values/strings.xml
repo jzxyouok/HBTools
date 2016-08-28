@@ -22,11 +22,11 @@
     <string name="action_clickToGradp">点击按钮开始抢红包</string>
     <string name="title_activity_setting">设置</string>
 
-    <string name="marquee_word_1">喜报:恭喜尾号为X4125的用户抢到14752个红包,总金额5675129.95元</string>
-    <string name="marquee_word_2">喜报:恭喜尾号为X9356的用户抢到10240个红包,总金额354011.62元</string>
-    <string name="marquee_word_3">喜报:恭喜尾号为X7563的用户抢到9562个红包,总金额260452.01元</string>
-    <string name="marquee_word_4">喜报:恭喜尾号为X4546的用户抢到6015个红包,总金额156320.32元</string>
-    <string name="marquee_word_5">喜报:恭喜尾号为X7834的用户抢到4641个红包,总金额95632.45元</string>
+    <string name="marquee_word_1">喜报:恭喜尾号为4125的用户抢到14752个红包,总金额5675129.95元</string>
+    <string name="marquee_word_2">喜报:恭喜尾号为9356的用户抢到10240个红包,总金额354011.62元</string>
+    <string name="marquee_word_3">喜报:恭喜尾号为7563的用户抢到9562个红包,总金额260452.01元</string>
+    <string name="marquee_word_4">喜报:恭喜尾号为4546的用户抢到6015个红包,总金额156320.32元</string>
+    <string name="marquee_word_5">喜报:恭喜尾号为7834的用户抢到4641个红包,总金额95632.45元</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

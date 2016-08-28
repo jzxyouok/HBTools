@@ -49,7 +49,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     private String currentActivityName = WECHAT_LUCKMONEY_GENERAL_ACTIVITY;
 
     private boolean mMutex = false, mListMutex = false, mChatMutex = false;
-        private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
     private HongbaoSignature signature = new HongbaoSignature();
     private PowerUtil powerUtil;
     private AccessibilityNodeInfo rootNodeInfo, mReceiveNode, mUnpackNode;
@@ -59,9 +59,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
     //四个标签的存储字符
     private String mTotalNum = "totalnum";
-    private String mTotalNumToday = "totalnumtoday";
     private String mTotalMoney = "totalmoney";
-    private String mTotalMoneyToday = "totalmoneytoday";
 
     //-----------[QQ红包]---------------//
     static final String QQ_HONGBAO_TEXT_KEY = "[QQ红包]";
@@ -92,11 +90,11 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         public void onReceive(Context context, Intent intent) {
             //拿到进度，更新UI
             mIsWeChatOn = intent.getBooleanExtra("wechat_broadcast", true);
-            int v_1 = mIsWeChatOn==true ? 1:0;
+            String v_1 = mIsWeChatOn==true ? "可接收":"不可接收";
             Log.i("TAG", "微信消息:" + v_1);
 
             mIsQQOn = intent.getBooleanExtra("qq_broadcast",true);
-            int v_2 = mIsQQOn == true ? 1:0;
+            String v_2 = mIsQQOn == true ? "可接收":"不可接收";
             Log.i("TAG", "qq消息" + v_2);
         }
     }
@@ -451,7 +449,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 {
                     Log.i("TAG", "红包的钱:"+info.getParent().getChild(2).getText().toString());
 
-//                    String mm = sharedPreferences.getString(mTotalMoney,"");
                     SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
                     String mm =  sharedP.getString(mTotalMoney,"");
                     DecimalFormat decimalFormat=new DecimalFormat("#0.00");
@@ -470,8 +467,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                         editor.putString(mTotalMoney,result_1);
                         editor.commit();
                         //写到主页上的标签上
-                        MainActivity.getInstance().money_total.setText(result_1);
-                        MainActivity.getInstance().money_today.setText(result_1);
                         MainActivity.getInstance().num_money.setText(result_1);
                     }else
                     {
@@ -482,8 +477,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                         editor.putString(mTotalMoney,neww_1);
                         editor.commit();
                         //写到主页上的标签上
-                        MainActivity.getInstance().money_total.setText(neww_1);
-                        MainActivity.getInstance().money_today.setText(neww_1);
                         MainActivity.getInstance().num_money.setText(neww_1);
                     }
 
@@ -643,6 +636,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 //处理普通红包
                 cellNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 Log.i("TAG","拆开普通红包");
+
                 //处理口令红包
                 if (cellNode.getText().toString().equals(QQ_HONG_BAO_PASSWORD))
                 {
@@ -751,9 +745,9 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (info.getClassName().toString().equals("android.widget.Button") && info.getText().toString().equals("发送"))
             {
                 //点击发送消息
-                Log.i("TAG","点击发送消息");
                 info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-               // performGlobalAction(GLOBAL_ACTION_BACK);
+                Log.i("TAG","点击发送消息");
+                // performGlobalAction(GLOBAL_ACTION_BACK);
             }
 
         } else
@@ -775,10 +769,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         SharedPreferences.Editor editor = sharedP.edit();
         editor.putInt(mTotalNum,nowNum);
         editor.commit();
-
         Log.i("TAG", "抢到总共:"+ nowNum + "个红包");
-       MainActivity.getInstance().num_total.setText(nowNum + "");
-        MainActivity.getInstance().num_today.setText(nowNum + "");
         MainActivity.getInstance().num_redpkt.setText(nowNum + "");
     }
 }
