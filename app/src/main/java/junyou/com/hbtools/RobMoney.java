@@ -79,8 +79,8 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
     //广播
     private MsgReceiver msgReceiver;
-    boolean mIsWeChatOn = true;
-    boolean mIsQQOn = true;
+    public boolean mIsWeChatOn = true;
+    public boolean mIsQQOn = true;
     /**
      * 广播接收器
      */
@@ -89,12 +89,12 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         @Override
         public void onReceive(Context context, Intent intent) {
             //拿到进度，更新UI
-            mIsWeChatOn = intent.getBooleanExtra("wechat_broadcast", true);
-            String v_1 = mIsWeChatOn==true ? "可接收":"不可接收";
+            RobMoney.getInstance().mIsWeChatOn = intent.getBooleanExtra("wechat_broadcast", true);
+            String v_1 = RobMoney.getInstance().mIsWeChatOn==true ? "可接收":"不可接收";
             Log.i("TAG", "微信消息:" + v_1);
 
-            mIsQQOn = intent.getBooleanExtra("qq_broadcast",true);
-            String v_2 = mIsQQOn == true ? "可接收":"不可接收";
+            RobMoney.getInstance().mIsQQOn = intent.getBooleanExtra("qq_broadcast",true);
+            String v_2 = RobMoney.getInstance().mIsQQOn == true ? "可接收":"不可接收";
             Log.i("TAG", "qq消息" + v_2);
         }
     }
@@ -110,11 +110,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("junyou.com.hbtools.RECEIVER");
         registerReceiver(msgReceiver, intentFilter);
-    }
-
-    public RobMoney()
-    {
-
     }
 
     public static RobMoney getInstance()
@@ -135,15 +130,24 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             Log.i("TAG", "不能抢红包了，关闭了红包助手");
             return;
         }
+
+        //test
+/*
+        String v_1 = mIsWeChatOn==true ? "可接收":"不可接收";
+        Log.i("TAG", "Rob微信消息:" + v_1);
+        String v_2 = mIsQQOn == true ? "可接收":"不可接收";
+        Log.i("TAG", "Robqq消息" + v_2);
+*/
         setCurrentActivityName(event);
-	        /* 检测通知消息 */
+        /* 检测通知消息 */
         if (!mMutex)
         {
             //是否是红包的判断，若是红包就打开消息栏进入该软件，若不是红包直接返回
             if (watchNotifications(event)) return;
             //若是红包，执行点击红包的操作
             if(openQQHongbao(event)) return;
-            if (openWeChatHongbao(event)) return;	//监视微信（貌似这个方法没作用）
+            //监视微信（貌似这个方法没作用）
+            if (openWeChatHongbao(event)) return;
             mListMutex = false;
         }
         if (!mChatMutex)
@@ -233,36 +237,37 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             return false;
         }
         Log.i("TAG","通知栏有消息!!!");
-        // Not a hongbao
-        String tip = event.getText().toString();
-        if (tip.contains(WECHAT_NOTIFICATION_TIP) || tip.contains(QQ_HONGBAO_TEXT_KEY))
-        {
-            Log.i("TAG","是红包~~~");
-            mIsEnterWeChatList = true;
-            if (event.getParcelableData() == null || !(event.getParcelableData() instanceof Notification))
-            {
-                return false;
-            }
 
-            Parcelable parcelable = event.getParcelableData();
-            if (parcelable instanceof Notification)
+        String tip = event.getText().toString();
+//        if (tip.contains(WECHAT_NOTIFICATION_TIP))
+        if (tip.contains(WECHAT_NOTIFICATION_TIP) || tip.contains(QQ_HONGBAO_TEXT_KEY))
             {
-                Notification notification = (Notification) parcelable;
-                try {
-                    /* 清除signature,避免进入会话后误判 */
-                    signature.cleanSignature();
-                    notification.contentIntent.send();
-                } catch (PendingIntent.CanceledException e)
+                Log.i("TAG","是红包~~~");
+                mIsEnterWeChatList = true;
+                if (event.getParcelableData() == null || !(event.getParcelableData() instanceof Notification))
                 {
-                    e.printStackTrace();
+                    return false;
                 }
+
+                Parcelable parcelable = event.getParcelableData();
+                if (parcelable instanceof Notification)
+                {
+                    Notification notification = (Notification) parcelable;
+                    try {
+                    /* 清除signature,避免进入会话后误判 */
+                        signature.cleanSignature();
+                        notification.contentIntent.send();
+                    } catch (PendingIntent.CanceledException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                return true;
             }
-            return true;
-        }
-        else
-        {
-            Log.i("TAG","不是红包");
-        }
+            else
+            {
+                Log.i("TAG","不是红包");
+            }
 
         return true;
     }

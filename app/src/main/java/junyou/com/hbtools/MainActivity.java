@@ -148,10 +148,12 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         }
 
         if (qq_data){
+            Log.i("TAG", "QQ开");
             openQQ_switch.setChecked(true);
             qq_auto_text.setText("自动抢");
             qq_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
         }else{
+            Log.i("TAG", "QQ关");
             openQQ_switch.setChecked(false);
             qq_auto_text.setText("自动抢   关闭");
             qq_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
@@ -533,7 +535,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
                 }
             }
-
         }
     };
 
