@@ -442,19 +442,24 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isServiceEnabled())
             {
+                //服务已经开启
                 if (isChecked)
                 {
+                    //打开开关
+//                    RobMoney.getInstance().startService();
                     wechat_auto_text.setText("自动抢");
                     wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
                     sharedPreferences.edit().putBoolean("wechat_switch",true);
                 }else
                 {
+                    //关闭开关
                     wechat_auto_text.setText("自动抢   关闭");
                     wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextblue));
                     sharedPreferences.edit().putBoolean("wechat_switch",false);
                 }
             }else
             {
+                //服务已经关闭
                 if (isChecked)
                 {
                     //未开启服务 弹出提示，再进入设置

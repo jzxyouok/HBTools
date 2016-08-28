@@ -2,6 +2,7 @@ package junyou.com.hbtools.fragments;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import junyou.com.hbtools.AboutActivity;
 import junyou.com.hbtools.MainActivity;
 import junyou.com.hbtools.R;
 import junyou.com.hbtools.SettingActivity;
@@ -39,13 +41,11 @@ public class SettingFragment extends PreferenceFragment
         instance = this;
         settingShare_Preference = (CheckBoxPreference) findPreference("pref_no_ad");
         //单击事件
-
         settingShare_Preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
         {
             public boolean onPreferenceClick(Preference preference)
             {
                 Log.i("TAG", "点击立即去广告");
-
                 View view_1 = LayoutInflater.from(SettingActivity.getInstance()).inflate(R.layout.dialog_settingshare, null);
                 dialog_setting_share = new Dialog(SettingActivity.getInstance(),R.style.common_dialog);
                 dialog_setting_share.setContentView(view_1);
@@ -66,6 +66,16 @@ public class SettingFragment extends PreferenceFragment
             }
         });
         */
+
+        //点击打开关于页面
+        Preference prefAbout = findPreference("pref_etc_about");
+        prefAbout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                Intent aboutAvt = new Intent(getActivity(),AboutActivity.class);
+                startActivity(aboutAvt);
+                return false;
+            }
+        });
     }
 
     public static SettingFragment getInstance()

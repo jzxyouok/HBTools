@@ -68,10 +68,7 @@ public class SettingActivity extends FragmentActivity
         if ("GeneralSettingsFragment".equals(fragId))
         {
             fragmentTransaction.replace(R.id.preferences_fragment, new SettingFragment());
-        } else if ("CommentSettingsFragment".equals(fragId)) {
-
         }
-
         fragmentTransaction.commit();
     }
 

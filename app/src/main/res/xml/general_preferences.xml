@@ -37,7 +37,7 @@
                 android:summary=""
                 android:layout="@layout/preference_checkbox"/>
         <Preference
-                android:key="pref_etc_issue"
+                android:key="pref_etc_about"
                 android:title="关于"
                 android:summary=""
                 android:layout="@layout/preference_checkbox"/>
