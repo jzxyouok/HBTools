@@ -32,14 +32,14 @@
             android:title=""
             android:layout="@layout/preference_category">
         <Preference
-                android:key="pref_etc_check_update"
+                android:key="pref_etc_limit"
                 android:title="红包权限设置"
-                android:summary=""
-                android:layout="@layout/preference_checkbox"/>
+                android:summary="在系统设置里打开或关闭红包快手"
+                android:layout="@layout/preference_checkboxarrow"/>
         <Preference
                 android:key="pref_etc_about"
                 android:title="关于"
-                android:summary=""
-                android:layout="@layout/preference_checkbox"/>
+                android:summary="进一步了解红包快手"
+                android:layout="@layout/preference_checkboxarrow"/>
     </PreferenceCategory>
 </PreferenceScreen>

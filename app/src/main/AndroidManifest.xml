@@ -30,7 +30,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".RobMoney"
@@ -48,11 +49,16 @@
 
         <activity
             android:name=".SettingActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_setting"
             android:theme="@style/notitle" />
-        <activity android:name=".helpActivity" />
-        <activity android:name=".AboutActivity" />
-        <activity android:name=".WebViewActivity"></activity>
+        <activity android:name=".helpActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".AboutActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".WebViewActivity"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

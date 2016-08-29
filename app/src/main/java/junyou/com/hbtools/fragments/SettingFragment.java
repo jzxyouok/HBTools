@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,7 +52,7 @@ public class SettingFragment extends PreferenceFragment
                 dialog_setting_share.setContentView(view_1);
                 dialog_setting_share.show();
                 //下载骏游连连看后设置为true
-//                settingShare_Preference.setChecked(false);
+                settingShare_Preference.setChecked(false);
                 return false;
             }
         });
@@ -73,6 +74,16 @@ public class SettingFragment extends PreferenceFragment
             public boolean onPreferenceClick(Preference preference) {
                 Intent aboutAvt = new Intent(getActivity(),AboutActivity.class);
                 startActivity(aboutAvt);
+                return false;
+            }
+        });
+
+        //点击红包权限设置 打开系统设置
+        Preference prefSetting = findPreference("pref_etc_limit");
+        prefSetting.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                Intent accessibleIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                startActivity(accessibleIntent);
                 return false;
             }
         });

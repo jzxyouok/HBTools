@@ -2,14 +2,22 @@ package junyou.com.hbtools;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +37,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -623,23 +632,65 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             dialog_openShare.dismiss();
         }
+        if (isWeixinAvilible(this))
+        {
+            Bitmap bt= BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher);
+            final Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bt, null,null));
+            Intent intent = new Intent();
+            ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
+
+            intent.setComponent(comp);
+            intent.setAction("android.intent.action.SEND");
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.putExtra("Kdescription", "红包快手，让红包来的容易点~");
+            startActivity(intent);
+        }else
+        {
+            Toast.makeText(getApplicationContext(), "您没有安装微信", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void shareWeiXinClick(View view)
     {
-        Log.i("TAG", "点击分享到微信");
+        Log.i("TAG", "点击分享给微信朋友");
         if (null != dialog_openShare)
         {
             dialog_openShare.dismiss();
+        }
+        if (isWeixinAvilible(this))
+        {
+            Intent intent = new Intent(Intent.ACTION_SEND); // 启动分享发送的属性
+            intent.setType("text/plain");                   // 分享发送的数据类型
+            String pakName = "com.tencent.mm";              //微信
+            intent.setPackage(pakName);
+            intent.putExtra(Intent.EXTRA_TEXT, "红包快手，让红包来的容易点~"); // 分享的内容
+            this.startActivity(Intent.createChooser(intent, ""));// 目标应用选择对话框的标题;
+        }else
+        {
+            Toast.makeText(getApplicationContext(), "您没有安装微信", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void shareQQClick(View view)
     {
-        Log.i("TAG", "点击分享到QQ");
+        Log.i("TAG", "点击分享给QQ好友");
         if (null != dialog_openShare)
         {
             dialog_openShare.dismiss();
+        }
+        if (isQQAvilible(this))
+        {
+            Intent intent = new Intent(Intent.ACTION_SEND); // 启动分享发送的属性
+            intent.setType("text/plain");                   // 分享发送的数据类型
+//        String pakName = "com.qzone";                   //qqzone
+            String pakName = "com.tencent.mobileqq";      //qq
+            intent.setPackage(pakName);
+            intent.putExtra(Intent.EXTRA_TEXT, "红包快手，让红包来的容易点~"); // 分享的内容
+            this.startActivity(Intent.createChooser(intent, ""));// 目标应用选择对话框的标题;
+        }else
+        {
+            Toast.makeText(getApplicationContext(), "您没有安装手机QQ", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -650,5 +701,68 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             dialog_openShare.dismiss();
         }
+        if (isSinaWeBoAvilible(this))
+        {
+            Intent intent = new Intent(Intent.ACTION_SEND); // 启动分享发送的属性
+            intent.setType("text/plain");                   // 分享发送的数据类型
+            String pakName = "com.sina.weibo";              //微博
+            intent.setPackage(pakName);
+            intent.putExtra(Intent.EXTRA_TEXT, "红包快手，让红包来的容易点~"); // 分享的内容
+            this.startActivity(Intent.createChooser(intent, ""));// 目标应用选择对话框的标题;
+        }else
+        {
+            Toast.makeText(getApplicationContext(), "您没有安装新浪微博", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isWeixinAvilible(Context context)
+    {
+        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
+        if (pinfo != null) {
+            for (int i = 0; i < pinfo.size(); i++)
+            {
+                String pn = pinfo.get(i).packageName;
+                if (pn.equals("com.tencent.mm"))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isQQAvilible(Context context)
+    {
+        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
+        if (pinfo != null) {
+            for (int i = 0; i < pinfo.size(); i++)
+            {
+                String pn = pinfo.get(i).packageName;
+                if (pn.equals("com.tencent.mobileqq"))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isSinaWeBoAvilible(Context context)
+    {
+        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
+        if (pinfo != null) {
+            for (int i = 0; i < pinfo.size(); i++)
+            {
+                String pn = pinfo.get(i).packageName;
+                if (pn.equals("com.sina.weibo"))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
