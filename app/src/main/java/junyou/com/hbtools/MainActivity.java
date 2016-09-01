@@ -352,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         if (isServiceEnabled())
         {
             Log.i("TAG","service is on");
-            Toast.makeText(getApplicationContext(), "红包快手已经开启", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "红包快手已经开启", Toast.LENGTH_SHORT).show();
             shouldOpenServer_layout.setVisibility(View.INVISIBLE);
             top_image.setImageResource(R.mipmap.top_img_radpacket_yes);
 
@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         } else
         {
             Log.i("TAG","service is off");
-            Toast.makeText(getApplicationContext(), "红包快手已经关闭", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "红包快手已经关闭", Toast.LENGTH_SHORT).show();
             shouldOpenServer_layout.setVisibility(View.VISIBLE);
             top_image.setImageResource(R.mipmap.top_img_radpacket_on);
 
@@ -381,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //                startActivity(accessibleIntent);
             } catch (Exception e)
             {
-                Toast.makeText(getApplicationContext(), "遇到一些问题,请手动打开系统设置>辅助服务>微信红包助手", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "遇到一些问题,请手动打开系统设置>辅助服务>微信红包助手", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
@@ -599,7 +599,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             startActivity(accessibleIntent);
         } catch (Exception e)
         {
-            Toast.makeText(getApplicationContext(), "遇到一些问题,请手动打开系统设置>辅助服务>微信红包助手", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "遇到一些问题,请手动打开系统设置>辅助服务>微信红包助手", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
         if (null != dialog_openSvs)

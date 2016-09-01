@@ -26,8 +26,10 @@ import junyou.com.hbtools.SettingActivity;
 public class SettingFragment extends PreferenceFragment
 {
     private CheckBoxPreference settingShare_Preference;
+    private CheckBoxPreference suopingGrasp_Preference;
 
     public Dialog dialog_setting_share;
+
     private static SettingFragment instance;
 
     public SettingFragment() {
@@ -41,7 +43,7 @@ public class SettingFragment extends PreferenceFragment
         setPrefListeners();
         instance = this;
         settingShare_Preference = (CheckBoxPreference) findPreference("pref_no_ad");
-        //单击事件
+        //点击立即去广告
         settingShare_Preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
         {
             public boolean onPreferenceClick(Preference preference)
@@ -57,16 +59,26 @@ public class SettingFragment extends PreferenceFragment
             }
         });
 
-        //开关按钮事件
+        //点击锁屏抢红包
+        suopingGrasp_Preference = (CheckBoxPreference) findPreference("pref_suoping_grasp");
         /*
-        settingShare_Preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener(){
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-
+        suopingGrasp_Preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick(Preference preference)
+            {
+                Log.i("TAG", "点击锁屏抢红包");
                 return false;
             }
         });
         */
+        suopingGrasp_Preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                //Log.i("TAG", "key:" + preference.getKey());       //"key:pref_suoping_grasp"
+                Log.i("TAG", "newValue:" + newValue.toString());    //"true false"
+                return true;
+            }
+        });
 
         //点击打开关于页面
         Preference prefAbout = findPreference("pref_etc_about");

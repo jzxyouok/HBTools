@@ -19,6 +19,12 @@
                 <!--android:layout="@layout/preference_checkbox"-->
                 <!--android:defaultValue="false"/>-->
         <CheckBoxPreference
+            android:key="pref_suoping_grasp"
+            android:title="锁屏抢红包"
+            android:summary="锁屏后不能有任何密码，否则不能锁屏抢红包哦"
+            android:layout="@layout/preference_checkbox"
+            android:defaultValue="true"/>
+        <CheckBoxPreference
             android:key="pref_no_ad"
             android:title="立即去广告"
             android:summary="开启无广告模式"
