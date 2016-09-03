@@ -686,15 +686,37 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 //        Log.i("TAG","监听QQ");
         if (mListMutex) return false;
         mListMutex = true;
-
         this.rootNodeInfo_1 = event.getSource();
         if (rootNodeInfo_1 == null)
         {
             return false;
         }
+        mLuckyMoneyReceived_1 = false;
         mReceiveNode_1 = null;
-        checkNodeInfo();
-        // checkKey();
+
+//        checkNodeInfo();
+        /* 聊天会话窗口，遍历节点匹配“点击拆开”，“口令红包”，“点击输入口令” */
+        List<AccessibilityNodeInfo> nodes1 = this.findAccessibilityNodeInfosByTexts(this.rootNodeInfo_1, new String[]{
+                QQ_DEFAULT_CLICK_OPEN, QQ_HONG_BAO_PASSWORD, QQ_CLICK_TO_PASTE_PASSWORD});
+
+        if (!nodes1.isEmpty())
+        {
+            String nodeId = Integer.toHexString(System.identityHashCode(this.rootNodeInfo_1));
+//            Log.i("TAG", "nodeId:"+nodeId + "  lastID:" + lastFetchedHongbaoId);
+            if (!nodeId.equals(lastFetchedHongbaoId))
+            {
+                Log.i("TAG", "有QQ红包字眼出现");
+                mLuckyMoneyReceived_1 = true;
+                mReceiveNode_1 = nodes1;
+            }else
+            {
+                return false;
+            }
+        }else
+        {
+            return  false;
+        }
+
         /* 如果已经接收到红包并且还没有戳开 */
         if (mLuckyMoneyReceived_1 && (mReceiveNode_1 != null))
         {
@@ -708,38 +730,89 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                     return false;
                 }
 
+//                if (findReturnInfo()) {
+//                    //若有 '已拆开' 或 '口令红包已拆开' 字样，则返回
+//                    return  false;
+//                }
                 lastFetchedHongbaoId = id;
                 lastFetchedTime = now;
 
                 AccessibilityNodeInfo cellNode = mReceiveNode_1.get(size - 1);
-                if (cellNode.getText().toString().equals("口令红包已拆开"))
+                if (null != cellNode)
                 {
-                    return false;
+                    if (cellNode.getText().toString().equals("口令红包已拆开"))
+                    {
+                        Log.i("TAG", "红包口令已拆开");
+                        return false;
+                    }else
+                    {
+                        //处理普通红包
+                        Log.i("TAG","拆开普通红包");
+                        cellNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    }
                 }
-                //处理普通红包
-                cellNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-
-                Log.i("TAG","拆开普通红包");
 
                 //处理口令红包
                 if (cellNode.getText().toString().equals(QQ_HONG_BAO_PASSWORD))
                 {
+
                     AccessibilityNodeInfo rowNode = getRootInActiveWindow();
                     if (rowNode == null)
                     {
-//                        gotoDeskTop();
                         return false;
                     } else
                     {
+                        Log.i("TAG", "口令红包");
                         recycle(rowNode);
                     }
                 }
                 Log.i("TAG", "-----------结束------------");
                 mLuckyMoneyReceived_1 = false;
-
             }
         }
         return false;
+    }
+
+    private boolean findReturnInfo()
+    {
+        //有"已拆开" 或 '口令红包已拆开' 返回true
+        if (rootNodeInfo_1 != null)
+        {
+            List<AccessibilityNodeInfo> list = rootNodeInfo_1.findAccessibilityNodeInfosByText("已拆开");
+            if (!list.isEmpty())
+            {
+                for (int j = list.size() - 1; j >= 0; j--) {
+                    AccessibilityNodeInfo opened = list.get(j);
+                    if (opened.getClassName().equals("android.widget.TextView"))
+                    {
+                        if (opened.getText().toString().equals("已拆开") || opened.getText().toString().equals("口令红包已拆开"))
+                        {
+//                            Log.i("TAG",   j+ ": "+ opened.getClassName() + "文字："+ opened.getText().toString());
+                            return  true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 获取抢到的钱数
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private void getMoney(AccessibilityNodeInfo nodeInfo)
+    {
+        List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByViewId("com.tencent.mobileqq:id/hb_count_tv");// 找到“元”关键字的节点
+        if (!list.isEmpty()) {
+            for (int i = list.size() - 1; i >= 0; i--)
+            {
+                String money = (String) list.get(i).getText();
+                Log.i("TAG", "---------------你抢到了：" + money + "元");
+            }
+        } else {
+            Log.i("TAG", "---------------来晚了，红包已被抢完！");
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -757,10 +830,11 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
         if (!nodes1.isEmpty())
         {
-            Log.i("TAG", "有QQ红包字眼出现");
+
             String nodeId = Integer.toHexString(System.identityHashCode(this.rootNodeInfo_1));
             if (!nodeId.equals(lastFetchedHongbaoId))
             {
+                Log.i("TAG", "有QQ红包字眼出现");
                 mLuckyMoneyReceived_1 = true;
                 mReceiveNode_1 = nodes1;
             }
