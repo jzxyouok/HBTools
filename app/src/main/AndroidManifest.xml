@@ -4,12 +4,14 @@
     android:versionCode="1"
     android:versionName="1.0.0">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.DEVICE_POWER"/>
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
@@ -30,8 +32,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".RobMoney"
@@ -49,14 +52,24 @@
 
         <activity
             android:name=".SettingActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_setting"
+            android:screenOrientation="portrait"
             android:theme="@style/notitle" />
-        <activity android:name=".helpActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".AboutActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".WebViewActivity"
+        <activity
+            android:name=".helpActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AboutActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".WebViewActivity"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".NullLockActivity"
+            android:launchMode="singleInstance"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:screenOrientation="portrait">
         </activity>
     </application>

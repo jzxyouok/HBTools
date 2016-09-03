@@ -3,6 +3,7 @@ package junyou.com.hbtools;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.annotation.TargetApi;
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -15,8 +16,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.text.LoginFilter;
 import android.util.Log;
@@ -81,6 +84,11 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     private MsgReceiver msgReceiver;
     public boolean mIsWeChatOn = true;
     public boolean mIsQQOn = true;
+
+    //锁屏判断
+    private boolean isScreenOff;
+    private ScreenOnOffReceiver mReceiver;
+    Parcelable mParcelable;
     /**
      * 广播接收器
      */
@@ -96,6 +104,29 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             RobMoney.getInstance().mIsQQOn = intent.getBooleanExtra("qq_broadcast",true);
             String v_2 = RobMoney.getInstance().mIsQQOn == true ? "可接收":"不可接收";
             Log.i("TAG", "qq消息" + v_2);
+        }
+    }
+
+    /**
+     * 屏幕是否锁屏判断
+     */
+    class ScreenOnOffReceiver extends BroadcastReceiver {
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action=intent.getAction();
+            if (action.equals(Intent.ACTION_SCREEN_OFF)) {      //暗屏----
+                Log.i("TAG", "已经锁屏");
+                RobMoney.getInstance().isScreenOff = true;
+            }
+            else if (Intent.ACTION_SCREEN_ON.equals(action)) { //亮屏----
+                Log.i("TAG", "未锁屏");
+                RobMoney.getInstance().isScreenOff = false;
+            }
+//            else if (Intent.ACTION_USER_PRESENT.equals(action))
+//            {
+//                Log.i("TAG", "解屏");
+//            }
         }
     }
 
@@ -150,6 +181,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (openWeChatHongbao(event)) return;
             mListMutex = false;
         }
+
         if (!mChatMutex)
         {
             mChatMutex = true;
@@ -191,6 +223,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     }
 
     //观察QQ通知栏
+    /*
     private boolean qqNotification(AccessibilityEvent event)
     {
         if (event.getEventType() != AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED)
@@ -228,6 +261,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
         return true;
     }
+    */
 
     //观察通知栏的消息，查找[微信红包]或者[QQ红包关]关键字，打开通知栏消息
     private boolean watchNotifications(AccessibilityEvent event)
@@ -249,20 +283,34 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                     return false;
                 }
 
-                Parcelable parcelable = event.getParcelableData();
-                if (parcelable instanceof Notification)
+                Boolean lockScreenLockFlag = sharedPreferences.getBoolean("pref_suoping_grasp", true);
+                if (lockScreenLockFlag)
                 {
-                    Notification notification = (Notification) parcelable;
-                    try {
-                    /* 清除signature,避免进入会话后误判 */
-                        signature.cleanSignature();
-                        notification.contentIntent.send();
-                    } catch (PendingIntent.CanceledException e)
+                    /**
+                     * 不是锁屏
+                     * 是锁屏
+                     */
+                    mParcelable = event.getParcelableData();
+                    //解锁屏幕
+                    wakeAndUnlock(true);
+                    return true;
+                }else
+                {
+                    Parcelable parce = event.getParcelableData();
+                    if (parce instanceof Notification)
                     {
-                        e.printStackTrace();
+                        Notification notification = (Notification) parce;
+                        try {
+//                             清除signature,避免进入会话后误判
+                                signature.cleanSignature();
+                                notification.contentIntent.send();
+                            } catch (PendingIntent.CanceledException e)
+                            {
+                                e.printStackTrace();
+                            }
                     }
+                    return true;
                 }
-                return true;
             }
             else
             {
@@ -339,6 +387,16 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         //这里可以设置多个包名，监听多个应用
         info.packageNames = new String[]{"com.tencent.mobileqq","com.tencent.mm"};
         setServiceInfo(info);
+
+        //锁屏
+        IntentFilter filter=new IntentFilter();
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_USER_PRESENT);
+        filter.setPriority(Integer.MAX_VALUE);
+
+        mReceiver = new ScreenOnOffReceiver();
+        registerReceiver(mReceiver, filter);
     }
 
     @Override
@@ -346,7 +404,10 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     {
         this.powerUtil.handleWakeLock(false);
         //注销广播
+        instance = null;
         unregisterReceiver(msgReceiver);
+        unregisterReceiver(mReceiver);
+        mWeakLock.release();
         super.onDestroy();
     }
 
@@ -443,8 +504,8 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             mMutex = false;
             mLuckyMoneyPicked = false;
             mUnpackCount = 0;
-            performGlobalAction(GLOBAL_ACTION_BACK);            //点击返回键
             signature.commentString = generateCommentString();
+//            performGlobalAction(GLOBAL_ACTION_BACK);            //点击返回键
             //在这里累加钱
             List<AccessibilityNodeInfo> list = getRootInActiveWindow().findAccessibilityNodeInfosByText("元");
             if (!list.isEmpty())
@@ -487,8 +548,25 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
                 }
             }
-            Log.i("TAG", "手慢了");
+            gotoDeskTop();
+            if (mKeyguardLock != null )
+            {
+                Log.i("TAG", "锁屏");
+                mKeyguardLock.reenableKeyguard();   //锁屏
+            }
         }
+    }
+
+    /**
+     * 返回桌面
+     */
+    private void gotoDeskTop()
+    {
+        Log.i("TAG", "返回桌面");
+        Intent home = new Intent(Intent.ACTION_MAIN);
+        home.addCategory(Intent.CATEGORY_HOME);
+        home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(home);
     }
 
     //发送回复
@@ -640,6 +718,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 }
                 //处理普通红包
                 cellNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+
                 Log.i("TAG","拆开普通红包");
 
                 //处理口令红包
@@ -648,6 +727,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                     AccessibilityNodeInfo rowNode = getRootInActiveWindow();
                     if (rowNode == null)
                     {
+//                        gotoDeskTop();
                         return false;
                     } else
                     {
@@ -656,6 +736,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 }
                 Log.i("TAG", "-----------结束------------");
                 mLuckyMoneyReceived_1 = false;
+
             }
         }
         return false;
@@ -730,29 +811,29 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         return false;
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void recycle(AccessibilityNodeInfo info)
     {
         if (info.getChildCount() == 0)
         {
-//            Log.e(TAG, "child widget----------------------------" + info.getClassName());
-//            Log.e(TAG, "showDialog:" + info.canOpenPopup());
-//            Log.e(TAG, "Text：" + info.getText());
-//            Log.e(TAG, "windowId:" + info.getWindowId());
+//            Log.e("TAG", "child widget----------------------------" + info.getClassName());
+//            Log.e("TAG", "showDialog:" + info.canOpenPopup());
+//            Log.e("TAG", "Text：" + info.getText());
+//            Log.e("TAG", "windowId:" + info.getWindowId());
             if (info.getText() != null && info.getText().toString().equals(QQ_CLICK_TO_PASTE_PASSWORD))
             {
-                info.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 Log.i("TAG","点击输入口令");
+                info.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 //performGlobalAction(GLOBAL_ACTION_BACK);
-
             }
 
             if (info.getClassName().toString().equals("android.widget.Button") && info.getText().toString().equals("发送"))
             {
                 //点击发送消息
-                info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 Log.i("TAG","点击发送消息");
+                info.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 // performGlobalAction(GLOBAL_ACTION_BACK);
+//                gotoDeskTop();
             }
 
         } else
@@ -776,5 +857,67 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         editor.commit();
         Log.i("TAG", "抢到总共:"+ nowNum + "个红包");
         MainActivity.getInstance().num_redpkt.setText(nowNum + "");
+    }
+
+    //-------------------------------------------//
+    //锁屏、唤醒相关
+    private KeyguardManager mKeyguardManager ;
+    private KeyguardManager.KeyguardLock mKeyguardLock ;
+    private PowerManager mPowerManager;
+    private PowerManager.WakeLock mWeakLock;
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void wakeAndUnlock(boolean b) {
+        if(b) {
+            //获取电源管理器对象
+            Log.i("TAG", "wakeAndUnlock ");
+            //在屏幕休眠的状态下唤醒屏幕
+
+            if (mPowerManager == null) {
+                mPowerManager=(PowerManager) getSystemService(POWER_SERVICE);
+            }
+            //保持屏幕常亮
+            if (mWeakLock == null) {
+                mWeakLock = mPowerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP |PowerManager.FULL_WAKE_LOCK | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "WakeLock");
+            }
+            mWeakLock.acquire();
+            mWeakLock.release();
+
+            if (mParcelable instanceof Notification)
+            {
+                Notification notification = (Notification) mParcelable;
+                try {
+//                   清除signature,避免进入会话后误判
+                    signature.cleanSignature();
+                    notification.contentIntent.send();
+                } catch (PendingIntent.CanceledException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            //得到键盘锁管理器对象
+            if (mKeyguardManager == null) {
+                mKeyguardManager= (KeyguardManager)getSystemService(KEYGUARD_SERVICE);
+            }
+            if (mKeyguardLock == null) {    //初始化键盘锁，可以锁定或解开键盘锁
+                mKeyguardLock = mKeyguardManager.newKeyguardLock("Lock");
+            }
+
+            if (mKeyguardManager.isKeyguardLocked() && mKeyguardManager.isKeyguardSecure()) {
+                //解锁,这个解锁时为了隐藏输密码界面，如果没有密码，只用上面的自动nullactivity就可以了
+                //禁用显示键盘锁定
+                mKeyguardLock.disableKeyguard();
+            }
+        }else
+        {
+            if (mWeakLock != null) {
+//               锁屏
+//                Log.i("TAG", "锁屏");
+//                mKeyguardLock.reenableKeyguard();
+                //在屏幕点亮的状态下，使屏幕休眠。
+//                mWeakLock.release();
+            }
+        }
     }
 }

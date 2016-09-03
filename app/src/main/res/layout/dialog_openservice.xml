@@ -7,7 +7,6 @@
 <RelativeLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@mipmap/pop"
     android:layout_centerHorizontal="true"
     android:layout_centerVertical="true"
     android:id="@+id/open_service_layout">
@@ -23,15 +22,16 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:src="@mipmap/openserivce_tip"
-        android:layout_below="@+id/id_serivce_iamge"
-        android:layout_marginTop="10dp"/>
+        android:layout_alignParentTop="false"
+        android:layout_marginTop="300dp"
+        />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@mipmap/bat_pop_red"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/id_serivce_iamge"
-        android:layout_marginTop="70dp"
+        android:layout_alignParentTop="false"
+        android:layout_marginTop="360dp"
         android:onClick="openServiceClick"/>
 </RelativeLayout>
     <ImageView

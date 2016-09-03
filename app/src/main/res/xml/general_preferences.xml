@@ -21,7 +21,7 @@
         <CheckBoxPreference
             android:key="pref_suoping_grasp"
             android:title="锁屏抢红包"
-            android:summary="锁屏后不能有任何密码，否则不能锁屏抢红包哦"
+            android:summary="开启或关闭锁屏抢红包功能"
             android:layout="@layout/preference_checkbox"
             android:defaultValue="true"/>
         <CheckBoxPreference
@@ -32,20 +32,30 @@
             android:enabled="true"
             android:persistent="true"
             android:defaultValue="false"/>
+        <Preference
+            android:key="pref_etc_limit"
+            android:title="红包权限设置"
+            android:summary="在系统设置里打开或关闭红包快手"
+            android:layout="@layout/preference_checkboxarrow"/>
+        <Preference
+            android:key="pref_etc_about"
+            android:title="关于"
+            android:summary="进一步了解红包快手"
+            android:layout="@layout/preference_checkboxarrow"/>
     </PreferenceCategory>
 
-    <PreferenceCategory
-            android:title=""
-            android:layout="@layout/preference_category">
-        <Preference
-                android:key="pref_etc_limit"
-                android:title="红包权限设置"
-                android:summary="在系统设置里打开或关闭红包快手"
-                android:layout="@layout/preference_checkboxarrow"/>
-        <Preference
-                android:key="pref_etc_about"
-                android:title="关于"
-                android:summary="进一步了解红包快手"
-                android:layout="@layout/preference_checkboxarrow"/>
-    </PreferenceCategory>
+    <!--<PreferenceCategory-->
+            <!--android:title=""-->
+            <!--android:layout="@layout/preference_category">-->
+        <!--<Preference-->
+                <!--android:key="pref_etc_limit"-->
+                <!--android:title="红包权限设置"-->
+                <!--android:summary="在系统设置里打开或关闭红包快手"-->
+                <!--android:layout="@layout/preference_checkboxarrow"/>-->
+        <!--<Preference-->
+                <!--android:key="pref_etc_about"-->
+                <!--android:title="关于"-->
+                <!--android:summary="进一步了解红包快手"-->
+                <!--android:layout="@layout/preference_checkboxarrow"/>-->
+    <!--</PreferenceCategory>-->
 </PreferenceScreen>
