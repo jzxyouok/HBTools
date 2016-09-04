@@ -709,8 +709,8 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                         String oldString = info.getParent().getChild(3).getText().toString();
                         //过滤字符串
                         int isContinue = oldString.indexOf(":");
-                        int isContinue_1 = oldString.indexOf("交易");
-                        int isContinue_2 = oldString.indexOf("输入");     //这里过滤要求输入密码的，发红包的支付确认界面
+                        int isContinue_1 = oldString.indexOf("免密码");
+                        int isContinue_2 = oldString.indexOf("支付密码");     //这里过滤要求输入密码的，发红包的支付确认界面
                         if (isContinue <= 0 && isContinue_1 <= 0 && isContinue_2 <=0)
                         {
                             Log.i("TAG", "是正确的金额"+ info.getParent().getChild(3).getText().toString()+ "元");

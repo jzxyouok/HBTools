@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         if (wechat_data) {
             Log.i("TAG", "微信开");
             openWechat_switch.setChecked(true);
-            wechat_auto_text.setText("自动抢");
+            wechat_auto_text.setText("自动抢   开启");
             wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
         }else {
             Log.i("TAG", "微信关");
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         if (qq_data){
             Log.i("TAG", "QQ开");
             openQQ_switch.setChecked(true);
-            qq_auto_text.setText("自动抢");
+            qq_auto_text.setText("自动抢   开启");
             qq_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
         }else{
             Log.i("TAG", "QQ关");
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     bor_intent.putExtra("wechat_broadcast", true);
                     sendBroadcast(bor_intent);
 
-                    wechat_auto_text.setText("自动抢");
+                    wechat_auto_text.setText("自动抢   开启");
                     wechat_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
                     //  存数据
                     SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
@@ -493,7 +493,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     bor_intent.putExtra("qq_broadcast", true);
                     sendBroadcast(bor_intent);
 
-                    qq_auto_text.setText("自动抢");
+                    qq_auto_text.setText("自动抢   开启");
                     qq_auto_text.setTextColor(getResources().getColor(R.color.colortextyellow));
 
                     SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
