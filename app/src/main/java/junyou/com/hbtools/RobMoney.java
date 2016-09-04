@@ -3,6 +3,7 @@ package junyou.com.hbtools;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.annotation.TargetApi;
+import android.app.Instrumentation;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -23,12 +24,14 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.text.LoginFilter;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +56,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
     private boolean mMutex = false, mListMutex = false, mChatMutex = false;
     private SharedPreferences sharedPreferences;
-    private HongbaoSignature signature = new HongbaoSignature();
     private AccessibilityNodeInfo rootNodeInfo, mReceiveNode, mUnpackNode;
     private boolean mLuckyMoneyPicked, mLuckyMoneyReceived;
     private int mUnpackCount = 0;
@@ -211,10 +213,10 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
             CharSequence contentDescription = nodeToClick.getContentDescription(); //从红包节点上获取的值
 
-            if (contentDescription != null && !signature.getContentDescription().equals(contentDescription))
+            if (contentDescription != null)
             {
+                Log.i("TAG", "first 打开红包");
                 nodeToClick.performAction(AccessibilityNodeInfo.ACTION_CLICK);		//自动打开红包
-                signature.setContentDescription(contentDescription.toString());
                 return true;
             }
         }
@@ -300,8 +302,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                     {
                         Notification notification = (Notification) parce;
                         try {
-//                             清除signature,避免进入会话后误判
-                                signature.cleanSignature();
                                 notification.contentIntent.send();
                             } catch (PendingIntent.CanceledException e)
                             {
@@ -388,6 +388,18 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
         mReceiver = new ScreenOnOffReceiver();
         registerReceiver(mReceiver, filter);
+
+        //返回键 返回两次
+        performGlobalAction(GLOBAL_ACTION_BACK);
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("TAG", "返回");
+                performGlobalAction(GLOBAL_ACTION_BACK);
+//                Instrumentation inst = new Instrumentation();
+//                inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+            }
+        },100);
     }
 
     @Override
@@ -459,17 +471,11 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     private void checkNodeInfo(int eventType)
     {
         if (this.rootNodeInfo == null) return;
-
-        if (signature.commentString != null)
-        {
-            signature.commentString = null;
-        }
-
         /* 聊天会话窗口，遍历节点匹配“领取红包”和"查看红包" */
         AccessibilityNodeInfo node1 = getTheLastNode(WECHAT_VIEW_OTHERS_CH, WECHAT_VIEW_SELF_CH);
         if (node1 != null && currentActivityName.contains(WECHAT_LUCKMONEY_GENERAL_ACTIVITY))
         {
-          Log.i("TAG","遍历聊天窗口");
+//          Log.i("TAG","遍历聊天窗口");
             mLuckyMoneyReceived = true;
             mReceiveNode = node1;
             return;
@@ -502,7 +508,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             mUnpackCount = 0;
             mUnpackNode = null;
             Log.i("TAG", "待抢红包为0。。。");
-            signature.commentString = generateCommentString();
             //在这里累加钱
             List<AccessibilityNodeInfo> list = getRootInActiveWindow().findAccessibilityNodeInfosByText("元");
             if (!list.isEmpty())
@@ -583,7 +588,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 {
                     bottom = bounds.bottom;
                     lastNode = tempNode;
-                    signature.others = text.equals(WECHAT_VIEW_OTHERS_CH);
                 }
             }
         }
@@ -627,26 +631,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (nodes != null && !nodes.isEmpty()) return true;
         }
         return false;
-    }
-
-    private String generateCommentString()
-    {
-        if (!signature.others) return null;
-
-        Boolean needComment = sharedPreferences.getBoolean("pref_comment_switch", false);//开启自动回复
-        if (!needComment) return null;
-
-        String[] wordsArray = sharedPreferences.getString("pref_comment_words", "").split(" +");    //自定义回复内容
-        if (wordsArray.length == 0) return null;
-
-        Boolean atSender = sharedPreferences.getBoolean("pref_comment_at", false);            //@发红包的人
-        if (atSender)
-        {
-            return "@" + signature.sender + " " + wordsArray[(int) (Math.random() * wordsArray.length)];
-        } else
-        {
-            return wordsArray[(int) (Math.random() * wordsArray.length)];
-        }
     }
 
     /**
@@ -980,8 +964,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             {
                 Notification notification = (Notification) mParcelable;
                 try {
-//                   清除signature,避免进入会话后误判
-                    signature.cleanSignature();
                     notification.contentIntent.send();
                 } catch (PendingIntent.CanceledException e)
                 {

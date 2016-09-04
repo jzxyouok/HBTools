@@ -16,14 +16,14 @@
         android:id="@+id/id_serivce_iamge"
         android:src="@mipmap/msg_pop_one"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp"/>
+        android:layout_centerVertical="true" />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:src="@mipmap/openserivce_tip"
         android:layout_alignParentTop="false"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="260dp"
         />
     <ImageView
         android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
         android:src="@mipmap/bat_pop_red"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="false"
-        android:layout_marginTop="360dp"
+        android:layout_marginTop="330dp"
         android:onClick="openServiceClick"/>
 </RelativeLayout>
     <ImageView
@@ -40,6 +40,6 @@
         android:layout_centerHorizontal="true"
         android:src="@mipmap/icon_close"
         android:onClick="closeOpenServiceClick"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="40dp"
         android:layout_below="@+id/open_service_layout"/>
 </RelativeLayout>
