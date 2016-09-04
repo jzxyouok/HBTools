@@ -2,12 +2,16 @@ package junyou.com.hbtools;
 
 import android.annotation.TargetApi;
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -16,6 +20,15 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import junyou.com.hbtools.fragments.SettingFragment;
 
@@ -138,11 +151,39 @@ public class SettingActivity extends FragmentActivity
     public void opendownloadClick(View view)
     {
         Log.i("TAG", "打开下载骏游连连看");
+        /*
+        //打开网页才能下载
         Intent webViewIntent = new Intent(this, WebViewActivity.class);
         webViewIntent.putExtra("title", "骏游科技");
 //        webViewIntent.putExtra("url", "http://www.zjhzjykj.com");
         webViewIntent.putExtra("url", "http://www.zjhzjykj.com/game/ShowClass.asp?ClassID=2");
         startActivity(webViewIntent);
         SettingFragment.getInstance().dialog_setting_share.dismiss();
+        */
+        //点击按钮直接下载
+        (new DownloadUtil()).enqueue("http://www.zjhzjykj.com/images/tgllx-daiji_3009-2.3.0-201605191729.apk", getApplicationContext());
+        SettingFragment.getInstance().dialog_setting_share.dismiss();
+    }
+
+    //打开APK
+    /*
+    private void openFile(File file) {
+        Log.e("OpenFile", file.getName());
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+        startActivity(intent);
+    }
+    */
+    public class DownloadUtil {
+        public void enqueue(String url, Context context) {
+            DownloadManager.Request r = new DownloadManager.Request(Uri.parse(url));
+            r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "tgllx-daiji_3009-2.3.0-201605191729.apk");
+            r.allowScanningByMediaScanner();
+            r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            DownloadManager dm = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
+            dm.enqueue(r);
+        }
     }
 }
