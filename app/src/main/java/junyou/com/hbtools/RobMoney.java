@@ -358,7 +358,9 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     public int onStartCommand(Intent intent,int flags,int startId)
     {
         Log.i("TAG","service onStartCommand");
-        return super.onStartCommand(intent, flags, startId);
+//        return super.onStartCommand(intent, flags, startId);
+        //防止服务被系统kill掉
+        return super.onStartCommand(intent, START_STICKY, startId);
     }
 
     @Override
