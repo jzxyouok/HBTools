@@ -54,7 +54,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     private boolean mMutex = false, mListMutex = false, mChatMutex = false;
     private SharedPreferences sharedPreferences;
     private HongbaoSignature signature = new HongbaoSignature();
-    private PowerUtil powerUtil;
     private AccessibilityNodeInfo rootNodeInfo, mReceiveNode, mUnpackNode;
     private boolean mLuckyMoneyPicked, mLuckyMoneyReceived;
     private int mUnpackCount = 0;
@@ -347,10 +346,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-
-        this.powerUtil = new PowerUtil(this);
-        Boolean watchOnLockFlag = sharedPreferences.getBoolean("pref_watch_on_lock", false);//是否息屏抢红包
-        this.powerUtil.handleWakeLock(watchOnLockFlag);
     }
 
     @Override
@@ -369,11 +364,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
-        if (key.equals("pref_watch_on_lock"))   //是否息屏抢红包
-        {
-            Boolean changedValue = sharedPreferences.getBoolean(key, false);
-           this.powerUtil.handleWakeLock(changedValue);
-        }
+
     }
 
      @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -402,9 +393,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     @Override
     public void onDestroy()
     {
-        this.powerUtil.handleWakeLock(false);
         //注销广播
-        instance = null;
         unregisterReceiver(msgReceiver);
         unregisterReceiver(mReceiver);
         mWeakLock.release();
@@ -417,10 +406,11 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     {
         this.rootNodeInfo = getRootInActiveWindow();
         if (rootNodeInfo == null) return;
+
         mReceiveNode = null;
         mUnpackNode = null;
-        checkNodeInfo(event.getEventType());
 
+        checkNodeInfo(event.getEventType());
         /* 如果已经接收到红包并且还没有戳开 */
         if (mLuckyMoneyReceived && !mLuckyMoneyPicked && (mReceiveNode != null) && mIsEnterWeChatList)
         {
@@ -433,8 +423,18 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         /* 如果戳开但还未领取 */
         if (mUnpackCount == 1 && (mUnpackNode != null))
         {
-            Log.i("TAG","打开了一个红包");     //监听抢到的红包个数
-            int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 1000;  //延时拆开红包
+            try {
+                Log.i("TAG","打开了红包。。。。");
+                mUnpackNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                addTotalNum();        //记录红包个数
+            } catch (Exception e) {
+                mMutex = false;
+                mLuckyMoneyPicked = false;
+                mUnpackCount = 0;
+            }
+            /*
+             //延时拆开红包
+            int delayFlag = sharedPreferences.getInt("pref_open_delay", 0) * 1000;
             new android.os.Handler().postDelayed(
                     new Runnable() {
                         public void run() {
@@ -446,10 +446,12 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                                 mMutex = false;
                                 mLuckyMoneyPicked = false;
                                 mUnpackCount = 0;
+                                Log.i("TAG","待抢红包归零");
                             }
                         }
                     },
                     delayFlag);
+            */
         }
     }
 
@@ -460,37 +462,28 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
         if (signature.commentString != null)
         {
-            sendComment();
             signature.commentString = null;
         }
 
         /* 聊天会话窗口，遍历节点匹配“领取红包”和"查看红包" */
-
-        AccessibilityNodeInfo node1 = (sharedPreferences.getBoolean("pref_watch_self", false)) ?//拆开自己发的红包
-                this.getTheLastNode(WECHAT_VIEW_OTHERS_CH, WECHAT_VIEW_SELF_CH) : this.getTheLastNode(WECHAT_VIEW_OTHERS_CH);
+        AccessibilityNodeInfo node1 = getTheLastNode(WECHAT_VIEW_OTHERS_CH, WECHAT_VIEW_SELF_CH);
         if (node1 != null && currentActivityName.contains(WECHAT_LUCKMONEY_GENERAL_ACTIVITY))
         {
-//            Log.i("TAG","聊天会话窗口，遍历节点匹配“领取红包”和查看红包");
-            String excludeWords = sharedPreferences.getString("pref_watch_exclude_words", "");  //屏蔽红包文字内容
-           // Log.i("TAG","excludeWords=="+ excludeWords);
-            if (this.signature.generateSignature(node1, excludeWords))
-            {
-                Log.i("TAG","进来了、、、、、、");
-                mLuckyMoneyReceived = true;
-                mReceiveNode = node1;
-            }
+          Log.i("TAG","遍历聊天窗口");
+            mLuckyMoneyReceived = true;
+            mReceiveNode = node1;
             return;
         }
 
         /* 戳开红包，红包还没抢完，遍历节点匹配“拆红包” */
-        AccessibilityNodeInfo node2 = findOpenButton(this.rootNodeInfo);
+        AccessibilityNodeInfo node2 = findOpenButton(rootNodeInfo);
         if (node2 != null &&
                 "android.widget.Button".equals(node2.getClassName()) &&
                 currentActivityName.contains(WECHAT_LUCKMONEY_RECEIVE_ACTIVITY))
         {
             mUnpackNode = node2;
             mUnpackCount += 1;
-            Log.i("TAG", "有拆红包关键字");
+            Log.i("TAG", "有拆红包关键字,待拆红包："+ mUnpackCount +"个");
             return;
         }
 
@@ -499,14 +492,17 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 WECHAT_BETTER_LUCK_CH, WECHAT_DETAILS_CH,
                 WECHAT_BETTER_LUCK_EN, WECHAT_DETAILS_EN, WECHAT_EXPIRES_CH);
 
-        if (mMutex && eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED && hasNodes
-                && (currentActivityName.contains(WECHAT_LUCKMONEY_DETAIL_ACTIVITY)
-                || currentActivityName.contains(WECHAT_LUCKMONEY_RECEIVE_ACTIVITY))) {
+        if (mMutex && eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+                hasNodes &&
+                (currentActivityName.contains(WECHAT_LUCKMONEY_DETAIL_ACTIVITY) ||
+                        currentActivityName.contains(WECHAT_LUCKMONEY_RECEIVE_ACTIVITY)))
+        {
             mMutex = false;
             mLuckyMoneyPicked = false;
             mUnpackCount = 0;
+            mUnpackNode = null;
+            Log.i("TAG", "待抢红包为0。。。");
             signature.commentString = generateCommentString();
-//            performGlobalAction(GLOBAL_ACTION_BACK);            //点击返回键
             //在这里累加钱
             List<AccessibilityNodeInfo> list = getRootInActiveWindow().findAccessibilityNodeInfosByText("元");
             if (!list.isEmpty())
@@ -549,6 +545,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
 
                 }
             }
+//            performGlobalAction(GLOBAL_ACTION_BACK);            //点击返回键
             gotoDeskTop();
             wakeAndUnlock(false);
         }
@@ -564,28 +561,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         home.addCategory(Intent.CATEGORY_HOME);
         home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(home);
-    }
-
-    //发送回复
-    private void sendComment()
-    {
-	 /*
-     try {
-         AccessibilityNodeInfo outNode =
-                 getRootInActiveWindow().getChild(0).getChild(0);
-         AccessibilityNodeInfo nodeToInput = outNode.getChild(outNode.getChildCount() - 1).getChild(0).getChild(1);
-
-         if ("android.widget.EditText".equals(nodeToInput.getClassName()))
-         {
-             Bundle arguments = new Bundle();
-             arguments.putCharSequence(AccessibilityNodeInfo
-                     .ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, signature.commentString);
-             nodeToInput.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments);
-         }
-     } catch (Exception e) {
-         // Not supported
-     }
-     */
     }
 
     private AccessibilityNodeInfo getTheLastNode(String... texts)
