@@ -65,13 +65,6 @@
             android:name=".WebViewActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity
-            android:name=".NullLockActivity"
-            android:launchMode="singleInstance"
-            android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:screenOrientation="portrait">
-        </activity>
     </application>
 
 </manifest>

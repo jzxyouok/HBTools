@@ -408,6 +408,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         unregisterReceiver(msgReceiver);
         unregisterReceiver(mReceiver);
         mWeakLock.release();
+        wakeAndUnlock(false);
         super.onDestroy();
     }
 
@@ -549,11 +550,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 }
             }
             gotoDeskTop();
-            if (mKeyguardLock != null )
-            {
-                Log.i("TAG", "锁屏");
-                mKeyguardLock.reenableKeyguard();   //锁屏
-            }
+            wakeAndUnlock(false);
         }
     }
 
@@ -683,7 +680,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public boolean openQQHongbao(AccessibilityEvent event)
     {
-//        Log.i("TAG","监听QQ");
         if (mListMutex) return false;
         mListMutex = true;
         this.rootNodeInfo_1 = event.getSource();
@@ -694,28 +690,96 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         mLuckyMoneyReceived_1 = false;
         mReceiveNode_1 = null;
 
+        int eventType = event.getEventType();
+        if (eventType== AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED ||eventType ==AccessibilityEvent.TYPE_VIEW_FOCUSED )
+        {
+            String className = String.valueOf(event.getClassName());
+//            Log.i("TAG", "窗口变化:" + className);
+//            if(className.equals("android.widget.FrameLayout"))
+            if(className.equals("cooperation.qwallet.plugin.QWalletPluginProxyActivity"))
+            {
+//                Log.i("TAG", "红包详情界面" + className);
+                List<AccessibilityNodeInfo> list = getRootInActiveWindow().findAccessibilityNodeInfosByText("元");
+                if (!list.isEmpty())
+                {
+//                    Log.i("TAG","有元字 size=" + list.size());
+                    for (AccessibilityNodeInfo info:list)
+                    {
+                        Log.i("TAG", info.getParent().getChild(3).getText().toString() + "元");
+                        String oldString = info.getParent().getChild(3).getText().toString();
+                        //过滤字符串
+                        int isContinue = oldString.indexOf(":");
+                        int isContinue_1 = oldString.indexOf("交易");
+                        int isContinue_2 = oldString.indexOf("输入");     //这里过滤要求输入密码的，发红包的支付确认界面
+                        if (isContinue <= 0 && isContinue_1 <= 0 && isContinue_2 <=0)
+                        {
+                            Log.i("TAG", "是正确的金额"+ info.getParent().getChild(3).getText().toString()+ "元");
+                            //在这里累积钱
+                            SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
+                            String mm =  sharedP.getString(mTotalMoney,"");
+                            DecimalFormat decimalFormat=new DecimalFormat("#0.00");
+                            if (!"".equals(mm))
+                            {
+                                //原来是非空的
+                                float oldd = Float.valueOf(mm);
+                                float neww = Float.valueOf(oldString);
+                                float result = oldd + neww;
+                                //保留两位小数
+                                String result_1=decimalFormat.format(result);
+
+                                Log.i("TAG", "oldd："+ mm);
+                                Log.i("TAG", "result："+ result_1);
+                                SharedPreferences.Editor editor = sharedP.edit();
+                                editor.putString(mTotalMoney,result_1);
+                                editor.commit();
+                                //写到主页上的标签上
+                                MainActivity.getInstance().num_money.setText(result_1);
+                            }else
+                            {
+                                //原来是空的
+                                float neww = Float.valueOf(oldString);
+                                String neww_1=decimalFormat.format(neww);
+                                SharedPreferences.Editor editor = sharedP.edit();
+                                editor.putString(mTotalMoney,neww_1);
+                                editor.commit();
+                                //写到主页上的标签上
+                                MainActivity.getInstance().num_money.setText(neww_1);
+                            }
+
+                            //返回桌面
+                            performGlobalAction(GLOBAL_ACTION_BACK);
+                            gotoDeskTop();
+                            wakeAndUnlock(false);
+                        }else
+                        {
+                            Log.i("TAG", "存在分号,是错误的金额");
+                            break;
+                        }
+                    }
+                }else
+                {
+                    Log.i("TAG","没有元字");
+                }
+            }
+        }
 //        checkNodeInfo();
         /* 聊天会话窗口，遍历节点匹配“点击拆开”，“口令红包”，“点击输入口令” */
         List<AccessibilityNodeInfo> nodes1 = this.findAccessibilityNodeInfosByTexts(this.rootNodeInfo_1, new String[]{
                 QQ_DEFAULT_CLICK_OPEN, QQ_HONG_BAO_PASSWORD, QQ_CLICK_TO_PASTE_PASSWORD});
 
-        if (!nodes1.isEmpty())
-        {
+        if (!nodes1.isEmpty()) {
             String nodeId = Integer.toHexString(System.identityHashCode(this.rootNodeInfo_1));
 //            Log.i("TAG", "nodeId:"+nodeId + "  lastID:" + lastFetchedHongbaoId);
-            if (!nodeId.equals(lastFetchedHongbaoId))
-            {
-                Log.i("TAG", "有QQ红包字眼出现");
+            if (!nodeId.equals(lastFetchedHongbaoId)) {
+//                Log.i("TAG", "有QQ红包字眼出现");
                 mLuckyMoneyReceived_1 = true;
                 mReceiveNode_1 = nodes1;
-            }else
-            {
+            }else {
                 return false;
             }
-        }else
-        {
-            return  false;
-        }
+        }else {
+                return  false;
+             }
 
         /* 如果已经接收到红包并且还没有戳开 */
         if (mLuckyMoneyReceived_1 && (mReceiveNode_1 != null))
@@ -729,11 +793,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 {
                     return false;
                 }
-
-//                if (findReturnInfo()) {
-//                    //若有 '已拆开' 或 '口令红包已拆开' 字样，则返回
-//                    return  false;
-//                }
                 lastFetchedHongbaoId = id;
                 lastFetchedTime = now;
 
@@ -747,11 +806,17 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                     }else
                     {
                         //处理普通红包
-                        Log.i("TAG","拆开普通红包");
-                        cellNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        if (!cellNode.isClickable())
+                        {
+                            Log.i("TAG","拆开普通红包1");
+                            addTotalNum();  //添加红包个数
+                            cellNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        }else
+                        {
+                            return false;
+                        }
                     }
                 }
-
                 //处理口令红包
                 if (cellNode.getText().toString().equals(QQ_HONG_BAO_PASSWORD))
                 {
@@ -766,32 +831,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                         recycle(rowNode);
                     }
                 }
-                Log.i("TAG", "-----------结束------------");
                 mLuckyMoneyReceived_1 = false;
-            }
-        }
-        return false;
-    }
-
-    private boolean findReturnInfo()
-    {
-        //有"已拆开" 或 '口令红包已拆开' 返回true
-        if (rootNodeInfo_1 != null)
-        {
-            List<AccessibilityNodeInfo> list = rootNodeInfo_1.findAccessibilityNodeInfosByText("已拆开");
-            if (!list.isEmpty())
-            {
-                for (int j = list.size() - 1; j >= 0; j--) {
-                    AccessibilityNodeInfo opened = list.get(j);
-                    if (opened.getClassName().equals("android.widget.TextView"))
-                    {
-                        if (opened.getText().toString().equals("已拆开") || opened.getText().toString().equals("口令红包已拆开"))
-                        {
-//                            Log.i("TAG",   j+ ": "+ opened.getClassName() + "文字："+ opened.getText().toString());
-                            return  true;
-                        }
-                    }
-                }
             }
         }
         return false;
@@ -941,8 +981,8 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     private PowerManager.WakeLock mWeakLock;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private void wakeAndUnlock(boolean b) {
-        if(b) {
+    private void wakeAndUnlock(boolean unlock) {
+        if(unlock) {
             //获取电源管理器对象
             Log.i("TAG", "wakeAndUnlock ");
             //在屏幕休眠的状态下唤醒屏幕
@@ -950,12 +990,16 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (mPowerManager == null) {
                 mPowerManager=(PowerManager) getSystemService(POWER_SERVICE);
             }
+
             //保持屏幕常亮
             if (mWeakLock == null) {
                 mWeakLock = mPowerManager.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP |PowerManager.FULL_WAKE_LOCK | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "WakeLock");
             }
-            mWeakLock.acquire();
-            mWeakLock.release();
+            if (!mPowerManager.isScreenOn())
+            {
+                mWeakLock.acquire();
+                mWeakLock.release();
+            }
 
             if (mParcelable instanceof Notification)
             {
@@ -977,20 +1021,21 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             if (mKeyguardLock == null) {    //初始化键盘锁，可以锁定或解开键盘锁
                 mKeyguardLock = mKeyguardManager.newKeyguardLock("Lock");
             }
-
-            if (mKeyguardManager.isKeyguardLocked() && mKeyguardManager.isKeyguardSecure()) {
-                //解锁,这个解锁时为了隐藏输密码界面，如果没有密码，只用上面的自动nullactivity就可以了
-                //禁用显示键盘锁定
-                mKeyguardLock.disableKeyguard();
+            //若在锁屏界面则解锁直接跳过锁屏
+            if (mKeyguardManager.inKeyguardRestrictedInputMode())
+            {
+                if (mKeyguardManager.isKeyguardLocked() && mKeyguardManager.isKeyguardSecure()) {
+                    //解锁,这个解锁时为了隐藏输密码界面，如果没有密码，只用上面的自动nullactivity就可以了
+                    //禁用显示键盘锁定
+                    mKeyguardLock.disableKeyguard();
+                }
             }
         }else
         {
-            if (mWeakLock != null) {
-//               锁屏
-//                Log.i("TAG", "锁屏");
-//                mKeyguardLock.reenableKeyguard();
-                //在屏幕点亮的状态下，使屏幕休眠。
-//                mWeakLock.release();
+            if (null != mKeyguardLock)
+            {
+                Log.i("TAG", "锁屏");
+                mKeyguardLock.reenableKeyguard();
             }
         }
     }
