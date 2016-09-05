@@ -40,7 +40,7 @@ public class AboutFragment extends PreferenceFragment
             }
         });
 
-        //点赞功能
+        //跟新功能
         Preference click_update = findPreference("pref_update");
         click_update.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {

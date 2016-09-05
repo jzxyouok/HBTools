@@ -99,12 +99,12 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         public void onReceive(Context context, Intent intent) {
             //拿到进度，更新UI
             RobMoney.getInstance().mIsWeChatOn = intent.getBooleanExtra("wechat_broadcast", true);
-            String v_1 = RobMoney.getInstance().mIsWeChatOn==true ? "可接收":"不可接收";
-            Log.i("TAG", "微信消息:" + v_1);
+//            String v_1 = RobMoney.getInstance().mIsWeChatOn==true ? "可接收":"不可接收";
+//            Log.i("TAG", "微信消息:" + v_1);
 
             RobMoney.getInstance().mIsQQOn = intent.getBooleanExtra("qq_broadcast",true);
-            String v_2 = RobMoney.getInstance().mIsQQOn == true ? "可接收":"不可接收";
-            Log.i("TAG", "qq消息" + v_2);
+//            String v_2 = RobMoney.getInstance().mIsQQOn == true ? "可接收":"不可接收";
+//            Log.i("TAG", "qq消息" + v_2);
         }
     }
 
@@ -124,7 +124,8 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 Log.i("TAG", "未锁屏");
                 RobMoney.getInstance().isScreenOff = false;
             }
-//            else if (Intent.ACTION_USER_PRESENT.equals(action))
+//            else if (Intent.
+// .equals(action))
 //            {
 //                Log.i("TAG", "解屏");
 //            }
@@ -164,12 +165,11 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         }
 
         //test
-/*
         String v_1 = mIsWeChatOn==true ? "可接收":"不可接收";
         Log.i("TAG", "Rob微信消息:" + v_1);
         String v_2 = mIsQQOn == true ? "可接收":"不可接收";
         Log.i("TAG", "Robqq消息" + v_2);
-*/
+
         setCurrentActivityName(event);
         /* 检测通知消息 */
         if (!mMutex)
@@ -398,8 +398,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             public void run() {
                 Log.i("TAG", "返回");
                 performGlobalAction(GLOBAL_ACTION_BACK);
-//                Instrumentation inst = new Instrumentation();
-//                inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
             }
         },100);
     }
@@ -408,11 +406,11 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     public void onDestroy()
     {
         //注销广播
+        super.onDestroy();
         unregisterReceiver(msgReceiver);
         unregisterReceiver(mReceiver);
         mWeakLock.release();
         wakeAndUnlock(false);
-        super.onDestroy();
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
