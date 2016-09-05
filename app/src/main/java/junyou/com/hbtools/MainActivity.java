@@ -49,7 +49,7 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity implements AccessibilityManager.AccessibilityStateChangeListener
 {
     private AccessibilityManager accessibilityManager;
-    SharedPreferences sharedPreferences;
+     SharedPreferences sharedPreferences;
 
     private static MainActivity instance;
 
@@ -144,6 +144,43 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //        showLeftDays();
         showDialog();
         showSwitchStatus();
+//        shareCallback();  //分享回调 todo
+    }
+
+    //分享是否成功
+    private void shareCallback()
+    {
+        // Get intent, action and MIME type
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                Log.i("TAG", "分享文字成功");
+                handleSendText(intent); // Handle text being sent
+            } else if (type.startsWith("image/")) {
+                Log.i("TAG", "分享图片成功");
+                handleSendImage(intent); // Handle single image being sent
+            }
+        }
+    }
+
+    void handleSendText(Intent intent) {
+        String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+//        String sharedTitle = intent.getStringExtra(Intent.EXTRA_TITLE);
+        if (sharedText != null) {
+            // Update UI to reflect text being shared
+            Log.i("TAG", "分享的文字:" + sharedText);
+        }
+    }
+
+    void handleSendImage(Intent intent) {
+        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (imageUri != null) {
+            // Update UI to reflect image being shared
+            Log.i("TAG", "分享的图片:" );
+        }
     }
 
     private void showSwitchStatus()
@@ -213,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                 handler.sendMessage(message);
             }
         };
-        timer.schedule(task, 20000,20000);    //10秒之后执行，每10秒执行一次
+        timer.schedule(task, 20000,20000);    //20秒之后执行，每20秒执行一次
     }
 
     private void showDialog()
@@ -231,11 +268,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //        dialog_receiveTime = new Dialog(this,R.style.common_dialog);
 //        dialog_receiveTime.setContentView(view_3);
 //        dialog_receiveTime.show();
-        //设置里的下载弹窗
-//        View view_3 = LayoutInflater.from(instance).inflate(R.layout.dialog_settingshare,null);
-//        Dialog dialog_settingShare = new Dialog(this,R.style.common_dialog);
-//        dialog_settingShare.setContentView(view_3);
-//        dialog_settingShare.show();
     }
 
     //时间显示有问题，TODO
@@ -656,21 +688,21 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             dialog_openShare.dismiss();
         }
-        if (isWeixinAvilible(this))
-        {
+        final String PackageName = "com.tencent.mm";
+        final String ActivityName = "com.tencent.mm.ui.tools.ShareToTimeLineUI"; //微信朋友圈
+        if (ShareHelper.isInstalled(this,PackageName,ActivityName)){
+            //图片加文字
             Bitmap bt= BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher);
             final Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bt, null,null));
             Intent intent = new Intent();
-            ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
-
+            ComponentName comp = new ComponentName(PackageName, ActivityName);//带图片分享
             intent.setComponent(comp);
-            intent.setAction("android.intent.action.SEND");
+            intent.setAction(Intent.ACTION_SEND);
             intent.setType("image/*");
             intent.putExtra(Intent.EXTRA_STREAM, uri);
-            intent.putExtra("Kdescription", "红包快手，让红包来的容易点~");
+            intent.putExtra("Kdescription", "红包快手，让红包来的容易点~~");
             startActivity(intent);
-        }else
-        {
+        }else {
             Toast.makeText(getApplicationContext(), "您没有安装微信", Toast.LENGTH_SHORT).show();
         }
     }
@@ -682,16 +714,33 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             dialog_openShare.dismiss();
         }
-        if (isWeixinAvilible(this))
-        {
-            Intent intent = new Intent(Intent.ACTION_SEND); // 启动分享发送的属性
-            intent.setType("text/plain");                   // 分享发送的数据类型
-            String pakName = "com.tencent.mm";              //微信
-            intent.setPackage(pakName);
-            intent.putExtra(Intent.EXTRA_TEXT, "红包快手，让红包来的容易点~"); // 分享的内容
-            this.startActivity(Intent.createChooser(intent, ""));// 目标应用选择对话框的标题;
-        }else
-        {
+
+        final String PackageName = "com.tencent.mm";
+        final String ActivityName = "com.tencent.mm.ui.tools.ShareImgUI";
+        if (ShareHelper.isInstalled(this,PackageName,ActivityName)){
+
+            //文字或链接
+            Intent intent = new Intent();
+            ComponentName comp = new ComponentName(PackageName, ActivityName);
+            intent.setComponent(comp);
+            intent.setAction(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, "红包快手，让红包来的容易点~~");
+            startActivity(intent);
+
+            //图片
+            /*
+            Bitmap bt= BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher);
+            final Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bt, null,null));
+            Intent intent = new Intent();
+            ComponentName comp = new ComponentName(PackageName, ActivityName);
+            intent.setComponent(comp);
+            intent.setAction(Intent.ACTION_SEND);
+            intent.setType("image/*");        //分享图片，没有图片用转回到分享文字
+            intent.putExtra(Intent.EXTRA_STREAM,uri);
+            startActivity(intent);
+            */
+        }else {
             Toast.makeText(getApplicationContext(), "您没有安装微信", Toast.LENGTH_SHORT).show();
         }
     }
@@ -703,19 +752,20 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             dialog_openShare.dismiss();
         }
-        if (isQQAvilible(this))
-        {
-            Intent intent = new Intent(Intent.ACTION_SEND); // 启动分享发送的属性
-            intent.setType("text/plain");                   // 分享发送的数据类型
-//        String pakName = "com.qzone";                   //qqzone
-            String pakName = "com.tencent.mobileqq";      //qq
-            intent.setPackage(pakName);
-            intent.putExtra(Intent.EXTRA_TEXT, "红包快手，让红包来的容易点~"); // 分享的内容
-            this.startActivity(Intent.createChooser(intent, ""));// 目标应用选择对话框的标题;
-        }else
-        {
-            Toast.makeText(getApplicationContext(), "您没有安装手机QQ", Toast.LENGTH_SHORT).show();
-        }
+          final String PackageName = "com.tencent.mobileqq";
+          final String ActivityName = "com.tencent.mobileqq.activity.JumpActivity"; //qq好友
+         if (ShareHelper.isInstalled(this,PackageName,ActivityName)){
+             //分享文字给好友
+             Intent intent = new Intent(Intent.ACTION_SEND);
+             ComponentName component = new ComponentName(PackageName,ActivityName);
+             intent.setComponent(component);
+             intent.putExtra(Intent.EXTRA_TEXT, "红包快手，让红包来的容易点~");
+             intent.setType("text/plain");
+             startActivity(intent);
+         }else {
+             Toast.makeText(getApplicationContext(), "您没有安装手机QQ", Toast.LENGTH_SHORT).show();
+         }
+        //todo  分享到qq空间
     }
 
     public void shareWeiboClick(View view)
@@ -725,55 +775,36 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             dialog_openShare.dismiss();
         }
-        if (isSinaWeBoAvilible(this))
+
+        if (isSinaWiBoAvilible(this))
         {
-            Intent intent = new Intent(Intent.ACTION_SEND); // 启动分享发送的属性
-            intent.setType("text/plain");                   // 分享发送的数据类型
-            String pakName = "com.sina.weibo";              //微博
+            //分享文字
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            String pakName = "com.sina.weibo";
             intent.setPackage(pakName);
-            intent.putExtra(Intent.EXTRA_TEXT, "红包快手，让红包来的容易点~"); // 分享的内容
-            this.startActivity(Intent.createChooser(intent, ""));// 目标应用选择对话框的标题;
+            intent.putExtra(Intent.EXTRA_TEXT, "红包快手，让红包来的容易点~");
+            this.startActivity(Intent.createChooser(intent, ""));
+
+            /*
+            //图片加文字
+            Bitmap bt= BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher);
+            final Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bt, null,null));
+            Intent intent = new Intent();
+            intent.setPackage("com.sina.weibo");
+            intent.setAction(Intent.ACTION_SEND);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.putExtra(Intent.EXTRA_TEXT, "红包快手，让红包来的容易点~");
+            startActivity(intent);
+            */
         }else
         {
             Toast.makeText(getApplicationContext(), "您没有安装新浪微博", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private boolean isWeixinAvilible(Context context)
-    {
-        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
-        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
-        if (pinfo != null) {
-            for (int i = 0; i < pinfo.size(); i++)
-            {
-                String pn = pinfo.get(i).packageName;
-                if (pn.equals("com.tencent.mm"))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean isQQAvilible(Context context)
-    {
-        final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
-        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
-        if (pinfo != null) {
-            for (int i = 0; i < pinfo.size(); i++)
-            {
-                String pn = pinfo.get(i).packageName;
-                if (pn.equals("com.tencent.mobileqq"))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean isSinaWeBoAvilible(Context context)
+    private boolean isSinaWiBoAvilible(Context context)
     {
         final PackageManager packageManager = context.getPackageManager();// 获取packagemanager
         List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);// 获取所有已安装程序的包信息
