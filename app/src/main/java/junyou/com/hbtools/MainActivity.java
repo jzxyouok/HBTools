@@ -99,18 +99,26 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         //-----------------------new items--------------------------//
         //开关
         openWechat_switch = (Switch) findViewById(R.id.open_wechat_switch);
-        openWechat_switch.setOnCheckedChangeListener(wechat_swtich_listener);
+        if (openWechat_switch != null){
+            openWechat_switch.setOnCheckedChangeListener(wechat_swtich_listener);
+        }
         openQQ_switch = (Switch) findViewById(R.id.open_qq_switch);
-        openQQ_switch.setOnCheckedChangeListener(qq_switch_listener);
+        if (openQQ_switch != null){
+            openQQ_switch.setOnCheckedChangeListener(qq_switch_listener);
+        }
 
         wechat_auto_text = (TextView)findViewById(R.id.wechat_auto);
         qq_auto_text = (TextView) findViewById(R.id.qq_auto);
 
         //设置和帮助按钮
         setting_imagebtn = (ImageButton) findViewById(R.id.imageButton_setting);
-        setting_imagebtn.setOnClickListener(onClickSetting);
+        if (setting_imagebtn != null){
+            setting_imagebtn.setOnClickListener(onClickSetting);
+        }
         help_imagebtn = (ImageButton) findViewById(R.id.imageButton_help);
-        help_imagebtn.setOnClickListener(onClickHelp);
+        if (help_imagebtn != null){
+            help_imagebtn.setOnClickListener(onClickHelp);
+        }
         //顶部图片
         top_image = (ImageView) findViewById(R.id.top_img_show);
 
@@ -205,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                 handler.sendMessage(message);
             }
         };
-        timer.schedule(task, 10000,10000);    //10秒之后执行，每10秒执行一次
+        timer.schedule(task, 20000,20000);    //10秒之后执行，每10秒执行一次
     }
 
     private void showDialog()
@@ -409,6 +417,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                 //服务已经开启
                 if (isChecked)
                 {
+                    //打开开关
                     //发送广播
                     bor_intent.putExtra("wechat_broadcast", true);
                     sendBroadcast(bor_intent);
@@ -501,6 +510,14 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     editor.putBoolean("qq_switch",true);
                     editor.commit();
 
+                    if (sharedP.getBoolean("qq_switch",true))
+                    {
+                        Log.i("TAG", "手动设置了qq开");
+                    }else
+                    {
+                        Log.i("TAG", "不能手动设置qq开");
+                    }
+
                 }else
                 {
                     bor_intent.putExtra("qq_broadcast", false);
@@ -514,6 +531,13 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     editor.putBoolean("qq_switch",false);
                     editor.commit();
 
+                    if (!sharedP.getBoolean("qq_switch",true))
+                    {
+                        Log.i("TAG", "手动设置了qq关");
+                    }else
+                    {
+                        Log.i("TAG", "不能手动设置qq关");
+                    }
                 }
             }else
             {

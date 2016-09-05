@@ -165,10 +165,10 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         }
 
         //test
-        String v_1 = mIsWeChatOn==true ? "可接收":"不可接收";
-        Log.i("TAG", "Rob微信消息:" + v_1);
-        String v_2 = mIsQQOn == true ? "可接收":"不可接收";
-        Log.i("TAG", "Robqq消息" + v_2);
+//        String v_1 = mIsWeChatOn==true ? "可接收":"不可接收";
+//        Log.i("TAG", "Rob微信消息:" + v_1);
+//        String v_2 = mIsQQOn == true ? "可接收":"不可接收";
+//        Log.i("TAG", "Robqq消息" + v_2);
 
         setCurrentActivityName(event);
         /* 检测通知消息 */
@@ -177,7 +177,9 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             //是否是红包的判断，若是红包就打开消息栏进入该软件，若不是红包直接返回
             if (watchNotifications(event)) return;
             //若是红包，执行点击红包的操作
-            if(openQQHongbao(event)) return;
+            if (mIsQQOn){
+                if(openQQHongbao(event)) return;
+            }
             //监视微信（貌似这个方法没作用）
             if (openWeChatHongbao(event)) return;
             mListMutex = false;
@@ -274,48 +276,135 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         Log.i("TAG","通知栏有消息!!!");
 
         String tip = event.getText().toString();
-//        if (tip.contains(WECHAT_NOTIFICATION_TIP))
-        if (tip.contains(WECHAT_NOTIFICATION_TIP) || tip.contains(QQ_HONGBAO_TEXT_KEY))
-            {
-                Log.i("TAG","是红包~~~");
+
+        /*
+        *   微信开 qq开
+        *   微信关 qq关
+        *   微信开 qq关
+        *   微信关 qq开
+        *   否则 都开
+        * */
+
+        if (mIsWeChatOn && mIsQQOn ){
+            Log.i("TAG", "...都开" );
+            if (tip.contains(WECHAT_NOTIFICATION_TIP) || tip.contains(QQ_HONGBAO_TEXT_KEY)) {
+                Log.i("TAG","是微信或者qq红包~~~");
                 mIsEnterWeChatList = true;
-                if (event.getParcelableData() == null || !(event.getParcelableData() instanceof Notification))
-                {
+                if (event.getParcelableData() == null || !(event.getParcelableData() instanceof Notification)) {
                     return false;
                 }
-
                 Boolean lockScreenLockFlag = sharedPreferences.getBoolean("pref_suoping_grasp", true);
-                if (lockScreenLockFlag)
-                {
-                    /**
-                     * 不是锁屏
-                     * 是锁屏
-                     */
+                if (lockScreenLockFlag) {
                     mParcelable = event.getParcelableData();
-                    //解锁屏幕
-                    wakeAndUnlock(true);
+                    wakeAndUnlock(true);//解锁屏幕
                     return true;
-                }else
-                {
+                }else {
                     Parcelable parce = event.getParcelableData();
-                    if (parce instanceof Notification)
-                    {
+                    if (parce instanceof Notification) {
                         Notification notification = (Notification) parce;
                         try {
-                                notification.contentIntent.send();
-                            } catch (PendingIntent.CanceledException e)
-                            {
-                                e.printStackTrace();
-                            }
+                            notification.contentIntent.send();
+                        } catch (PendingIntent.CanceledException e) {
+                            e.printStackTrace();
+                        }
                     }
                     return true;
                 }
             }
-            else
-            {
+            else {
                 Log.i("TAG","不是红包");
             }
-
+        }else if (!mIsWeChatOn &&  !mIsQQOn){
+            Log.i("TAG", "...都关" );
+        }else if (mIsWeChatOn && !mIsQQOn){
+            Log.i("TAG", "...微信开，qq关" );
+            if (tip.contains(WECHAT_NOTIFICATION_TIP)) {
+                Log.i("TAG","是微信红包~~~");
+                mIsEnterWeChatList = true;
+                if (event.getParcelableData() == null || !(event.getParcelableData() instanceof Notification)) {
+                    return false;
+                }
+                Boolean lockScreenLockFlag = sharedPreferences.getBoolean("pref_suoping_grasp", true);
+                if (lockScreenLockFlag) {
+                    mParcelable = event.getParcelableData();
+                    wakeAndUnlock(true);//解锁屏幕
+                    return true;
+                }else {
+                    Parcelable parce = event.getParcelableData();
+                    if (parce instanceof Notification) {
+                        Notification notification = (Notification) parce;
+                        try {
+                            notification.contentIntent.send();
+                        } catch (PendingIntent.CanceledException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return true;
+                }
+            }
+            else {
+                Log.i("TAG","不是红包");
+            }
+        }else if (!mIsWeChatOn && mIsQQOn){
+            Log.i("TAG", "...微信关，qq开" );
+            if (tip.contains(QQ_HONGBAO_TEXT_KEY)) {
+                Log.i("TAG","是qq红包~~~");
+                if (event.getParcelableData() == null || !(event.getParcelableData() instanceof Notification)) {
+                    return false;
+                }
+                Boolean lockScreenLockFlag = sharedPreferences.getBoolean("pref_suoping_grasp", true);
+                if (lockScreenLockFlag) {
+                    mParcelable = event.getParcelableData();
+                    wakeAndUnlock(true);//解锁屏幕
+                    return true;
+                }else {
+                    Parcelable parce = event.getParcelableData();
+                    if (parce instanceof Notification) {
+                        Notification notification = (Notification) parce;
+                        try {
+                            notification.contentIntent.send();
+                        } catch (PendingIntent.CanceledException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return true;
+                }
+            }
+            else {
+                Log.i("TAG","不是红包");
+            }
+        }else{
+            Log.i("TAG", "...其他,默认全开" );
+        }
+        /*
+        if (tip.contains(WECHAT_NOTIFICATION_TIP) || tip.contains(QQ_HONGBAO_TEXT_KEY)) {
+                Log.i("TAG","是红包~~~");
+                mIsEnterWeChatList = true;
+                if (event.getParcelableData() == null || !(event.getParcelableData() instanceof Notification)) {
+                    return false;
+                }
+                Boolean lockScreenLockFlag = sharedPreferences.getBoolean("pref_suoping_grasp", true);
+                if (lockScreenLockFlag) {
+                    mParcelable = event.getParcelableData();
+                    wakeAndUnlock(true);//解锁屏幕
+                    return true;
+                }else {
+                    Parcelable parce = event.getParcelableData();
+                    if (parce instanceof Notification) {
+                        Notification notification = (Notification) parce;
+                        try {
+                                notification.contentIntent.send();
+                        } catch (PendingIntent.CanceledException e) {
+                                e.printStackTrace();
+                            }
+                    }
+                        return true;
+                }
+            }
+            else {
+                Log.i("TAG","不是红包");
+            }
+        */
         return true;
     }
 
