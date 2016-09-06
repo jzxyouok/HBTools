@@ -56,8 +56,8 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity implements AccessibilityManager.AccessibilityStateChangeListener
 {
     private AccessibilityManager accessibilityManager;
-     SharedPreferences sharedPreferences;
-
+    SharedPreferences sharedPreferences;
+    RelativeLayout mainLayoutHeader;
     private static MainActivity instance;
 
     private static final String LEFT_DAYS_COUNT = "left_days_count";  //剩余的天数
@@ -110,6 +110,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         //监听AccessibilityService 变化
         accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         accessibilityManager.addAccessibilityStateChangeListener(this);
+
+        mainLayoutHeader = (RelativeLayout) findViewById(R.id.layout_header);
+
         //-----------------------new items--------------------------//
         //开关
         openWechat_switch = (Switch) findViewById(R.id.open_wechat_switch);
@@ -399,7 +402,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
             openWechat_switch.setChecked(true);
             openQQ_switch.setChecked(true);
-
+            if (mainLayoutHeader != null){
+                mainLayoutHeader.setBackgroundColor(getResources().getColor(R.color.mainbgOn));
+            }
         } else
         {
             Log.i("TAG","service is off");
@@ -409,6 +414,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
             openWechat_switch.setChecked(false);
             openQQ_switch.setChecked(false);
+            if (mainLayoutHeader != null){
+                mainLayoutHeader.setBackgroundColor(getResources().getColor(R.color.mainbgOff));
+            }
         }
     }
 
