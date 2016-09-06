@@ -37,6 +37,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.sdk.modelmsg.WXTextObject;
+import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
+
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -52,6 +59,10 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
      SharedPreferences sharedPreferences;
 
     private static MainActivity instance;
+
+    private static final String LEFT_DAYS_COUNT = "left_days_count";  //剩余的天数
+    private static final String DATE_MARK = "date_mark";            //日期记录
+    private static final int BORN_DAYS = 5;                         //初始天数
 
     private Switch openWechat_switch;
     private Switch openQQ_switch;
@@ -75,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     private TextView marquee_text;
 
     //剩余天数
-    private TextView left_days_text;
+    public TextView left_days_text;
 
     //弹窗
     private Dialog dialog_openSvs;
@@ -85,13 +96,16 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     //广播消息
     private Intent bor_intent;
 
+    //sdk 相关
+    private IWXAPI wxAPI;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         instance = this;
+        regToWx();      //注册微信id
 
         //监听AccessibilityService 变化
         accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
@@ -141,46 +155,16 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         updateServiceStatus();
         showDatas();
         refrishMarqueeText();
-//        showLeftDays();
+        showLeftDays();
         showDialog();
         showSwitchStatus();
-//        shareCallback();  //分享回调 todo
-    }
 
-    //分享是否成功
-    private void shareCallback()
+    }
+    //注册微信id
+    private void regToWx()
     {
-        // Get intent, action and MIME type
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        String type = intent.getType();
-
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if ("text/plain".equals(type)) {
-                Log.i("TAG", "分享文字成功");
-                handleSendText(intent); // Handle text being sent
-            } else if (type.startsWith("image/")) {
-                Log.i("TAG", "分享图片成功");
-                handleSendImage(intent); // Handle single image being sent
-            }
-        }
-    }
-
-    void handleSendText(Intent intent) {
-        String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-//        String sharedTitle = intent.getStringExtra(Intent.EXTRA_TITLE);
-        if (sharedText != null) {
-            // Update UI to reflect text being shared
-            Log.i("TAG", "分享的文字:" + sharedText);
-        }
-    }
-
-    void handleSendImage(Intent intent) {
-        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        if (imageUri != null) {
-            // Update UI to reflect image being shared
-            Log.i("TAG", "分享的图片:" );
-        }
+        wxAPI = WXAPIFactory.createWXAPI(this,Constants.APP_ID,true);
+        wxAPI.registerApp(Constants.APP_ID);
     }
 
     private void showSwitchStatus()
@@ -270,47 +254,64 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //        dialog_receiveTime.show();
     }
 
-    //时间显示有问题，TODO
+    //TODO 时间显示有问题
     private void showLeftDays()
     {
         SharedPreferences sharedP = getSharedPreferences("config",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedP.edit();
+
         //设置天数
-        /*
-        editor.putInt("left_days_count",15);
-        editor.commit();
-
-        if (left_days_text != null)
+        /**
+         * 若为-1  设置为5天
+         * 若不为-1  获得之前设置的天数
+         */
+        int days = getSharedPreferences("config",MODE_PRIVATE).getInt(LEFT_DAYS_COUNT,-1);
+        if (days < 0)
         {
-            int days = getSharedPreferences("config",MODE_PRIVATE).getInt("left_days_count",0);
-            left_days_text.setText(String.valueOf(days) + " 天");
+//            Log.i("TAG", "天数小于0。。。");
+            editor.putInt(LEFT_DAYS_COUNT,BORN_DAYS);
+            editor.commit();
+            if (left_days_text != null)
+            {
+                int days_1 = getSharedPreferences("config",MODE_PRIVATE).getInt(LEFT_DAYS_COUNT,0);
+                left_days_text.setText(String.valueOf(days_1) + " 天");
+            }
+        }else
+        {
+//            Log.i("TAG", ",天数有值。。。");
+            if (left_days_text != null)
+            {
+                int days_2 = getSharedPreferences("config",MODE_PRIVATE).getInt(LEFT_DAYS_COUNT,5);
+                left_days_text.setText(String.valueOf(days_2) + " 天");
+            }
         }
-*/
 
+        /*
         Calendar calendar = Calendar.getInstance();
         String nowDate = calendar.get(Calendar.YEAR) + "年"
                 + (calendar.get(Calendar.MONTH)+1) + "月"//从0计算
                 + calendar.get(Calendar.DAY_OF_MONTH) + "日";
 
-        if (!nowDate.equals(getSharedPreferences("config",MODE_PRIVATE).getString("date_mark","")))
+        if (!nowDate.equals(getSharedPreferences("config",MODE_PRIVATE).getString(DATE_MARK,"")))
         {
             //日期不相等
-            editor.putInt("left_days_count",getSharedPreferences("config",MODE_PRIVATE).getInt("left_days_count",0) - 1);
+            editor.putInt(LEFT_DAYS_COUNT,getSharedPreferences("config",MODE_PRIVATE).getInt(LEFT_DAYS_COUNT,0) - 1);
             editor.commit();
 
             if (left_days_text != null)
             {
-                int days = getSharedPreferences("config",MODE_PRIVATE).getInt("left_days_count",0);
+                int days = getSharedPreferences("config",MODE_PRIVATE).getInt(LEFT_DAYS_COUNT,0);
                 left_days_text.setText(String.valueOf(days) + " 天");
             }
         }else
         {
             //日期相等  保存今天的日期信息
-            editor.putString("date_mark",nowDate);
+            editor.putString(DATE_MARK,nowDate);
             editor.commit();
         }
         Log.e("TAG", nowDate);
-        Log.i("TAG", "存储日期:" + getSharedPreferences("config",MODE_PRIVATE).getString("date_mark",""));
+        Log.i("TAG", "存储日期:" + getSharedPreferences("config",MODE_PRIVATE).getString(DATE_MARK,""));
+        */
     }
 
     private void showDatas()
@@ -688,6 +689,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
             dialog_openShare.dismiss();
         }
+
+        //不使用sdk分享
+        /*
         final String PackageName = "com.tencent.mm";
         final String ActivityName = "com.tencent.mm.ui.tools.ShareToTimeLineUI"; //微信朋友圈
         if (ShareHelper.isInstalled(this,PackageName,ActivityName)){
@@ -705,6 +709,46 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         }else {
             Toast.makeText(getApplicationContext(), "您没有安装微信", Toast.LENGTH_SHORT).show();
         }
+        */
+        //使用sdk分享
+        WXWebpageObject webpage = new WXWebpageObject();
+        webpage.webpageUrl = "http://www.zjhzjykj.com";
+        WXMediaMessage msg = new WXMediaMessage(webpage);
+        msg.title = "红包快手";
+        msg.description = "红包快手，最强大的抢红包神器~";
+        Bitmap thumb = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        msg.thumbData = Util.bmpToByteArray(thumb, true);
+
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.transaction = ShareHelper.buildTransaction("webpage");
+        req.message = msg;
+//        req.scene = SendMessageToWX.Req.WXSceneSession;     //好友
+        req.scene = SendMessageToWX.Req.WXSceneTimeline;    //朋友圈
+        wxAPI.sendReq(req);
+
+        // 初始化一个WXTextObject对象
+        /*
+        String text = "hello";
+        WXTextObject textObj = new WXTextObject();
+        textObj.text = text;
+
+        // 用WXTextObject对象初始化一个WXMediaMessage对象
+
+        WXMediaMessage msg = new WXMediaMessage();
+        msg.mediaObject = textObj;
+        // 发送文本类型的消息时，title字段不起作用
+        // msg.title = "Will be ignored";
+        msg.description = "红包快手";
+
+        // 构造一个Req
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.transaction = ShareHelper.buildTransaction(text); // transaction字段用于唯一标识一个请求
+        req.message = msg;
+//        req.scene = isTimelineCb.isChecked() ? SendMessageToWX.Req.WXSceneTimeline : SendMessageToWX.Req.WXSceneSession;
+        req.scene = SendMessageToWX.Req.WXSceneSession;     //好友
+        // 调用api接口发送数据到微信
+        wxAPI.sendReq(req);
+        */
     }
 
     public void shareWeiXinClick(View view)
@@ -720,6 +764,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         if (ShareHelper.isInstalled(this,PackageName,ActivityName)){
 
             //文字或链接
+            /*
             Intent intent = new Intent();
             ComponentName comp = new ComponentName(PackageName, ActivityName);
             intent.setComponent(comp);
@@ -727,7 +772,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_TEXT, "红包快手，让红包来的容易点~~");
             startActivity(intent);
-
+               */
             //图片
             /*
             Bitmap bt= BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher);
@@ -740,6 +785,21 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             intent.putExtra(Intent.EXTRA_STREAM,uri);
             startActivity(intent);
             */
+            //使用sdk分享
+            WXWebpageObject webpage = new WXWebpageObject();
+            webpage.webpageUrl = "http://www.zjhzjykj.com";
+            WXMediaMessage msg = new WXMediaMessage(webpage);
+            msg.title = "红包快手";
+            msg.description = "红包快手，最强大的抢红包神器~";
+            Bitmap thumb = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+            msg.thumbData = Util.bmpToByteArray(thumb, true);
+
+            SendMessageToWX.Req req = new SendMessageToWX.Req();
+            req.transaction = ShareHelper.buildTransaction("webpage");
+            req.message = msg;
+            req.scene = SendMessageToWX.Req.WXSceneSession;     //好友
+            wxAPI.sendReq(req);
+
         }else {
             Toast.makeText(getApplicationContext(), "您没有安装微信", Toast.LENGTH_SHORT).show();
         }
@@ -819,5 +879,29 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             }
         }
         return false;
+    }
+
+    public void closeReceiveTime(View view)
+    {
+        Log.i("TAG", "关闭收到天数啦");
+        if (dialog_receiveTime != null){
+            dialog_receiveTime.dismiss();
+        }
+    }
+
+    public void receive_confirm_click(View view)
+    {
+        Log.i("TAG", "确定收到天数");
+        if (dialog_receiveTime != null){
+            dialog_receiveTime.dismiss();
+        }
+    }
+
+    public void receive_getmore_click(View view)
+    {
+        Log.i("TAG", "成为超级VIP");
+        if (dialog_receiveTime != null){
+            dialog_receiveTime.dismiss();
+        }
     }
 }

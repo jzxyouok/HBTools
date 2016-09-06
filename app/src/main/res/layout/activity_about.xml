@@ -60,34 +60,34 @@
         android:layout_below="@id/about_icon_bg"
         android:background="@android:color/transparent"/>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/about_icon_clock"
-        android:src="@mipmap/under_icon_clock_good"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:paddingRight="10dp"
-        android:onClick="about_getMoreTime"/>
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/about_icon_tool"
-        android:src="@mipmap/under_icon_tooltip"
-        android:layout_above="@+id/about_icon_clock"
-        android:layout_alignParentRight="true"
-        android:paddingRight="30dp"
-        android:layout_marginBottom="-10dp"
-        android:onClick="about_getMoreTime"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/about_days_text"
-        android:text="10天"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="35dp"
-        android:paddingBottom="35dp"
-        android:textSize="20dp"
-        android:textColor="@color/colorwhite"/>
+    <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/about_icon_clock"-->
+        <!--android:src="@mipmap/under_icon_clock_good"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:paddingRight="10dp"-->
+        <!--android:onClick="about_getMoreTime"/>-->
+    <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/about_icon_tool"-->
+        <!--android:src="@mipmap/under_icon_tooltip"-->
+        <!--android:layout_above="@+id/about_icon_clock"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:paddingRight="30dp"-->
+        <!--android:layout_marginBottom="-10dp"-->
+        <!--android:onClick="about_getMoreTime"/>-->
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/about_days_text"-->
+        <!--android:text="5 天"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_marginRight="35dp"-->
+        <!--android:paddingBottom="35dp"-->
+        <!--android:textSize="20dp"-->
+        <!--android:textColor="@color/colorwhite"/>-->
 </RelativeLayout>

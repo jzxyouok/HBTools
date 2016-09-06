@@ -33,8 +33,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="false"
                 android:layout_alignRight="@+id/imageButton_setting"
-                android:paddingRight="68dp"
-                android:paddingTop="20dp"/>
+                android:paddingRight="63dp"
+                android:paddingTop="16dp"/>
         <!--帮助按钮-->
         <ImageButton
             android:layout_width="wrap_content"
@@ -292,7 +292,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/left_days_text"
-    android:text="10天"
+    android:text="5 天"
     android:layout_alignParentBottom="true"
     android:layout_alignParentRight="true"
     android:layout_marginRight="35dp"

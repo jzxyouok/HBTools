@@ -30,19 +30,19 @@ import junyou.com.hbtools.fragments.AboutFragment;
 public class AboutActivity extends FragmentActivity {
 
     static private AboutActivity instance;
-    private Dialog dialog_openShare;
-    private TextView about_text;
+//    private Dialog dialog_openShare;
+//    private TextView about_text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
         prepareSettings();
         instance = this;
-        about_text = (TextView) findViewById(R.id.about_days_text);
+//        about_text = (TextView) findViewById(R.id.about_days_text);
         //弹窗
-        View view_2 = LayoutInflater.from(this).inflate(R.layout.dialog_share,null);
-        dialog_openShare = new Dialog(this,R.style.common_dialog);
-        dialog_openShare.setContentView(view_2);
+//        View view_2 = LayoutInflater.from(this).inflate(R.layout.dialog_share,null);
+//        dialog_openShare = new Dialog(this,R.style.common_dialog);
+//        dialog_openShare.setContentView(view_2);
     }
 
     private void prepareSettings()
@@ -67,31 +67,31 @@ public class AboutActivity extends FragmentActivity {
     public void about_getMoreTime(View view)
     {
         Log.i("TAG", "获得更多时间");
-        if (null != about_text)
-        {
-//            about_text.setText("111天");
-        }
-        if (null != dialog_openShare)
-        {
-            dialog_openShare.show();
-        }
+//        if (null != about_text)
+//        {
+////            about_text.setText("111天");
+//        }
+//        if (null != dialog_openShare)
+//        {
+//            dialog_openShare.show();
+//        }
     }
 
     public void closeOpenShare(View view)
     {
-        if (null != dialog_openShare)
-        {
-            dialog_openShare.dismiss();
-        }
+//        if (null != dialog_openShare)
+//        {
+//            dialog_openShare.dismiss();
+//        }
     }
 
     public void sharePengYouQuanClick(View view)
     {
         Log.i("TAG", "点击分享到朋友圈");
-        if (null != dialog_openShare)
-        {
-            dialog_openShare.dismiss();
-        }
+//        if (null != dialog_openShare)
+//        {
+//            dialog_openShare.dismiss();
+//        }
 
         final String PackageName = "com.tencent.mm";
         final String ActivityName = "com.tencent.mm.ui.tools.ShareToTimeLineUI"; //微信朋友圈
@@ -115,10 +115,10 @@ public class AboutActivity extends FragmentActivity {
     public void shareWeiXinClick(View view)
     {
         Log.i("TAG", "点击分享给微信朋友");
-        if (null != dialog_openShare)
-        {
-            dialog_openShare.dismiss();
-        }
+//        if (null != dialog_openShare)
+//        {
+//            dialog_openShare.dismiss();
+//        }
         final String PackageName = "com.tencent.mm";
         final String ActivityName = "com.tencent.mm.ui.tools.ShareImgUI";
         if (ShareHelper.isInstalled(this,PackageName,ActivityName)){
@@ -151,10 +151,10 @@ public class AboutActivity extends FragmentActivity {
     public void shareQQClick(View view)
     {
         Log.i("TAG", "点击分享给QQ好友");
-        if (null != dialog_openShare)
-        {
-            dialog_openShare.dismiss();
-        }
+//        if (null != dialog_openShare)
+//        {
+//            dialog_openShare.dismiss();
+//        }
         final String PackageName = "com.tencent.mobileqq";
         final String ActivityName = "com.tencent.mobileqq.activity.JumpActivity"; //qq好友
         if (ShareHelper.isInstalled(this,PackageName,ActivityName)){
@@ -174,10 +174,10 @@ public class AboutActivity extends FragmentActivity {
     public void shareWeiboClick(View view)
     {
         Log.i("TAG", "点击分享到微博");
-        if (null != dialog_openShare)
-        {
-            dialog_openShare.dismiss();
-        }
+//        if (null != dialog_openShare)
+//        {
+//            dialog_openShare.dismiss();
+//        }
         if (isSinaWiBoAvilible(this))
         {
             Intent intent = new Intent(Intent.ACTION_SEND);

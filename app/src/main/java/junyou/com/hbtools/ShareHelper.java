@@ -2,6 +2,8 @@ package junyou.com.hbtools;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
 import java.util.List;
@@ -57,5 +59,26 @@ public class ShareHelper {
             return true;
         }
         return false;
+    }
+    //是否安装骏游连连看
+    public static boolean isInstalledJunyouLik(Context context)
+    {
+        final PackageManager packageManager = context.getPackageManager();
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);
+        if (pinfo != null) {
+            for (int i = 0; i < pinfo.size(); i++)
+            {
+                String pn = pinfo.get(i).packageName;
+                if (pn.equals("com.."))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static String buildTransaction(String type) {
+        return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
     }
 }

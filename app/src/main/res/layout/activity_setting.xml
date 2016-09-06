@@ -39,7 +39,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="150dp"
         android:background="@android:color/transparent"
         android:layout_below="@id/up_bg"
         android:id="@+id/vip_bar">
@@ -66,7 +66,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="120dp"
-            android:layout_marginBottom="15dp"/>
+            android:layout_marginBottom="28dp"/>
     </RelativeLayout>
     <FrameLayout
         android:layout_width="match_parent"

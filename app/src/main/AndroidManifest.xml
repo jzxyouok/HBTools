@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="junyou.com.hbtools"
     android:versionCode="1"
-    android:versionName="1.0.0">
+    android:versionName="1.0">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <uses-permission android:name="android.permission.DEVICE_POWER"/>
+    <!--<uses-permission android:name="android.permission.DEVICE_POWER"/>-->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

@@ -36,6 +36,8 @@ public class SettingActivity extends FragmentActivity
 {
     private Dialog dialog_open_vip;
     private static SettingActivity instance;
+    private static final String LEFT_DAYS_COUNT = "left_days_count";  //剩余的天数
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -163,6 +165,22 @@ public class SettingActivity extends FragmentActivity
         //点击按钮直接下载
         (new DownloadUtil()).enqueue("http://www.zjhzjykj.com/images/tgllx-daiji_3009-2.3.0-201605191729.apk", getApplicationContext());
         SettingFragment.getInstance().dialog_setting_share.dismiss();
+
+        //点击直接增加天数
+        int days = getSharedPreferences("config",MODE_PRIVATE).getInt(LEFT_DAYS_COUNT,0);
+        SharedPreferences sharedP = getSharedPreferences("config",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedP.edit();
+        //设置天数
+        editor.putInt(LEFT_DAYS_COUNT,days + 1);
+        editor.commit();
+        Toast.makeText(getApplicationContext(), "开始下载，又可以再使用一天了哦~", Toast.LENGTH_SHORT).show();
+
+        try{
+            int days_1 = getSharedPreferences("config",MODE_PRIVATE).getInt(LEFT_DAYS_COUNT,0);
+            MainActivity.getInstance().left_days_text.setText(String.valueOf(days_1) + " 天");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     //打开APK
