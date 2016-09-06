@@ -22,6 +22,7 @@ import android.os.IBinder;
 import android.os.Parcelable;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.text.LoginFilter;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -30,6 +31,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -161,6 +163,12 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         if (!sharedPreferences.getBoolean("pref_watch_notification",true))
         {
             Log.i("TAG", "不能抢红包了，关闭了红包助手");
+            return;
+        }
+
+        boolean isServiceOn = getSharedPreferences("config",MODE_PRIVATE).getBoolean(Constants.IS_SERVICE_ON,true);
+        if (!isServiceOn){
+            Log.i("TAG", "不能抢红包了，没日期了");
             return;
         }
 
@@ -485,10 +493,10 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.i("TAG", "返回");
                 performGlobalAction(GLOBAL_ACTION_BACK);
             }
         },100);
+
     }
 
     @Override

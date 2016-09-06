@@ -19,6 +19,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.annotation.BoolRes;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
     private static final String LEFT_DAYS_COUNT = "left_days_count";  //剩余的天数
     private static final String DATE_MARK = "date_mark";            //日期记录
-    private static final int BORN_DAYS = 5;                         //初始天数
+    private static final int BORN_DAYS = 3;                         //初始天数
 
     private Switch openWechat_switch;
     private Switch openQQ_switch;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     private Dialog dialog_openSvs;
     private Dialog dialog_openShare;
     private Dialog dialog_receiveTime;
+    private Dialog dialog_tryDays;
 
     //广播消息
     private Intent bor_intent;
@@ -208,7 +210,14 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                 getResources().getString(R.string.marquee_word_2),
                 getResources().getString(R.string.marquee_word_3),
                 getResources().getString(R.string.marquee_word_4),
-                getResources().getString(R.string.marquee_word_5)
+                getResources().getString(R.string.marquee_word_5),
+                getResources().getString(R.string.marquee_word_6),
+                getResources().getString(R.string.marquee_word_7),
+                getResources().getString(R.string.marquee_word_8),
+                getResources().getString(R.string.marquee_word_9),
+                getResources().getString(R.string.marquee_word_10),
+                getResources().getString(R.string.marquee_word_11),
+                getResources().getString(R.string.marquee_word_12)
         };
         //调度器
         Timer timer = new Timer();
@@ -217,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                 switch (msg.what) {
                     case 1:
                     {
-                        int num = (int)(Math.random()*5);  //0-4
+                        int num = (int)(Math.random()*12);  //0-11
                         if (null != marquee_text)
                         {
                             marquee_text.setText(marquee_lists[num]);
@@ -250,14 +259,28 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         View view_2 = LayoutInflater.from(instance).inflate(R.layout.dialog_share,null);
         dialog_openShare = new Dialog(this,R.style.common_dialog);
         dialog_openShare.setContentView(view_2);
+
         //主页的获取更多天数弹窗
 //        View view_3 = LayoutInflater.from(instance).inflate(R.layout.dialog_receivetime,null);
 //        dialog_receiveTime = new Dialog(this,R.style.common_dialog);
 //        dialog_receiveTime.setContentView(view_3);
 //        dialog_receiveTime.show();
+
+        //刚启动 赠送天数弹窗
+        SharedPreferences sharedP = getSharedPreferences("config",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedP.edit();
+        int days = getSharedPreferences("config",MODE_PRIVATE).getInt("showTryDaysDialog",-1);
+        if (days <0){
+            View view_4 = LayoutInflater.from(instance).inflate(R.layout.dialog_trydays,null);
+            dialog_tryDays = new Dialog(this,R.style.common_dialog);
+            dialog_tryDays.setContentView(view_4);
+            dialog_tryDays.show();
+            editor.putInt("showTryDaysDialog",1);
+            editor.commit();
+        }
     }
 
-    //TODO 时间显示有问题
+    //右下角显示剩余的天数
     private void showLeftDays()
     {
         SharedPreferences sharedP = getSharedPreferences("config",MODE_PRIVATE);
@@ -265,18 +288,18 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
         //设置天数
         /**
-         * 若为-1  设置为5天
-         * 若不为-1  获得之前设置的天数
+         * 若为-99  设置为3天
+         * 若不为-99  获得之前设置的天数
          */
-        int days = getSharedPreferences("config",MODE_PRIVATE).getInt(LEFT_DAYS_COUNT,-1);
-        if (days < 0)
+        int days = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,-99);
+        if (days == -99 )
         {
 //            Log.i("TAG", "天数小于0。。。");
-            editor.putInt(LEFT_DAYS_COUNT,BORN_DAYS);
+            editor.putInt(Constants.LEFT_DAYS_COUNT,BORN_DAYS);
             editor.commit();
             if (left_days_text != null)
             {
-                int days_1 = getSharedPreferences("config",MODE_PRIVATE).getInt(LEFT_DAYS_COUNT,0);
+                int days_1 = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0);
                 left_days_text.setText(String.valueOf(days_1) + " 天");
             }
         }else
@@ -284,37 +307,74 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //            Log.i("TAG", ",天数有值。。。");
             if (left_days_text != null)
             {
-                int days_2 = getSharedPreferences("config",MODE_PRIVATE).getInt(LEFT_DAYS_COUNT,5);
+                int days_2 = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,BORN_DAYS);
                 left_days_text.setText(String.valueOf(days_2) + " 天");
             }
         }
 
-        /*
+        /**
+         * 1. 第一次进入app,获取保存的时间，若为空，则保存现在的时间
+         *     若不为空，拿当前的系统时间和保存的时间比较
+         *     若相等，则是同一天，不相等，则是新的一天
+         *  2.  若是新的一天  将剩余天数减 1  改掉UI显示
+         *      若不是新的一天  不操作
+         */
+
+        //判断是否新的一天
         Calendar calendar = Calendar.getInstance();
+        /*
+        //for test
+        String nowDate = calendar.get(Calendar.YEAR) + "年"
+                + (calendar.get(Calendar.MONTH)+1) + "月"//从0计算
+                + calendar.get(Calendar.DAY_OF_MONTH) + "日"
+                + calendar.get(Calendar.HOUR_OF_DAY) + "时"
+                + calendar.get(Calendar.MINUTE)+ "分"
+                + calendar.get(Calendar.SECOND)+ "秒";
+        */
         String nowDate = calendar.get(Calendar.YEAR) + "年"
                 + (calendar.get(Calendar.MONTH)+1) + "月"//从0计算
                 + calendar.get(Calendar.DAY_OF_MONTH) + "日";
 
-        if (!nowDate.equals(getSharedPreferences("config",MODE_PRIVATE).getString(DATE_MARK,"")))
-        {
-            //日期不相等
-            editor.putInt(LEFT_DAYS_COUNT,getSharedPreferences("config",MODE_PRIVATE).getInt(LEFT_DAYS_COUNT,0) - 1);
-            editor.commit();
-
-            if (left_days_text != null)
-            {
-                int days = getSharedPreferences("config",MODE_PRIVATE).getInt(LEFT_DAYS_COUNT,0);
-                left_days_text.setText(String.valueOf(days) + " 天");
-            }
-        }else
-        {
-            //日期相等  保存今天的日期信息
+        String defaultTime = getSharedPreferences("config",MODE_PRIVATE).getString(DATE_MARK,"empty");
+        if ("empty".equals(defaultTime)){
             editor.putString(DATE_MARK,nowDate);
             editor.commit();
+//            Log.i("TAG", "<<<第一次进来,日期为empty,我保存到了本地");
+            editor.putBoolean(Constants.IS_SERVICE_ON,true);
+            editor.apply();
+        }else{
+           String saveTime =  getSharedPreferences("config",MODE_PRIVATE).getString(DATE_MARK,"empty");
+            if (nowDate.equals(saveTime)) {
+                Log.i("TAG","<<<不是新的一天");
+                editor.putBoolean(Constants.IS_SERVICE_ON,true);
+                editor.apply();
+            }else{
+                Log.i("TAG","<<<是新的一天");
+                int days_5 = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0) - 1;
+                if (days_5 >=0){
+                    editor.putInt(Constants.LEFT_DAYS_COUNT,days_5);
+                    editor.commit();
+//                    Log.i("TAG", "设置的天数" + getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0));
+                    if (left_days_text != null)
+                    {
+                        left_days_text.setText(getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0) + " 天");
+                    }
+                    if (days_5 == 0){
+                        editor.putBoolean(Constants.IS_SERVICE_ON,false);
+                        editor.apply();
+                    }else{
+                        editor.putBoolean(Constants.IS_SERVICE_ON,true);
+                        editor.apply();
+                    }
+                }else{
+                    //没有天数了，需要一个弹窗提醒
+                    Log.i("TAG", "没有天数了");
+                    editor.putBoolean(Constants.IS_SERVICE_ON,false);
+                    editor.apply();
+                }
+            }
+//            Log.i("TAG","保存的时间："+saveTime+"， 现在："+nowDate);
         }
-        Log.e("TAG", nowDate);
-        Log.i("TAG", "存储日期:" + getSharedPreferences("config",MODE_PRIVATE).getString(DATE_MARK,""));
-        */
     }
 
     private void showDatas()
@@ -606,7 +666,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     SharedPreferences.Editor editor = sharedP.edit();
                     editor.putBoolean("qq_switch",false);
                     editor.commit();
-
                 }
             }
         }
@@ -910,6 +969,18 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         Log.i("TAG", "成为超级VIP");
         if (dialog_receiveTime != null){
             dialog_receiveTime.dismiss();
+        }
+    }
+
+    public void try_days_click(View view){
+        if (dialog_tryDays != null){
+            dialog_tryDays.dismiss();
+        }
+    }
+
+    public void closeTryDays(View view){
+        if (dialog_tryDays != null){
+            dialog_tryDays.dismiss();
         }
     }
 }

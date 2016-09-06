@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/receive_time_text"
-            android:text="10天"
+            android:text="1天"
             android:textSize="30dp"
             android:textColor="@color/colorBG"
             android:layout_alignParentTop="false"
@@ -28,7 +28,7 @@
             android:background="@android:color/transparent"
             android:layout_centerHorizontal="false"
             android:layout_alignParentTop="false"
-            android:layout_marginTop="315dp"
+            android:layout_marginTop="305dp"
             android:layout_marginLeft="40dp"
             android:onClick="receive_confirm_click" />
 
@@ -39,7 +39,7 @@
             android:background="@android:color/transparent"
             android:layout_centerHorizontal="false"
             android:layout_alignParentTop="false"
-            android:layout_marginTop="310dp"
+            android:layout_marginTop="300dp"
             android:layout_marginLeft="157dp"
             android:onClick="receive_getmore_click"/>
 
