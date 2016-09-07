@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         String defaultTime = getSharedPreferences("config",MODE_PRIVATE).getString(DATE_MARK,"empty");
         if ("empty".equals(defaultTime)){
             editor.putString(DATE_MARK,nowDate);
-            editor.commit();
+            editor.apply();
 //            Log.i("TAG", "<<<第一次进来,日期为empty,我保存到了本地");
             editor.putBoolean(Constants.IS_SERVICE_ON,true);
             editor.apply();
@@ -358,6 +358,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //                editor.apply();
             }else{
                 Log.i("TAG","<<<是新的一天");
+                editor.putString(DATE_MARK,nowDate);    //需要存储新的一天的值 下次进来和当天的值比较
+                editor.apply();
+
                 editor.putBoolean(Constants.IS_NEW_DAY,true);
                 editor.apply();
 

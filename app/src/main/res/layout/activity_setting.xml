@@ -53,6 +53,7 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/id_sp_vip"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             android:src="@mipmap/bat_pop_yellow_tow"
@@ -64,9 +65,11 @@
             android:src="@mipmap/icon_red_point"
             android:layout_alignParentTop="false"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="120dp"
-            android:layout_marginBottom="28dp"/>
+            android:layout_alignParentRight="false"
+           android:layout_toRightOf="@+id/id_sp_vip"
+            android:layout_marginBottom="28dp"
+            android:layout_marginLeft="-70dp"/>
+
     </RelativeLayout>
     <FrameLayout
         android:layout_width="match_parent"

@@ -13,28 +13,27 @@
         android:layout_height="match_parent"
         android:id="@+id/layout_header"
         android:background="#f23b3b"
-        android:layout_alignParentTop="true"
-        >
+        android:layout_alignParentTop="true">
         <!--设置按钮-->
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/imageButton_setting"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="130px"
-            android:layout_marginTop="20dp"
+            android:layout_toLeftOf="@+id/imageButton_help"
+            android:layout_marginRight="25dp"
+            android:layout_marginTop="25dp"
             android:src="@mipmap/icon_set"
             android:background="@android:color/transparent"/>
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/icon_red_point"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentTop="false"
-                android:layout_alignRight="@+id/imageButton_setting"
-                android:layout_marginRight="63dp"
-                android:layout_marginTop="16dp"/>
+                android:layout_toRightOf="@+id/imageButton_setting"
+                android:layout_alignParentRight="false"
+                android:layout_marginLeft="-34dp"
+                android:layout_marginTop="20dp"/>
         <!--帮助按钮-->
         <ImageButton
             android:layout_width="wrap_content"
@@ -42,16 +41,65 @@
             android:id="@+id/imageButton_help"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="50px"
-            android:layout_marginTop="20dp"
+            android:layout_marginRight="75px"
+            android:layout_marginTop="25dp"
             android:src="@mipmap/icon_help"
             android:background="@android:color/transparent"/>
 
-        <ImageView
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/top_img"
-            android:layout_marginTop="75dp"/>
+            android:background="@mipmap/top_img"
+            android:layout_marginTop="75dp">
+            <!--红包个数标签-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:layout_marginLeft="80px"
+                android:layout_marginTop="100px"
+                android:textColor="#ffffff"
+                android:textSize="28sp"
+                android:id="@+id/packt_num_text"/>
+            <!--金额标签-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="0.00"
+                android:layout_marginLeft="300px"
+                android:layout_marginTop="100px"
+                android:textColor="#ffffff"
+                android:textSize="28sp"
+                android:id="@+id/money_num_text"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="false"
+                android:text="红包个数"
+                android:layout_marginLeft="50px"
+                android:layout_below="@+id/packt_num_text"
+                android:textColor="#ffffff"
+                android:textSize="12sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="false"
+                android:text="金额"
+                android:layout_below="@+id/money_num_text"
+                android:layout_marginLeft="350px"
+                android:textColor="#ffffff"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@mipmap/top_img"-->
+            <!--android:layout_marginTop="75dp"-->
+            <!--android:layout_alignParentLeft="true" />-->
+
         <!--可以抢的图-->
         <ImageView
             android:layout_width="wrap_content"
@@ -61,49 +109,8 @@
             android:layout_marginTop="50dp"
             android:id="@+id/top_img_show"/>
 
-        <!--红包个数标签-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:text="0"
-            android:layout_marginLeft="50px"
-            android:layout_marginTop="200px"
-            android:textColor="#ffffff"
-            android:textSize="28sp"
-            android:id="@+id/packt_num_text"/>
-        <!--金额标签-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:text="0.00"
-            android:layout_marginLeft="300px"
-            android:layout_marginTop="200px"
-            android:textColor="#ffffff"
-            android:textSize="28sp"
-            android:id="@+id/money_num_text"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:text="红包个数"
-            android:layout_marginLeft="50px"
-            android:layout_marginTop="280px"
-            android:textColor="#ffffff"
-            android:textSize="12sp" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:text="金额"
-            android:layout_marginLeft="320px"
-            android:layout_marginTop="280px"
-            android:textColor="#ffffff"
-            android:textSize="12sp" />
-
     </RelativeLayout>
+
     <!--通告-->
     <ImageView
         android:layout_width="wrap_content"
@@ -130,17 +137,17 @@
         android:scrollHorizontally="true"
         android:focusable="true"
         android:focusableInTouchMode="true"/>
-
+    <!--背景色-->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="310dp"
         tools:layout="@android:layout/simple_list_item_1"
         android:background="#f2db6f"
-        android:layout_alignParentBottom="true"
-        >
+        android:layout_alignParentBottom="true">
     </LinearLayout>
 
+    <!--android:layout_height="340dp"-->
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -148,8 +155,7 @@
         android:id="@+id/should_openServer"
         android:background="#f2db6f"
         android:layout_alignParentBottom="true"
-        android:onClick="openSettings"
-        >
+        android:onClick="openSettings">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -178,13 +184,13 @@
         android:background="#f2f2f2"
         android:layout_marginTop="280dp"
         android:layout_alignParentBottom="true">
-    <RelativeLayout
-        android:id="@+id/mainavt_layout_1"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="#f1eceb"
-        android:layout_marginTop="0dp">
+        <RelativeLayout
+            android:id="@+id/mainavt_layout_1"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="#f1eceb"
+            android:layout_marginTop="0dp">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

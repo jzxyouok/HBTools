@@ -496,7 +496,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                 performGlobalAction(GLOBAL_ACTION_BACK);
             }
         },100);
-
     }
 
     @Override
@@ -1078,11 +1077,20 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             //若在锁屏界面则解锁直接跳过锁屏
             if (mKeyguardManager.inKeyguardRestrictedInputMode())
             {
+                Log.i("TAG", "屏幕是黑的或目前正处于锁住状态????? ");
+                mKeyguardLock.disableKeyguard();
+                /*
                 if (mKeyguardManager.isKeyguardLocked() && mKeyguardManager.isKeyguardSecure()) {
                     //解锁,这个解锁时为了隐藏输密码界面，如果没有密码，只用上面的自动nullactivity就可以了
                     //禁用显示键盘锁定
+                    Log.i("TAG", "能解锁///////");
                     mKeyguardLock.disableKeyguard();
+                }else{
+                    Log.i("TAG", "不能解锁/////////");
                 }
+                */
+            }else{
+                Log.i("TAG", "键盘未锁屏????");
             }
         }else
         {
