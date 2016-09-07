@@ -79,15 +79,19 @@
         <!--android:paddingRight="30dp"-->
         <!--android:layout_marginBottom="-10dp"-->
         <!--android:onClick="about_getMoreTime"/>-->
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/about_days_text"-->
-        <!--android:text="5 天"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_marginRight="35dp"-->
-        <!--android:paddingBottom="35dp"-->
-        <!--android:textSize="20dp"-->
-        <!--android:textColor="@color/colorwhite"/>-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/copyright_text"
+        android:text="Copyright @2008-2016"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="480dp"
+        android:textSize="12dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="杭州骏游科技股份有限公司"
+        android:textSize="12dp"
+        android:layout_below="@+id/copyright_text"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

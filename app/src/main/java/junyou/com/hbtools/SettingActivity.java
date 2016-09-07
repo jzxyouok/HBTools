@@ -161,29 +161,39 @@ public class SettingActivity extends FragmentActivity
         startActivity(webViewIntent);
         SettingFragment.getInstance().dialog_setting_share.dismiss();
         */
-        //点击按钮直接下载
-        (new DownloadUtil()).enqueue("http://www.zjhzjykj.com/images/tgllx-daiji_3009-2.3.0-201605191729.apk", getApplicationContext());
-        SettingFragment.getInstance().dialog_setting_share.dismiss();
 
-        //点击直接增加天数
-        int days = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0);
         SharedPreferences sharedP = getSharedPreferences("config",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedP.edit();
-        //设置天数
-        /*
-        editor.putInt(Constants.LEFT_DAYS_COUNT,days + 1);
-        editor.commit();
-        Toast.makeText(getApplicationContext(), "开始下载，又可以再使用一天了哦~", Toast.LENGTH_SHORT).show();
-        try{
-            int days_1 = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0);
-            MainActivity.getInstance().left_days_text.setText(String.valueOf(days_1) + " 天");
-            //增加天数的时候一定要这句话，不然没用
-            editor.putBoolean(Constants.IS_SERVICE_ON,true);
-            editor.apply();
-        }catch (Exception e){
-            e.printStackTrace();
+
+        boolean isDownload = getSharedPreferences("config",MODE_PRIVATE).getBoolean("isdownloadlink",false);
+
+        if (!isDownload){
+            //没有下载过，直接下载
+            if (!ShareHelper.isInstalledJunyouLik(this)){
+                (new DownloadUtil()).enqueue("http://www.zjhzjykj.com/images/tgllx-daiji_3009-2.3.0-201605191729.apk", getApplicationContext());
+                SettingFragment.getInstance().dialog_setting_share.dismiss();
+                //点击直接增加天数
+                int days = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0);
+                editor.putInt(Constants.LEFT_DAYS_COUNT,days + 1);
+                editor.apply();
+
+                Toast.makeText(getApplicationContext(), "开始下载，又可以再使用一天了哦~", Toast.LENGTH_SHORT).show();
+                try{
+                    int days_1 = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0);
+                    MainActivity.getInstance().left_days_text.setText(String.valueOf(days_1) + " 天");
+                    //增加天数的时候一定要这句话，不然没用
+                    editor.putBoolean(Constants.IS_SERVICE_ON,true);
+                    editor.apply();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                editor.putBoolean("isdownloadlink",true);
+                editor.apply();
+            }
+        }else{
+            //已经下载过，不做操作
+            Toast.makeText(getApplicationContext(), "您已经下载过骏游连连看~", Toast.LENGTH_SHORT).show();
         }
-        */
     }
 
     //打开APK

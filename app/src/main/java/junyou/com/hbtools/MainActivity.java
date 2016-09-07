@@ -38,11 +38,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tencent.mm.sdk.modelbase.BaseReq;
+import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.sdk.modelmsg.WXTextObject;
 import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import java.io.File;
@@ -170,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     {
         wxAPI = WXAPIFactory.createWXAPI(this,Constants.APP_ID,true);
         wxAPI.registerApp(Constants.APP_ID);
+
     }
 
     private void showSwitchStatus()
@@ -342,18 +346,25 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 //            Log.i("TAG", "<<<第一次进来,日期为empty,我保存到了本地");
             editor.putBoolean(Constants.IS_SERVICE_ON,true);
             editor.apply();
+            editor.putBoolean(Constants.IS_NEW_DAY,true);
+            editor.apply();
         }else{
            String saveTime =  getSharedPreferences("config",MODE_PRIVATE).getString(DATE_MARK,"empty");
             if (nowDate.equals(saveTime)) {
                 Log.i("TAG","<<<不是新的一天");
                 editor.putBoolean(Constants.IS_SERVICE_ON,true);
                 editor.apply();
+//                editor.putBoolean(Constants.IS_NEW_DAY,false);
+//                editor.apply();
             }else{
                 Log.i("TAG","<<<是新的一天");
+                editor.putBoolean(Constants.IS_NEW_DAY,true);
+                editor.apply();
+
                 int days_5 = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0) - 1;
                 if (days_5 >=0){
                     editor.putInt(Constants.LEFT_DAYS_COUNT,days_5);
-                    editor.commit();
+                    editor.apply();
 //                    Log.i("TAG", "设置的天数" + getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0));
                     if (left_days_text != null)
                     {
@@ -368,6 +379,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     }
                 }else{
                     //没有天数了，需要一个弹窗提醒
+                    Toast.makeText(getApplicationContext(), "亲，没有天数了，赶快去分享获得天数吧！", Toast.LENGTH_SHORT).show();
                     Log.i("TAG", "没有天数了");
                     editor.putBoolean(Constants.IS_SERVICE_ON,false);
                     editor.apply();
@@ -758,11 +770,12 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         }
 
         //不使用sdk分享
-        /*
+
         final String PackageName = "com.tencent.mm";
         final String ActivityName = "com.tencent.mm.ui.tools.ShareToTimeLineUI"; //微信朋友圈
         if (ShareHelper.isInstalled(this,PackageName,ActivityName)){
             //图片加文字
+            /*
             Bitmap bt= BitmapFactory.decodeResource(getApplicationContext().getResources(), R.mipmap.ic_launcher);
             final Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bt, null,null));
             Intent intent = new Intent();
@@ -773,49 +786,26 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             intent.putExtra(Intent.EXTRA_STREAM, uri);
             intent.putExtra("Kdescription", "红包快手，让红包来的容易点~~");
             startActivity(intent);
+            */
+            //使用sdk分享
+            WXWebpageObject webpage = new WXWebpageObject();
+//            webpage.webpageUrl = "http://www.zjhzjykj.com/images/hbks.apk";     //网址替换掉就可以了
+            webpage.webpageUrl = "http://www.zjhzjykj.com";     //网址替换掉就可以了
+
+            WXMediaMessage msg = new WXMediaMessage(webpage);
+            msg.title = "红包快手";
+            msg.description = "红包快手，让红包来得容易点~";
+            Bitmap thumb = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+            msg.thumbData = Util.bmpToByteArray(thumb, true);
+
+            SendMessageToWX.Req req = new SendMessageToWX.Req();
+            req.transaction = ShareHelper.buildTransaction("webpage");
+            req.message = msg;
+            req.scene = SendMessageToWX.Req.WXSceneTimeline;    //朋友圈
+            wxAPI.sendReq(req);
         }else {
             Toast.makeText(getApplicationContext(), "您没有安装微信", Toast.LENGTH_SHORT).show();
         }
-        */
-        //使用sdk分享
-        WXWebpageObject webpage = new WXWebpageObject();
-        webpage.webpageUrl = "http://www.zjhzjykj.com";
-        WXMediaMessage msg = new WXMediaMessage(webpage);
-        msg.title = "红包快手";
-        msg.description = "红包快手，最强大的抢红包神器~";
-        Bitmap thumb = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-        msg.thumbData = Util.bmpToByteArray(thumb, true);
-
-        SendMessageToWX.Req req = new SendMessageToWX.Req();
-        req.transaction = ShareHelper.buildTransaction("webpage");
-        req.message = msg;
-//        req.scene = SendMessageToWX.Req.WXSceneSession;     //好友
-        req.scene = SendMessageToWX.Req.WXSceneTimeline;    //朋友圈
-        wxAPI.sendReq(req);
-
-        // 初始化一个WXTextObject对象
-        /*
-        String text = "hello";
-        WXTextObject textObj = new WXTextObject();
-        textObj.text = text;
-
-        // 用WXTextObject对象初始化一个WXMediaMessage对象
-
-        WXMediaMessage msg = new WXMediaMessage();
-        msg.mediaObject = textObj;
-        // 发送文本类型的消息时，title字段不起作用
-        // msg.title = "Will be ignored";
-        msg.description = "红包快手";
-
-        // 构造一个Req
-        SendMessageToWX.Req req = new SendMessageToWX.Req();
-        req.transaction = ShareHelper.buildTransaction(text); // transaction字段用于唯一标识一个请求
-        req.message = msg;
-//        req.scene = isTimelineCb.isChecked() ? SendMessageToWX.Req.WXSceneTimeline : SendMessageToWX.Req.WXSceneSession;
-        req.scene = SendMessageToWX.Req.WXSceneSession;     //好友
-        // 调用api接口发送数据到微信
-        wxAPI.sendReq(req);
-        */
     }
 
     public void shareWeiXinClick(View view)
@@ -854,10 +844,11 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             */
             //使用sdk分享
             WXWebpageObject webpage = new WXWebpageObject();
+//            webpage.webpageUrl = "http://www.zjhzjykj.com/images/hbks.apk";
             webpage.webpageUrl = "http://www.zjhzjykj.com";
             WXMediaMessage msg = new WXMediaMessage(webpage);
             msg.title = "红包快手";
-            msg.description = "红包快手，最强大的抢红包神器~";
+            msg.description = "红包快手，让红包来得容易点~";
             Bitmap thumb = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             msg.thumbData = Util.bmpToByteArray(thumb, true);
 
@@ -866,7 +857,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             req.message = msg;
             req.scene = SendMessageToWX.Req.WXSceneSession;     //好友
             wxAPI.sendReq(req);
-
         }else {
             Toast.makeText(getApplicationContext(), "您没有安装微信", Toast.LENGTH_SHORT).show();
         }

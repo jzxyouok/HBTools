@@ -69,7 +69,7 @@ public class ShareHelper {
             for (int i = 0; i < pinfo.size(); i++)
             {
                 String pn = pinfo.get(i).packageName;
-                if (pn.equals("com.."))
+                if (pn.equals("com.candy.no"))
                 {
                     return true;
                 }

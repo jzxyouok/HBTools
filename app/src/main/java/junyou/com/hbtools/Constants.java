@@ -9,8 +9,6 @@ public class Constants {
     // 包名：junyou.com.hbtools
     public static final String APP_ID = "wx2eb61bf0cd4d04a9";
 
-
-
     public static class ShowMsgActivity {
         public static final String STitle = "showmsg_title";
         public static final String SMessage = "showmsg_message";
@@ -20,4 +18,5 @@ public class Constants {
     //服务是否能够开启 若有天数，能抢红包，若没有天数，不能抢红包
     public static final String IS_SERVICE_ON = "isserviceon";
     public static final String LEFT_DAYS_COUNT = "left_days_count";  //剩余的天数
+    public static final String IS_NEW_DAY = "is_new_day";
 }
