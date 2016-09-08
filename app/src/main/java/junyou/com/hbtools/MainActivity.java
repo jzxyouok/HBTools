@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     //弹窗
     private Dialog dialog_openSvs;
     private Dialog dialog_openShare;
-    private Dialog dialog_receiveTime;
+    public  Dialog dialog_receiveTime;
     private Dialog dialog_tryDays;
 
     //广播消息
@@ -264,10 +264,10 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         dialog_openShare = new Dialog(this,R.style.common_dialog);
         dialog_openShare.setContentView(view_2);
 
-        //主页的获取更多天数弹窗
-//        View view_3 = LayoutInflater.from(instance).inflate(R.layout.dialog_receivetime,null);
-//        dialog_receiveTime = new Dialog(this,R.style.common_dialog);
-//        dialog_receiveTime.setContentView(view_3);
+        //主页的收到天数弹窗
+        View view_3 = LayoutInflater.from(instance).inflate(R.layout.dialog_receivetime,null);
+        dialog_receiveTime = new Dialog(this,R.style.common_dialog);
+        dialog_receiveTime.setContentView(view_3);
 //        dialog_receiveTime.show();
 
         //刚启动 赠送天数弹窗

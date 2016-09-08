@@ -181,6 +181,7 @@ public class SettingActivity extends FragmentActivity
                 try{
                     int days_1 = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0);
                     MainActivity.getInstance().left_days_text.setText(String.valueOf(days_1) + " 天");
+                    MainActivity.getInstance().dialog_receiveTime.show();
                     //增加天数的时候一定要这句话，不然没用
                     editor.putBoolean(Constants.IS_SERVICE_ON,true);
                     editor.apply();
@@ -189,6 +190,8 @@ public class SettingActivity extends FragmentActivity
                 }
                 editor.putBoolean("isdownloadlink",true);
                 editor.apply();
+            }else{
+                Toast.makeText(getApplicationContext(), "您已经下载过骏游连连看~", Toast.LENGTH_SHORT).show();
             }
         }else{
             //已经下载过，不做操作

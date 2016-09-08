@@ -452,15 +452,6 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     }
 
     @Override
-    public int onStartCommand(Intent intent,int flags,int startId)
-    {
-        Log.i("TAG","service onStartCommand");
-//        return super.onStartCommand(intent, flags, startId);
-        //防止服务被系统kill掉
-        return super.onStartCommand(intent, START_STICKY, startId);
-    }
-
-    @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
 
@@ -499,6 +490,15 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
     }
 
     @Override
+    public int onStartCommand(Intent intent,int flags,int startId)
+    {
+        Log.i("TAG","service onStartCommand");
+//        return super.onStartCommand(intent, flags, startId);
+        //防止服务被系统kill掉
+        return super.onStartCommand(intent, START_STICKY, startId);
+    }
+
+    @Override
     public void onDestroy()
     {
         //注销广播
@@ -507,6 +507,9 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         unregisterReceiver(mReceiver);
         mWeakLock.release();
         wakeAndUnlock(false);
+
+        //在这里重启service
+
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)

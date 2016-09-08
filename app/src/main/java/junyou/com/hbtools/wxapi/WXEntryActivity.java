@@ -75,8 +75,11 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
                     try{
                         int days_1 = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0);
                         MainActivity.getInstance().left_days_text.setText(String.valueOf(days_1) + " 天");
+
                         editor.putBoolean(Constants.IS_SERVICE_ON,true);
                         editor.apply();
+
+                        MainActivity.getInstance().dialog_receiveTime.show();
                     }catch (Exception e){
                         e.printStackTrace();
                     }
