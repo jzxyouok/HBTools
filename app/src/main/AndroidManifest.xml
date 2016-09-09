@@ -15,7 +15,6 @@
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
-
     <!-- android:name=".MainActivity" -->
     <application
         android:allowBackup="true"

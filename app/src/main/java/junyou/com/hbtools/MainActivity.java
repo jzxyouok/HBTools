@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
     private static final String LEFT_DAYS_COUNT = "left_days_count";  //剩余的天数
     private static final String DATE_MARK = "date_mark";            //日期记录
-    private static final int BORN_DAYS = 3;                         //初始天数
+    private static final int BORN_DAYS = 1;                         //初始天数
 
     private Switch openWechat_switch;
     private Switch openQQ_switch;
@@ -112,7 +112,9 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         setContentView(R.layout.activity_main);
         instance = this;
         regToWx();      //注册微信id
-//        MobclickAgent.setDebugMode(true);   //打开友盟埋点数据统计测试
+        MobclickAgent.setScenarioType(instance, MobclickAgent.EScenarioType.E_UM_NORMAL);
+        MobclickAgent.setDebugMode(true);   //打开友盟埋点数据统计测试
+        PayUtil.YMPhoneInfo(this);
 
         //监听AccessibilityService 变化
         accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
