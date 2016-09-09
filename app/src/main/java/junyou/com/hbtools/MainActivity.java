@@ -47,6 +47,7 @@ import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         setContentView(R.layout.activity_main);
         instance = this;
         regToWx();      //注册微信id
+//        MobclickAgent.setDebugMode(true);   //打开友盟埋点数据统计测试
 
         //监听AccessibilityService 变化
         accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
@@ -458,6 +460,13 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     protected void onResume()
     {
         super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override

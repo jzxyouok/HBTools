@@ -22,6 +22,8 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.umeng.analytics.MobclickAgent;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,6 +31,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import junyou.com.hbtools.fragments.SettingFragment;
 
@@ -102,6 +106,13 @@ public class SettingActivity extends FragmentActivity
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     public void performBack(View view)
@@ -136,6 +147,8 @@ public class SettingActivity extends FragmentActivity
     {
         dialog_open_vip.dismiss();
         Log.i("TAG", "点击获取超级VIP");
+        //todo 这里累计计费请求次数
+        PayUtil.YMpurchase_num(this);
     }
 
     public void closeOpenSuperVip(View view)

@@ -72,6 +72,15 @@
             android:name=".wxapi.WXEntryActivity"
             android:exported="true">
         </activity>
+
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="57d11831e0f55a65cf003c1a" >
+        </meta-data>
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="Umeng" >
+        </meta-data>
     </application>
 
 </manifest>

@@ -5,6 +5,9 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.umeng.analytics.AnalyticsConfig;
+import com.umeng.analytics.MobclickAgent;
+
 //启动界面
 
 public class SplashActivity extends AppCompatActivity {
@@ -20,6 +23,23 @@ public class SplashActivity extends AppCompatActivity {
                 goHome();
             }
         }, 1000);
+
+        /** 设置是否对日志信息进行加密, 默认false(不加密). */
+//        AnalyticsConfig.enableEncrypt(boolean enable);//6.0.0版本以前
+        MobclickAgent.enableEncrypt(false);//6.0.0版本及以后
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     private void goHome() {

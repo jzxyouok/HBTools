@@ -33,6 +33,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.umeng.analytics.MobclickAgent;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -1019,7 +1021,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             }
         }
     }
-
+    //统计抢红包个数
     private void addTotalNum()
     {
         SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
@@ -1029,6 +1031,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
         editor.commit();
         Log.i("TAG", "抢到总共:"+ nowNum + "个红包");
         MainActivity.getInstance().num_redpkt.setText(nowNum + "");
+        PayUtil.YMgrasp_num(MainActivity.getInstance());
     }
 
     //-------------------------------------------//

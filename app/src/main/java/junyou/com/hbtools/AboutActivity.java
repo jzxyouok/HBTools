@@ -21,6 +21,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.umeng.analytics.MobclickAgent;
+
 import org.w3c.dom.Text;
 
 import java.util.List;
@@ -43,6 +45,19 @@ public class AboutActivity extends FragmentActivity {
 //        View view_2 = LayoutInflater.from(this).inflate(R.layout.dialog_share,null);
 //        dialog_openShare = new Dialog(this,R.style.common_dialog);
 //        dialog_openShare.setContentView(view_2);
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     private void prepareSettings()

@@ -18,6 +18,8 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.umeng.analytics.MobclickAgent;
+
 import static android.content.Context.DOWNLOAD_SERVICE;
 
 public class WebViewActivity extends AppCompatActivity {
@@ -95,6 +97,13 @@ public class WebViewActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     public class DownloadUtil {
