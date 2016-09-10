@@ -21,8 +21,7 @@
             android:gravity="left|center_vertical|center_horizontal"
             android:elegantTextHeight="false"
             android:textSize="18sp"
-            android:layout_toRightOf="@+id/preference_back"
-            />
+            android:layout_toRightOf="@+id/preference_back" />
 
         <ImageView
             android:layout_width="40dp"

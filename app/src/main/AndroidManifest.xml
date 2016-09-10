@@ -6,7 +6,7 @@
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-     <!--<uses-permission android:name="android.permission.DEVICE_POWER"/> -->
+    <!-- <uses-permission android:name="android.permission.DEVICE_POWER"/> -->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
+
     <!-- android:name=".MainActivity" -->
     <application
         android:allowBackup="true"
@@ -33,10 +34,9 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
-        </activity>
-        <!--android:exported="true"-->
+            android:exported="true"
+            android:screenOrientation="portrait"></activity>
+        <!-- android:exported="true" -->
         <service
             android:name=".RobMoney"
             android:enabled="true"
@@ -64,22 +64,19 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".WebViewActivity"
-            android:screenOrientation="portrait">
-        </activity>
-
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".wxapi.WXEntryActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
 
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="57d11831e0f55a65cf003c1a" >
-        </meta-data>
+            android:value="57d11831e0f55a65cf003c1a"></meta-data>
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="Umeng" >
-        </meta-data>
+            android:value="Umeng"></meta-data>
+
+        <activity android:name=".VipActivity"></activity>
     </application>
 
 </manifest>

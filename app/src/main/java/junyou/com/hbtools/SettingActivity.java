@@ -137,22 +137,20 @@ public class SettingActivity extends FragmentActivity
     public void superVipClick(View view)
     {
         Log.i("TAG", "点击弹出超级VIP弹窗");
+        /*
         View view_1 = LayoutInflater.from(SettingActivity.this).inflate(R.layout.dialog_supervip, null);
         dialog_open_vip = new Dialog(this,R.style.common_dialog);
         dialog_open_vip.setContentView(view_1);
         dialog_open_vip.show();
+        */
+        Intent settingAvt = new Intent(this,VipActivity.class);
+        startActivity(settingAvt);
     }
 
     public void super_vip_click(View view)
     {
-        dialog_open_vip.dismiss();
+//        dialog_open_vip.dismiss();
         Log.i("TAG", "点击获取超级VIP");
-        //todo 这里累计计费请求次数
-        PayUtil.YMpurchase_num(this);
-
-//        PayUtil.YMmoney_count(this,0);
-//        PayUtil.YMmoney_count(this,1);
-//        PayUtil.YMmoney_count(this,2);
     }
 
     public void closeOpenSuperVip(View view)
