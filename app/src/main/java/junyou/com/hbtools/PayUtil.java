@@ -2,6 +2,7 @@ package junyou.com.hbtools;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import com.umeng.analytics.MobclickAgent;
 
@@ -18,8 +19,8 @@ public class PayUtil {
      计费请求次数，        purchase_num    整形(int)    ， 计数事件
      抢红包的次数，        grasp_num           整形(int)     ，计数事件
      imei，               imei_num       （移动设备识别码，识别用户的手机）  *#06#
-     imis，               imsi_num（国际移动用户识别码，识别用户的手机卡）
-     机型，         phone_type
+     imis，               imsi_num       （国际移动用户识别码，识别用户的手机卡）
+     机型，                phone_type      计算事件
 
      分渠道的id，   （友盟自带）
      用的天数，     （友盟自带）
@@ -28,24 +29,20 @@ public class PayUtil {
     //抢红包次数
     public static void YMgrasp_num(Context context)
     {
-        //记录到友盟
         MobclickAgent.onEvent(context,"grasp_num");
     }
-    //计费请求次数
+        //计费请求次数
     public static void YMpurchase_num(Context context)
     {
-        //记录到友盟
         MobclickAgent.onEvent(context,"purchase_num");
     }
 
     //收到的钱
     public static void YMmoney_count(Context context,int payid)
     {
-        String payString = "money_count";
         int payType  = 0; //付费类型类型
         Map<String, String> map_value = new HashMap<String, String>();
 
-        //记录到友盟
         switch (payid){
             case 0:
                 //包月 6.66元
@@ -63,8 +60,7 @@ public class PayUtil {
                 payType = 2;
                 break;
         }
-
-        MobclickAgent.onEventValue(context, payString , map_value, payType);
+        MobclickAgent.onEventValue(context, "money_count" , map_value, payType);
     }
 
     //手机识别相关
@@ -77,9 +73,16 @@ public class PayUtil {
         String imsi = mTm.getSubscriberId();        //国际移动用户识别码,识别用户的手机卡
 
         Map<String, String> map_ekv = new HashMap<String, String>();
-        map_ekv.put("phoneType", phoneType);
-        map_ekv.put("imei", imei);
-        map_ekv.put("imsi", imsi);
+        if (phoneType != null){
+            map_ekv.put("phoneType", phoneType);
+        }
+        if (imei != null){
+            map_ekv.put("imei", imei);
+        }
+        if (imsi != null){
+            map_ekv.put("imsi", imsi);
+        }
         MobclickAgent.onEvent(context, "phone_type", map_ekv);
+        Log.i("TAG", "手机型号:"+ phoneType+" imei:"+ imei + " imsi:"+ imsi);
     }
 }

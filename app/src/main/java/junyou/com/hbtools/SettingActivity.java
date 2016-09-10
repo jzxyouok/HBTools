@@ -149,6 +149,10 @@ public class SettingActivity extends FragmentActivity
         Log.i("TAG", "点击获取超级VIP");
         //todo 这里累计计费请求次数
         PayUtil.YMpurchase_num(this);
+
+//        PayUtil.YMmoney_count(this,0);
+//        PayUtil.YMmoney_count(this,1);
+//        PayUtil.YMmoney_count(this,2);
     }
 
     public void closeOpenSuperVip(View view)

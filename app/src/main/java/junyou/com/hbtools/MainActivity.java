@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
 
     private static final String LEFT_DAYS_COUNT = "left_days_count";  //剩余的天数
     private static final String DATE_MARK = "date_mark";            //日期记录
-    private static final int BORN_DAYS = 1;                         //初始天数
+    private static final int BORN_DAYS = 2;                         //初始天数
 
     private Switch openWechat_switch;
     private Switch openQQ_switch;
@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     private Dialog dialog_openShare;
     public  Dialog dialog_receiveTime;
     private Dialog dialog_tryDays;
+    private Dialog dialog_open_vip;
 
     //广播消息
     private Intent bor_intent;
@@ -167,8 +168,8 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         updateServiceStatus();
         showDatas();
         refrishMarqueeText();
-        showLeftDays();
         showDialog();
+        showLeftDays();
         showSwitchStatus();
 
     }
@@ -284,8 +285,13 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             dialog_tryDays.setContentView(view_4);
             dialog_tryDays.show();
             editor.putInt("showTryDaysDialog",1);
-            editor.commit();
+            editor.apply();
         }
+
+        View view_5 = LayoutInflater.from(instance).inflate(R.layout.dialog_supervip, null);
+        dialog_open_vip = new Dialog(this,R.style.common_dialog);
+        dialog_open_vip.setContentView(view_5);
+//        dialog_open_vip.show();
     }
 
     //右下角显示剩余的天数
@@ -304,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         {
 //            Log.i("TAG", "天数小于0。。。");
             editor.putInt(Constants.LEFT_DAYS_COUNT,BORN_DAYS);
-            editor.commit();
+            editor.apply();
             if (left_days_text != null)
             {
                 int days_1 = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0);
@@ -338,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                 + calendar.get(Calendar.HOUR_OF_DAY) + "时"
                 + calendar.get(Calendar.MINUTE)+ "分"
                 + calendar.get(Calendar.SECOND)+ "秒";
-        */
+*/
         String nowDate = calendar.get(Calendar.YEAR) + "年"
                 + (calendar.get(Calendar.MONTH)+1) + "月"//从0计算
                 + calendar.get(Calendar.DAY_OF_MONTH) + "日";
@@ -351,6 +357,8 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             editor.putBoolean(Constants.IS_SERVICE_ON,true);
             editor.apply();
             editor.putBoolean(Constants.IS_NEW_DAY,true);
+            editor.apply();
+            editor.putInt(Constants.USE_DAY,1);
             editor.apply();
         }else{
            String saveTime =  getSharedPreferences("config",MODE_PRIVATE).getString(DATE_MARK,"empty");
@@ -368,6 +376,20 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                 editor.putBoolean(Constants.IS_NEW_DAY,true);
                 editor.apply();
 
+                int use_day = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.USE_DAY,1);
+                editor.putInt(Constants.USE_DAY,use_day +1);
+                editor.apply();
+
+                 int save_day = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.USE_DAY,1);
+                if (save_day % 3 == 2){
+                    //每三天弹一次窗
+                    if (dialog_open_vip != null){
+                        //购买vip弹窗
+                        dialog_open_vip.show();
+                    }
+                }
+//                Log.i("TAG", "使用天数:" + getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.USE_DAY,1));
+
                 int days_5 = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0) - 1;
                 if (days_5 >=0){
                     editor.putInt(Constants.LEFT_DAYS_COUNT,days_5);
@@ -380,6 +402,8 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     if (days_5 == 0){
                         editor.putBoolean(Constants.IS_SERVICE_ON,false);
                         editor.apply();
+//                        dialog_open_vip.show();
+                        //todo 没有天数
                     }else{
                         editor.putBoolean(Constants.IS_SERVICE_ON,true);
                         editor.apply();
@@ -388,6 +412,8 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     //没有天数了，需要一个弹窗提醒
                     Toast.makeText(getApplicationContext(), "亲，没有天数了，赶快去分享获得天数吧！", Toast.LENGTH_SHORT).show();
                     Log.i("TAG", "没有天数了");
+                    //todo  没有天数
+//                    dialog_open_vip.show();
                     editor.putBoolean(Constants.IS_SERVICE_ON,false);
                     editor.apply();
                 }
@@ -555,7 +581,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedP.edit();
                     editor.putBoolean("wechat_switch",true);
-                    editor.commit();
+                    editor.apply();
 
                     if (sharedP.getBoolean("wechat_switch",true))
                     {
@@ -577,7 +603,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedP.edit();
                     editor.putBoolean("wechat_switch",false);
-                    editor.commit();
+                    editor.apply();
 
                     if (!sharedP.getBoolean("wechat_switch",true))
                     {
@@ -603,7 +629,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedP.edit();
                     editor.putBoolean("wechat_switch",true);
-                    editor.commit();
+                    editor.apply();
 
                 }else
                 {
@@ -613,7 +639,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedP.edit();
                     editor.putBoolean("wechat_switch",false);
-                    editor.commit();
+                    editor.apply();
                 }
             }
         }
@@ -635,7 +661,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedP.edit();
                     editor.putBoolean("qq_switch",true);
-                    editor.commit();
+                    editor.apply();
 
                     if (sharedP.getBoolean("qq_switch",true))
                     {
@@ -656,7 +682,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedP.edit();
                     editor.putBoolean("qq_switch",false);
-                    editor.commit();
+                    editor.apply();
 
                     if (!sharedP.getBoolean("qq_switch",true))
                     {
@@ -681,7 +707,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedP.edit();
                     editor.putBoolean("qq_switch",true);
-                    editor.commit();
+                    editor.apply();
 
                 }else
                 {
@@ -691,7 +717,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
                     SharedPreferences sharedP=  getSharedPreferences("config",MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedP.edit();
                     editor.putBoolean("qq_switch",false);
-                    editor.commit();
+                    editor.apply();
                 }
             }
         }
@@ -986,5 +1012,21 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         if (dialog_tryDays != null){
             dialog_tryDays.dismiss();
         }
+    }
+
+    public void super_vip_click(View view)
+    {
+        dialog_open_vip.dismiss();
+        Log.i("TAG", "点击获取超级VIP");
+        //todo 这里累计计费请求次数
+        PayUtil.YMpurchase_num(this);
+//        PayUtil.YMmoney_count(this,0);
+//        PayUtil.YMmoney_count(this,1);
+//        PayUtil.YMmoney_count(this,2);
+    }
+
+    public void closeOpenSuperVip(View view)
+    {
+        dialog_open_vip.dismiss();
     }
 }

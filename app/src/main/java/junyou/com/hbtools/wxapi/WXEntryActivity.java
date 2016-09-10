@@ -60,42 +60,48 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler{
 
         switch (baseResp.errCode) {
             case BaseResp.ErrCode.ERR_OK:		//发送成功
-                result = "发送成功";
-                Log.i("TAG", "发送成功");
+                result = "分享成功";
+                Log.i("TAG", "分享成功");
                     //增加天数
                 if (getSharedPreferences("config",MODE_PRIVATE).getBoolean(Constants.IS_NEW_DAY,true))
                 {
                     Log.i("TAG","新的一天");
-                    int days = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0);
-                    editor.putInt(Constants.LEFT_DAYS_COUNT,days + 1);
-                    editor.apply();
-                    editor.putBoolean(Constants.IS_NEW_DAY,false);
-                    editor.apply();
-
-                    try{
-                        int days_1 = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0);
-                        MainActivity.getInstance().left_days_text.setText(String.valueOf(days_1) + " 天");
-
-                        editor.putBoolean(Constants.IS_SERVICE_ON,true);
+                    int use_day = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.USE_DAY,1);
+                    if (use_day <= 10){
+                        int days = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0);
+                        editor.putInt(Constants.LEFT_DAYS_COUNT,days + 1);
+                        editor.apply();
+                        editor.putBoolean(Constants.IS_NEW_DAY,false);
                         editor.apply();
 
-                        MainActivity.getInstance().dialog_receiveTime.show();
-                    }catch (Exception e){
-                        e.printStackTrace();
+                        try{
+                            int days_1 = getSharedPreferences("config",MODE_PRIVATE).getInt(Constants.LEFT_DAYS_COUNT,0);
+                            MainActivity.getInstance().left_days_text.setText(String.valueOf(days_1) + " 天");
+
+                            editor.putBoolean(Constants.IS_SERVICE_ON,true);
+                            editor.apply();
+
+                            MainActivity.getInstance().dialog_receiveTime.show();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }else{
+                        //超过十天，不能通过分享获得天数
+                        Toast.makeText(getApplicationContext(), "您免费使用超过了十天,不能获得获得分享天数了！", Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;
             case BaseResp.ErrCode.ERR_USER_CANCEL: //发送取消
-                result = "发送取消";
-                Log.i("TAG", "发送取消");
+                result = "分享取消";
+                Log.i("TAG", "分享取消");
                 break;
             case BaseResp.ErrCode.ERR_AUTH_DENIED: //发送延迟
-                result = "发送被拒绝";
-                Log.i("TAG", "发送被拒绝");
+                result = "分享被拒绝";
+                Log.i("TAG", "分享被拒绝");
                 break;
             default:
-                result = "未知发送";	           //未知
-                Log.i("TAG", "未知发送");
+                result = "分享失败";	           //未知
+                Log.i("TAG", "分享失败");
                 break;
         }
         Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
