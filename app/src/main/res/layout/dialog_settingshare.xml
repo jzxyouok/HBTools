@@ -18,13 +18,24 @@
             android:src="@mipmap/ad_img"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"/>
-        <ImageView
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/download_link"
+            android:id="@+id/down_text_1"
+            android:text="为了开开心心抢红包，开启功能 !"
             android:layout_centerHorizontal="true"
+            android:textColor="@color/colorwhite"
             android:layout_below="@+id/id_ad_iamge"
             android:layout_marginTop="50dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="下载骏游连连看"
+            android:textColor="@color/colorwhite"
+            android:layout_below="@id/down_text_1"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"/>
 
         <ImageView
             android:layout_width="wrap_content"
