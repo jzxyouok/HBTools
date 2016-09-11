@@ -25,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
 import android.text.LoginFilter;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        Log.i("TAG", "onCreate<<<<<<");
         setContentView(R.layout.activity_main);
         instance = this;
         regToWx();      //注册微信id
@@ -173,6 +175,14 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
         showSwitchStatus();
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateServiceStatus();
+//        Log.i("TAG", "onStart<<<<<<");
+    }
+
     //注册微信id
     private void regToWx()
     {
@@ -489,6 +499,15 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     {
         super.onResume();
         MobclickAgent.onResume(this);
+        updateServiceStatus();
+//        Log.i("TAG", "OnResume<<<<<<");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        updateServiceStatus();
+//        Log.i("TAG", "onRestart<<<<<<");
     }
 
     @Override
@@ -511,9 +530,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             Toast.makeText(getApplicationContext(), "红包快手已经开启", Toast.LENGTH_SHORT).show();
             shouldOpenServer_layout.setVisibility(View.INVISIBLE);
             top_image.setImageResource(R.mipmap.top_img_radpacket_yes);
-
-            openWechat_switch.setChecked(true);
-            openQQ_switch.setChecked(true);
+            showSwitchStatus();
             if (mainLayoutHeader != null){
                 mainLayoutHeader.setBackgroundColor(getResources().getColor(R.color.mainbgOn));
             }
@@ -523,9 +540,7 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
             Toast.makeText(getApplicationContext(), "红包快手已经关闭", Toast.LENGTH_SHORT).show();
             shouldOpenServer_layout.setVisibility(View.VISIBLE);
             top_image.setImageResource(R.mipmap.top_img_radpacket_on);
-
-            openWechat_switch.setChecked(false);
-            openQQ_switch.setChecked(false);
+            showSwitchStatus();
             if (mainLayoutHeader != null){
                 mainLayoutHeader.setBackgroundColor(getResources().getColor(R.color.mainbgOff));
             }

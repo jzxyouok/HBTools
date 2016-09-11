@@ -488,7 +488,7 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             public void run() {
                 performGlobalAction(GLOBAL_ACTION_BACK);
             }
-        },100);
+        },200);
     }
 
     @Override
@@ -534,12 +534,23 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             mLuckyMoneyPicked = true;
         }
         /* 如果戳开但还未领取 */
-        if (mUnpackCount == 1 && (mUnpackNode != null))
+        /*
+        if (mUnpackCount>=1){
+            Log.i("TAG", "mUnpackCount>=1");
+        }else{
+            Log.i("TAG", "mUnpackCount<1...");
+        }
+        if (mUnpackNode!=null){
+            Log.i("TAG", "mUnpackNode 非空");
+        }else{
+            Log.i("TAG", "mUnpackNode 空...");
+        }
+         */
+        if (mUnpackCount >= 1 && (mUnpackNode != null))
         {
             try {
                 Log.i("TAG","打开了红包。。。。");
                 mUnpackNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                addTotalNum();        //记录红包个数
             } catch (Exception e) {
                 mMutex = false;
                 mLuckyMoneyPicked = false;
@@ -608,7 +619,11 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
             mLuckyMoneyPicked = false;
             mUnpackCount = 0;
             mUnpackNode = null;
-            Log.i("TAG", "待抢红包为0。。。");
+
+//            performGlobalAction(GLOBAL_ACTION_BACK);
+            gotoDeskTop();
+            wakeAndUnlock(false);
+
             //在这里累加钱
             List<AccessibilityNodeInfo> list = getRootInActiveWindow().findAccessibilityNodeInfosByText("元");
             if (!list.isEmpty())
@@ -634,9 +649,12 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                         Log.i("TAG", "result："+ result_1);
                         SharedPreferences.Editor editor = sharedP.edit();
                         editor.putString(mTotalMoney,result_1);
-                        editor.commit();
+                        editor.apply();
                         //写到主页上的标签上
                         MainActivity.getInstance().num_money.setText(result_1);
+
+                        //记录红包个数
+                        addTotalNum();
                     }else
                     {
                         //原来是空的
@@ -644,16 +662,19 @@ public class RobMoney extends AccessibilityService implements SharedPreferences.
                         String neww_1=decimalFormat.format(neww);
                         SharedPreferences.Editor editor = sharedP.edit();
                         editor.putString(mTotalMoney,neww_1);
-                        editor.commit();
+                        editor.apply();
                         //写到主页上的标签上
                         MainActivity.getInstance().num_money.setText(neww_1);
+
+                        //记录红包个数
+                        addTotalNum();
                     }
 
                 }
             }
 //            performGlobalAction(GLOBAL_ACTION_BACK);            //点击返回键
-            gotoDeskTop();
-            wakeAndUnlock(false);
+//            gotoDeskTop();
+//            wakeAndUnlock(false);
         }
     }
 
