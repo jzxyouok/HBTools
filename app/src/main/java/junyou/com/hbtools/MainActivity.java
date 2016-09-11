@@ -188,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements AccessibilityMana
     {
         wxAPI = WXAPIFactory.createWXAPI(this,Constants.APP_ID,true);
         wxAPI.registerApp(Constants.APP_ID);
-
     }
 
     private void showSwitchStatus()
